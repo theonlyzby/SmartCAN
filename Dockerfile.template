@@ -17,8 +17,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN sudo rpi-update
 
 # Remove Permanent Eth0 MAC address
-RUN mv /lib/udev/write_net_rules /lib/udev/write_net_rules-OLD && \
-    rm /etc/udev/rules.d/70-persistent-net.rules
+RUN mv /lib/udev/write_net_rules /lib/udev/write_net_rules-OLD
 
 # Defines our working directory in container
 #WORKDIR /usr/src/app
