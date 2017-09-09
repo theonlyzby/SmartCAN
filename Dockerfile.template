@@ -7,12 +7,12 @@ FROM resin/rpi-raspbian:stretch
 
 # use apt-get if you need to install dependencies,
 # for instance if you need ALSA sound utils, just uncomment the lines below.
-RUN apt-get update && apt-get upgrade && apt-get dist-upgrade
-RUN apt-get install -yq firmware-brcm80211 wpasupplicant
 #  pi-bluetooth raspberrypi-sys-mods
-RUN apt-get install -yq raspi-config rpi-update sudo make gcc libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev
-RUN apt-get install -tyq stretch mysql-server-5.6 mysql-client-5.6 mysql-common php7.0
-RUN apt-get install -tyq php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml ntp
+
+RUN apt-get update && apt-get upgrade && apt-get dist-upgrade
+RUN apt-get install -yq firmware-brcm80211 wpasupplicant raspi-config rpi-update sudo make gcc libpcre3 libpcre3-dev \
+ zlib1g zlib1g-dev openssl libssl-dev mysql-server-5.6 mysql-client-5.6 mysql-common php7.0 \
+ php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml ntp
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
