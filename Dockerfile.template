@@ -19,7 +19,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 #RUN sudo rpi-update
 
 # Remove Permanent Eth0 MAC address
-RUN mv /lib/udev/write_net_rules /lib/udev/write_net_rules-OLD
+#RUN mv /lib/udev/write_net_rules /lib/udev/write_net_rules-OLD
 
 #Install Openresty
 RUN wget https://openresty.org/download/openresty-1.11.2.1.tar.gz
