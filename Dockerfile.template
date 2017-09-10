@@ -30,8 +30,6 @@ RUN cd ./openresty-1.11.2.5 && ./configure --prefix=/usr/local/resty --conf-path
     --add-module=../nchan-0.99.16 \
     --with-cc-opt="-I/usr/local/include" --with-ld-opt="-L/usr/local/lib" --with-pcre-jit --with-http_secure_link_module \
     --without-http_gzip_module --with-http_ssl_module && make && sudo make install
-# check
-RUN sudo /usr/local/nginx/sbin/nginx -v
 
 # Defines our working directory in container
 #WORKDIR /usr/src/app
