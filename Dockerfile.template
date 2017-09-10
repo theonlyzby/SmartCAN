@@ -32,14 +32,14 @@ RUN cd ./openresty-1.11.2.5 && ./configure --prefix=/usr/local/resty --conf-path
     --without-http_gzip_module --with-http_ssl_module && make && sudo make install
 
 # Defines our working directory in container
-WORKDIR /var
+WORKDIR /
 
 # Copy GitHub Files
 # This will copy all files in our root to the working  directory in the container
 COPY . ./
 
 # Move config files
-RUN mv /var/config-files/* /*
+# RUN mv /var/config-files/* /*
 
 # Enable systemd init system in container
 ENV INITSYSTEM on
