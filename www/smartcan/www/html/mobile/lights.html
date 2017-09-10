@@ -1,0 +1,24 @@
+          <div style="float: left; width: 520px; border-right: 1px solid grey;">
+            <div style="margin-top: 20px; font-size: 12px;">
+            Mode nuit : <strong><span id="modenuit" onclick="traitement(); xajax_modenuit();">{MODENUIT}</span></strong>
+            </div>
+<!-- BEGIN: PLAN -->
+            <div class="plan cacher" style="background: url('./images/plans/plan_{LOCALISATION}.jpg');{CACHER}" id="{LOCALISATION}">
+              <div id="conteneur_allumage">
+                <img class="lumiere_on" id="03_0x10" src="./images/lumiere_on_all.png" onclick="traitement(); xajax_allumerall('{LOCALISATION}');" />
+                <img class="lumiere_off" id="03_0x10" src="./images/lumiere_off_all.png" onclick="traitement(); xajax_eteindreall('{LOCALISATION}');" />
+                <p class="allumage_global">Allumage globale</p>
+              </div>
+<!-- BEGIN: AMPOULE -->
+<img id="{CARTE}_{SORTIE}" src="./images/lumiere_{LUMIERE}.png" style="position: absolute; top: {IMG_X}px; left: {IMG_Y}px;" onclick="traitement(); xajax_inverser({CARTE},{SORTIE});" />
+<!-- END: AMPOULE -->
+            </div>
+<!-- END: PLAN -->
+          </div>
+          <div style="float: right; width: 70px;">
+           <p class="choix_plan">
+<!-- BEGIN: NIVEAU -->
+              <a onclick="$('.cacher').css('display', 'none');$('#{LOCALISATION}').css('display', 'block');"><span>{LOCALISATION}</span><br /><br />
+<!-- END: NIVEAU -->
+            </p>
+          </div>
