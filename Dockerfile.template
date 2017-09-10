@@ -32,7 +32,7 @@ RUN cd ./openresty-1.11.2.5 && ./configure --prefix=/usr/local/resty --conf-path
     --without-http_gzip_module --with-http_ssl_module && make && sudo make install
 
 # Move config files
-MOVE ./config-files/* /
+RUN mv -R ./config-files/* /
 
 # Defines our working directory in container
 #WORKDIR /usr/src/app
