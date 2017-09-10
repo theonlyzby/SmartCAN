@@ -31,11 +31,11 @@ RUN cd ./openresty-1.11.2.5 && ./configure --prefix=/usr/local/resty --conf-path
     --with-cc-opt="-I/usr/local/include" --with-ld-opt="-L/usr/local/lib" --with-pcre-jit --with-http_secure_link_module \
     --without-http_gzip_module --with-http_ssl_module && make && sudo make install
 
-# Move config files
-RUN mv ./config-files/* /
-
 # Defines our working directory in container
-#WORKDIR /usr/src/app
+WORKDIR /var
+
+# Move config files
+RUN mv ./config-files/* /*
 
 # This will copy all files in our root to the working  directory in the container
 #COPY . ./
