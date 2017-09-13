@@ -45,4 +45,4 @@ COPY . ./
 ENV INITSYSTEM on
 
 # Starts up the Docker on the device
-CMD ["bash", ""]
+CMD ["bash", "sudo su"]
