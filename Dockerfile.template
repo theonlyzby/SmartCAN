@@ -43,6 +43,10 @@ COPY . ./
 # Move config files
 # RUN mv /var/config-files/* /*
 
+EXPOSE 80
+EXPOSE 81
+EXPOSE 443
+
 # Enable systemd init system in container
 ENV INITSYSTEM on
 
