@@ -38,7 +38,6 @@ WORKDIR /
 
 # Copy GitHub Files
 # This will copy all files from our root to the working  directory in the container
-ADD /
 COPY . .
 
 # Move config files
