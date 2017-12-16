@@ -3,9 +3,9 @@
 # and about resin base images here: http://docs.resin.io/runtime/resin-base-images/
 # Note the node:slim image doesn't have node-gyp
 # FROM resin/%%RESIN_MACHINE_NAME%%-raspbian:latest
-# FROM resin/rpi-raspbian:stretch
+FROM resin/rpi-raspbian:stretch
 # FROM resin/resin/raspberrypi3-debian:stretch
-FROM resin/resin/raspberrypi3-debian:stretch
+# FROM resin/resin/raspberrypi3-debian:stretch
 
 # use apt-get if you need to install dependencies,
 # Error on: pi-bluetooth raspberrypi-sys-mods raspi-config rpi-update
@@ -51,4 +51,4 @@ EXPOSE 443
 ENV INITSYSTEM on
 
 # Starts up the Docker on the device
-# CMD ["bash", "sudo su"]
+CMD ["bash", "sudo su"]
