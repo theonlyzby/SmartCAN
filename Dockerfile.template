@@ -49,6 +49,9 @@ EXPOSE 81
 EXPOSE 443
 EXPOSE 444
 
+# Generate LetsEncrypt Certificate
+sudo certbot -n --agree-tos -m theonlyzby@gmail.com --nginx certonly
+
 # Enable systemd init system in container
 # ENV INITSYSTEM on
 
