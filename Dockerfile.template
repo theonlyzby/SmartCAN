@@ -50,7 +50,7 @@ EXPOSE 443
 EXPOSE 444
 
 # Generate LetsEncrypt Certificate
-certbot -n --agree-tos -m theonlyzby@gmail.com --nginx certonly
+#certbot -n --agree-tos -m EMAIL --nginx certonly
 
 # Enable systemd init system in container
 # ENV INITSYSTEM on
