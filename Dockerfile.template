@@ -51,4 +51,4 @@ EXPOSE 443
 # ENV INITSYSTEM on
 
 # Starts up the Docker on the device
-CMD [ "/var/www/smartcan/bin/server_udp", "&" ]
+CMD [ "bash" ]
