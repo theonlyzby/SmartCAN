@@ -3,7 +3,7 @@
   /* POUR ENVOI DE TRAME A LA CARTE CAN/ETH */
   define('ADRESSE_INTERFACE', 'localhost');
   define('PORT_INTERFACE', '1470');
-  define('LOCAL_IP', '172.27.10.115');
+  define('LOCAL_IP', '192.168.1.100');
 
   /*
     DEBUG POUR TRAME CAN

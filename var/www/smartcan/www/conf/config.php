@@ -3,7 +3,7 @@
   /* POUR ENVOI DE TRAME A LA CARTE CAN/ETH */
   define('ADRESSE_INTERFACE', 'localhost');
   define('PORT_INTERFACE', '1470');
-  define('LOCAL_IP', '172.27.10.115');
+  define('LOCAL_IP', '192.168.1.100');
 
   /*
     DEBUG POUR TRAME CAN
@@ -31,7 +31,7 @@
   define('mysqli_HOST', '127.0.0.1');
   define('mysqli_LOGIN', 'root');
   define('mysqli_DB', 'domotique');
-  define('mysqli_PWD', 'f$24get');
+  define('mysqli_PWD', 'SmartCAN');
   
   define('TABLE_ENTREE', 'entree');
   define('TABLE_LUMIERES', 'lumieres');
@@ -72,7 +72,7 @@
   
   /* 1WIRE & Temp Graphs*/
   define('ONEWIRE_MODE', 'RPI'); // Valuers possibles: OWFS , RPI
-  define('RRDPATH', '/var/www/smartcan/rrdtool/'); // If RRDTool Installed: '/var/www/smartcan/rrdtool/'
+  define('RRDPATH', ''); // If RRDTool Installed: '/var/www/smartcan/rrdtool/'
   define('EXCELTEMPLOGSPATH', ''); // if Excell Temp Logs Active: '/var/www/smartcan/bin/tests/'
   define('SONDE_EXTERIEURE', '1');
   define('PATHOWFS', '/mnt/1wire');
