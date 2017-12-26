@@ -49,10 +49,14 @@ COPY . .
 # Move config files
 # RUN mv /var/config-files/* /*
 
+# Expose services (http, phpMyAdmin and Samba)
 EXPOSE 80
 EXPOSE 81
 EXPOSE 445
 
+# Configure and start Samba
+RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
+RUN service samba start
 
 # Enable systemd init system in container
 # ENV INITSYSTEM on
