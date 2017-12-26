@@ -51,6 +51,7 @@ COPY . .
 
 EXPOSE 80
 EXPOSE 81
+EXPOSE 445
 
 
 # Enable systemd init system in container
