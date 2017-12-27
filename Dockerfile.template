@@ -11,31 +11,15 @@ FROM resin/raspberrypi3-debian:stretch
 # Error on: pi-bluetooth raspberrypi-sys-mods raspi-config rpi-update
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 
-# Install MySQL Server in a Non-Interactive mode. Default root password will be "SmartCAN"
-RUN echo "mariadb-server-10.1 mysql-server/root_password password SmartCAN" | sudo debconf-set-selections
-RUN echo "mariadb-server-10.1 mysql-server/root_password_again password SmartCAN" | sudo debconf-set-selections
-RUN apt-get -y install mariadb-server-10.1
-
-# Run the MySQL Secure Installation wizard
-RUN mysql_secure_installation
-
-RUN sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
-RUN mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
-
-# Install all other packages
+# Install all required packages
 RUN apt-get install -yq firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 libpcre3-dev \
  zlib1g zlib1g-dev openssl libssl1.0-dev wget \
- mariadb-client-10.1 mariadb-common php7.0 \
+ mariadb-server-10.1 mariadb-client-10.1 mariadb-common php7.0 \
  php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml php7.0-mbstring ntp
 RUN apt-get install -yq samba samba-common-bin
 
+#  Clean-up apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Update Firmware
-#RUN sudo rpi-update
-
-# Remove Permanent Eth0 MAC address
-#RUN mv /lib/udev/write_net_rules /lib/udev/write_net_rules-OLD
 
 #Install Openresty
 RUN cd /opt
