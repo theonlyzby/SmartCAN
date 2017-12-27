@@ -6,7 +6,7 @@ if [ ! -d /data/mysql ]; then
 	rm -rf /var/lib/mysql
 	chown -R mysql:mysql /data/mysql
 fi
-sudo chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
+chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
 service mysql start
 mysql -uroot -pSmartCAN -e "SHOW DATABASES";
