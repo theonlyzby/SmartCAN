@@ -9,14 +9,21 @@ FROM resin/raspberrypi3-debian:stretch
 
 # use apt-get if you need to install dependencies,
 # Error on: pi-bluetooth raspberrypi-sys-mods raspi-config rpi-update
-RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
+RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install -y debconf-utils
 
+# Default mysql password
+RUN echo 'mysql-server mysql-server/root_password password root' | debconf-set-selections  \
+		&& echo 'mysql-server mysql-server/root_password_again password root' | debconf-set-selections
+  
 # Install all required packages
-RUN apt-get install -yq firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 libpcre3-dev \
+RUN apt-get install -yq mariadb-server-10.1 mariadb-client-10.1 mariadb-common libpcre3-dev \
  zlib1g zlib1g-dev openssl libssl1.0-dev wget \
- mariadb-server-10.1 mariadb-client-10.1 mariadb-common php7.0 \
+ firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 php7.0 \
  php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml php7.0-mbstring ntp
 RUN apt-get install -yq samba samba-common-bin
+
+# Move DB to persistent /data folder
+RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
 
 #  Clean-up apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
