@@ -7,14 +7,11 @@ if [ ! -d /data/mysql ]; then
 	chown -R mysql:mysql /data/mysql
 fi
 service mysql start
-mysql -uroot -proot -e "SHOW DATABASES";
+mysql -uroot -pSmartCAN -e "SHOW DATABASES";
 
 
 # Start Samba
 service samba start
-
-#Start mysql
-service mysql start
 
 # Start PHP
 service php7.0-fpm start
