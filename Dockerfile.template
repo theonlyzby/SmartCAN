@@ -18,7 +18,7 @@ RUN echo 'mariadb-server-10.1 mysql-server/root_password password SmartCAN' | de
 # Install aMySQL Server package
 RUN apt-get install -y mariadb-server-10.1 
 # Configure DB to persistent /data folder
-#RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
+RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
 RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Install all other required packages
@@ -62,6 +62,7 @@ COPY . .
 EXPOSE 80
 EXPOSE 81
 EXPOSE 445
+EXPOSE 3306
 
 # Configure and start Samba
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
