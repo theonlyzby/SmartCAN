@@ -12,15 +12,15 @@ FROM resin/raspberrypi3-debian:stretch
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 
 # Install MySQL Server in a Non-Interactive mode. Default root password will be "SmartCAN"
-echo "mariadb-server-10.1 mysql-server/root_password password SmartCAN" | sudo debconf-set-selections
-echo "mariadb-server-10.1 mysql-server/root_password_again password SmartCAN" | sudo debconf-set-selections
-apt-get -y install mariadb-server-10.1
+RUN echo "mariadb-server-10.1 mysql-server/root_password password SmartCAN" | sudo debconf-set-selections
+RUN echo "mariadb-server-10.1 mysql-server/root_password_again password SmartCAN" | sudo debconf-set-selections
+RUN apt-get -y install mariadb-server-10.1
 
 # Run the MySQL Secure Installation wizard
-mysql_secure_installation
+RUN mysql_secure_installation
 
-sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
-mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+RUN sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+RUN mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
 
 # Install all other packages
 RUN apt-get install -yq firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 libpcre3-dev \
