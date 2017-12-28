@@ -7,8 +7,8 @@
   */
 
   /* DEPENDANCES */
-  include_once('/var/www/smartcan/www/conf/config.php');
-  include_once('/var/www/smartcan/class/class.triggers.php5');
+  include_once('/data/www/smartcan/www/conf/config.php');
+  include_once('/data/www/smartcan/class/class.triggers.php5');
   //include_once(PATHCLASS . '/class.envoiTrame.php5');
   //include_once(PATHCLASS . '/class.gradateur.php5');
 
@@ -26,7 +26,7 @@
   $HeaterOUT="";
   $BoilerOUT="";
 
-  /* TEMPERATURE VOULUE, TEMPRETAURE MINIMUM, PRESENCE(ABSENCE-1), CIRCULATEUREAUCHAUDE (Boiler sur Circulateur séparé)  */
+  /* TEMPERATURE VOULUE, TEMPRETAURE MINIMUM, PRESENCE(ABSENCE-1), CIRCULATEUREAUCHAUDE (Boiler sur Circulateur sÃ©parÃ©)  */
   $sql="SELECT * FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE 1;";
   $retour = mysqli_query($DB,$sql);
   while ($row = mysqli_fetch_array($retour, MYSQLI_BOTH)) {
@@ -115,7 +115,7 @@
 	// Mode 1 Circulateur (1er Contact = Chaudiere+Boiler), 2eme contact = Circulater Chauffage) //
 	 /////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Si Moyenne<Temp Min OU (Présent ET (Periode Chauffage OU Periode Boiler)) => Chaudiere (et Boiler) ON 
+    // Si Moyenne<Temp Min OU (PrÃ©sent ET (Periode Chauffage OU Periode Boiler)) => Chaudiere (et Boiler) ON 
 	 if (($absence==0 && ($periode_chauffe>=1 || $periode_boiler>=1)) || (($moyenne_actuelle!='0') && ($moyenne_actuelle<($tempmini+($voulu2-$voulu))))) {  
 	   if ($BoilerOEM!="") {
 	     $grad_FullName = $BoilerOEM . "_gradateur";
@@ -183,7 +183,7 @@
 			  if (DEBUG_AJAX) { mysqli_query($DB,"INSERT INTO `" . TABLE_MEASURE . "` (`measure_type`, `start_time`, `start_value`, `extra_measure`) VALUES ('HEATER', CURRENT_TIMESTAMP,'" . $moyenne_actuelle . "','" . $ext_temp . "');"); }
 			} // ENDIF
 		  } // ENDIF
-		  /* SI LA TEMPERATURE MOYENNE EST SUPERIEUR A LA VOULUE ou absence ou pas de periode chauffe ou ... priorité eau chaude*/
+		  /* SI LA TEMPERATURE MOYENNE EST SUPERIEUR A LA VOULUE ou absence ou pas de periode chauffe ou ... prioritÃ© eau chaude*/
 		  if (( ($moyenne_actuelle >= $voulu3 && $tempmini<$moyenne_actuelle+1) || $moyenne_actuelle == '0' ) || ($absence==1 || $periode_chauffe==0) || ($periode_boiler>=1)) {
 		    echo("\nHEATER Off(HeaterOEM=$HeaterOEM)");
 			if ($HeaterOEM!="") {
