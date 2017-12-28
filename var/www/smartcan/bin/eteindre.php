@@ -5,7 +5,7 @@
   */
 
   /* DEPENDANCES */
-  include_once('/var/www/smartcan/www/conf/config.php');
+  include_once('/data/www/smartcan/www/conf/config.php');
   include_once(PATHCLASS . '/class.envoiTrame.php5');
   include_once(PATHCLASS . '/class.gradateur.php5');
 
