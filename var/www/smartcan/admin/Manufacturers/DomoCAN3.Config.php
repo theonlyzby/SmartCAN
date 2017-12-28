@@ -1,6 +1,6 @@
 <?PHP
 // Includes
-include_once('/var/www/smartcan/www/conf/config.php');
+include_once('/data/www/smartcan/www/conf/config.php');
 
 //include_once(PATHCLASS . 'class.webadmin.php5');
 
