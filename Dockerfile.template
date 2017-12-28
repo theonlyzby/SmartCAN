@@ -23,7 +23,7 @@ RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/mariadb.conf.d/50
 
 # Install all other required packages
 RUN apt-get install -yq mariadb-client-10.1 mariadb-common libpcre3-dev \
- zlib1g zlib1g-dev openssl libssl1.0-dev wget \
+ zlib1g zlib1g-dev openssl libssl1.0-dev wget cron \
  firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 php7.0 \
  php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml php7.0-mbstring ntp
 RUN apt-get install -yq samba samba-common-bin
