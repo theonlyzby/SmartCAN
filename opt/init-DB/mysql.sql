@@ -18,7 +18,6 @@
 --
 -- Table structure for table `user`
 --
-USE mysql;
 
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
