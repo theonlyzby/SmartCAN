@@ -9,7 +9,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
   */
 
   /* DEPENDANCES */
-  include_once('/var/www/smartcan/www/conf/config.php');
+  include_once('/data/www/smartcan/www/conf/config.php');
 
   /* CONNEXION SQL */
   $DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
@@ -53,7 +53,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	$server_IP=$match[1];
 	if ($server_IP!=LOCAL_IP) {
 	  // Need to modify config.php
-	  $myFile = "/var/www/smartcan/www/conf/config.php";
+	  $myFile = "/data/www/smartcan/www/conf/config.php";
 	  $reading   = fopen($myFile,'r');
 	  $writing   = fopen($myFile.".tmp","w");
 	  while(!feof($reading)) {
