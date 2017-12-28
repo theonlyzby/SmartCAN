@@ -18,6 +18,8 @@
 --
 -- Table structure for table `chauffage_clef`
 --
+CREATE DATABASE domotique;
+USE domotique;
 
 DROP TABLE IF EXISTS `chauffage_clef`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
