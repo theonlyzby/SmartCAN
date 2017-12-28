@@ -17,6 +17,14 @@ chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 service mysql start
 mysql -uroot -pSmartCAN -e "SHOW DATABASES";
 
+# crontab
+echo "*   * * * * php /data/www/smartcan/bin/message.php" | crontab
+echo "*   * * * * php /data/www/smartcan/bin/temperatures.php" | crontab
+echo "*   * * * * /etc/init.d/domocan-monitor" | crontab
+echo "*   * * * * ( sleep 20 ; php /var/www/smartcan/bin/chauffage.php )" | crontab
+echo "5   4 * * * php /data/www/smartcan/bin/dailysync.php" | crontab
+echo "*/5 * * * *  php /data/www/smartcan/bin/fivemin-clean.php" | crontab
+
 # Start Samba
 service samba start
 
