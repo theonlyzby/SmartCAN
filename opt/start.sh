@@ -6,6 +6,7 @@ if [ ! -d /data/mysql ]; then
 	rm -rf /var/lib/mysql
 	chown -R mysql:mysql /data/mysql
 	mv -r /var/www /data/www
+	mv -r /var/phpmyadmin /data/phpmyadmin
 	service mysql start
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
