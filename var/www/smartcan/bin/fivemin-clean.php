@@ -2,7 +2,7 @@
 // Tasks run evry 5 minutes
 
 // Includes
-include_once '/var/www/smartcan/www/conf/config.php';
+include_once '/data/www/smartcan/www/conf/config.php';
 
 // Connect DB
 $DB = mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
