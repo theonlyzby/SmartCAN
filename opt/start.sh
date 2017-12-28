@@ -5,8 +5,7 @@ if [ ! -d /data/mysql ]; then
 	#sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
 	rm -rf /var/lib/mysql
 	chown -R mysql:mysql /data/mysql
-	mv -r /var/www /data/www
-	mv -r /var/phpmyadmin /data/phpmyadmin
+	mv /var/www /data/www
 	service mysql start
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
