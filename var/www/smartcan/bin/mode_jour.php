@@ -6,7 +6,7 @@
 
 
   /* DEPENDANCES */
-  include_once('/var/www/smartcan/www/conf/config.php');
+  include_once('/data/www/smartcan/www/conf/config.php');
 
   /* ACTIVATION DU MODE JOUR */
   if ( $argv['1'] == 'on' ) {
