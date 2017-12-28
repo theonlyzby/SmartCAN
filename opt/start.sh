@@ -26,5 +26,8 @@ service php7.0-fpm start
 # Start NGINX
 /usr/local/nginx/sbin/nginx -c  /usr/local/nginx/conf/nginx.conf
 
+# Start DomoCAN Server
+/etc/init.d/domocan-init start
+
 # To prevent Docker from exiting
 bash
