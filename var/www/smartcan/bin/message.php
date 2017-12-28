@@ -5,10 +5,10 @@
   */
 
   /* DEPENDANCES */
-  include_once('/var/www/smartcan/www/conf/config.php');
+  include_once('/data/www/smartcan/www/conf/config.php');
 
   /* SI AUCUN MESSAGE, ENVOI DE L'HEURE ACTUELLE */
-  if ( $argv[1] == "" ) {
+  if ( !isset($argv[1]) ) {
 
     /* CONNEXION */
     $DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
