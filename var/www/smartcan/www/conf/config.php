@@ -17,12 +17,12 @@
   /* INTERFACE WEB */
   define('URI',  '/smartcan/www');
   define('DEBUG_AJAX', FALSE);
-  define('PATH', '/var/www/smartcan/www/');
-  define('PATHBASE', '/var/www/smartcan');
-  define('PATHUPLOAD', '/var/www/smartcan/uploads/');
-  define('PATHCLASS', '/var/www/smartcan/class/');
-  define('PATHVAR', '/var/www/smartcan/var/');
-  define('PATHBIN', '/var/www/smartcan/bin/');
+  define('PATH', '/data/www/smartcan/www/');
+  define('PATHBASE', '/data/www/smartcan');
+  define('PATHUPLOAD', '/data/www/smartcan/uploads/');
+  define('PATHCLASS', '/data/www/smartcan/class/');
+  define('PATHVAR', '/data/www/smartcan/var/');
+  define('PATHBIN', '/data/www/smartcan/bin/');
   define('DEFAUT_LOCALISATION', 'RDC');
   define('URIPUSH', 'http://127.0.0.1/smartcan/envoi');
   define('URIRECV', '/smartcan/reception');
@@ -52,7 +52,7 @@
   /* Admin Interface */
   define('ADMIN_DEBUG', '0'); // 0 = NO Debug, 1 = Outputs debug and error messages on Screen
   define('CRLF', chr(10).chr(13));
-  define('PATHWEBADMIN', '/var/www/smartcan/admin/');
+  define('PATHWEBADMIN', '/data/www/smartcan/admin/');
   define('ONEWIRE_OWSERVER_PORT', '4304');
   define('ADMIN_INTERFACE_NAME', 'SmartCAN Admin');
   define('ADMIN_LIGHT_PAGE_NAME', 'Position des points lumineux et Prises');
