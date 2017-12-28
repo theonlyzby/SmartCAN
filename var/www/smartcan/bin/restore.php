@@ -2,7 +2,7 @@
 // System restore ... from raspi-config
 
 // Includes
-include_once '/var/www/smartcan/www/conf/config.php';
+include_once '/data/www/smartcan/www/conf/config.php';
 
 // Connect DB
 $DB = mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
@@ -15,7 +15,7 @@ $variable = $argv[1];
 if ($variable=="/boot/FULLsmartCAN-BACKUP.tar.gz") {
   // Restore
   // UnTAR & Restore Files & DB
-  $BackupDest = "/var/www/backups";
+  $BackupDest = "/data/www/backups";
   echo("Uncompressing /boot/FULLsmartCAN-BACKUP.tar.gz /n" . CRLF);
   shell_exec("sudo /bin/tar zxvf /boot/FULLsmartCAN-BACKUP.tar.gz -C /  2>&1");
   // SQL File present in Extracted files
