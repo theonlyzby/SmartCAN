@@ -31,7 +31,7 @@ function BackupRestore() {
   while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
     $Var = $row['variable'];
 	$Val = $row['value'];
-	if ($Var=="backup_uri") { if ($Val=="") { $BackupDir = "/var/www/backups/"; $BackupDirDisplay = "";} else { $BackupDir = $BackupDirDisplay = $Val; }}
+	if ($Var=="backup_uri") { if ($Val=="") { $BackupDir = "/data/www/backups/"; $BackupDirDisplay = "";} else { $BackupDir = $BackupDirDisplay = $Val; }}
 	if ($Var=="daily_backup")   { $daily_backup   = $Val; }
 	if ($Var=="weekly_backup")  { $weekly_backup  = $Val; }
 	if ($Var=="monthly_backup") { $monthly_backup = $Val; }
@@ -47,7 +47,7 @@ function BackupRestore() {
 	  $URIChecked = "N";
 	  if ($BackupDest=="") {
 	    // Empty path => back to DEFAULT
-		$URIChecked = "Y"; $BackupDir = "/var/www/backups/"; $BackupDirDisplay = "";
+		$URIChecked = "Y"; $BackupDir = "/data/www/backups/"; $BackupDirDisplay = "";
 		echo("<b>".$msg["BACKUPRESTORE"]["back2default"][$Lang]."</b><br>");
 	  } else {
 	    $choppedURL = parse_url($BackupDest);
@@ -61,7 +61,7 @@ function BackupRestore() {
 		  // login with username and password 
 		  $login_result = ftp_login($conn_id, $user, $pass); 
 		  // upload a file 
-		  if (ftp_put($conn_id, $path."/SmartCAN-Test.txt", "/var/www/test-ftp.txt", FTP_BINARY)) { 
+		  if (ftp_put($conn_id, $path."/SmartCAN-Test.txt", "/data/www/test-ftp.txt", FTP_BINARY)) { 
 		    echo("<b>".$msg["BACKUPRESTORE"]["ftptested"][$Lang]."</b><br>");
 			$URIChecked = "Y";
 			$BackupDir = $BackupDirDisplay = $BackupDest;
@@ -134,7 +134,7 @@ function BackupRestore() {
   // Manual Backup
   if ($action=="backUp") {
     //echo("Manual Backup<br>");
-    $BackupDest = "/var/www/backups/";
+    $BackupDest = "/data/www/backups/";
     exec("sudo mysqldump --opt --user=" . mysqli_LOGIN . " --password='".mysqli_real_escape_string($DB,mysqli_PWD)."' " . mysqli_DB . " > " . $BackupDest . "domotique.sql");
 	exec("sudo mysqldump --user=" . mysqli_LOGIN . " --password='".mysqli_real_escape_string($DB,mysqli_PWD)."' mysql user > " . $BackupDest . "mysql.sql");
 	exec("sudo pdbedit -e smbpasswd:" . $BackupDest . "samba-users.smbback");
@@ -205,7 +205,7 @@ function BackupRestore() {
   
   // Restore Stored Backup
   if ($action=="reStoreBackup") {
-    $BackupDest = "/var/www/backups/";
+    $BackupDest = "/data/www/backups/";
 	$BackupURI = html_postget("backupURI");
 	$fileName = substr($BackupURI, strrpos($BackupURI,"/")+1);
 	echo($msg["BACKUPRESTORE"]["restore"][$Lang]." $fileName<br>");
@@ -256,7 +256,7 @@ function BackupRestore() {
 	  $local = fopen($BackupDest . $fileName, 'w');
 	  $read = 0;
 	  $filesize = filesize("ssh2.sftp://$sftp/$path$fileName");
-	  while ( ($read < $filesize) && ($buffer = fread($remote, $filesize - $read))) {
+	  while (($read < $filesize) && ($buffer = fread($remote, $filesize - $read))) {
 		$read += strlen($buffer);
 		if (fwrite($local, $buffer) === FALSE) {
 		  echo("<font color=red><b>".$msg["BACKUPRESTORE"]["sftpError"][$Lang]."</b></font><br>");
@@ -291,7 +291,7 @@ function BackupRestore() {
   // Upload & Restore
   if ($action=="upLoadBackup") {
     if (basename($_FILES['PackageFile']['type'])=="x-gzip") {
-	  $BackupDest = "/var/www/backups/";
+	  $BackupDest = "/data/www/backups/";
       //echo("UPLOAD!-=".basename($_FILES['PackageFile']['name'])."=-<br>");
       $fileName = basename($_FILES['PackageFile']['name']);
 	  $uploadfile = $BackupDest . $fileName;
@@ -510,7 +510,7 @@ function BackupRestore() {
     if (substr($BackupDir,-1)!="/") { $BackupDir=$BackupDir."/"; }
 	echo("<tr><td colspan=2><a href='javascript:submitformConfirm(\"ChangeVariables2\",\"action2\",\"reStoreBackup\",\"".$BackupDir.$files[$i]."\");' title='Restore'>".$files[$i]."</a>");
 	$Dir="";
-	if (substr($BackupDir,0,8)=="/var/www") { $Dir = substr($BackupDir,8); }
+	if (substr($BackupDir,0,8)=="/data/www") { $Dir = substr($BackupDir,8); }
 	if (substr($BackupDir,0,4)=="ftp:")     { $Dir = $BackupDir.'/'; }
 	if ($Dir!="") {
 	  echo("&nbsp;<a href='".$Dir.$files[$i]."' target='_blank'><img src='./images/download.png' width=32 height=32 title='Download'/></a>");
