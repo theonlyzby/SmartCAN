@@ -10,7 +10,7 @@
     //echo "[" . $date . "] - Reception brute(recv.php) : " . $argv[1];
 	
     /* DEPENDANCES */
-    include_once('/var/www/smartcan/www/conf/config.php');
+    include_once('/data/www/smartcan/www/conf/config.php');
     include_once(PATHCLASS . '/DomoCAN3/class.receptionTrame.php5');
     include_once(PATHCLASS . '/DomoCAN3/class.debug.php5');
 
