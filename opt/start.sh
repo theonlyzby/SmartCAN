@@ -18,12 +18,12 @@ service mysql start
 mysql -uroot -pSmartCAN -e "SHOW DATABASES";
 
 # crontab
-echo "*   * * * * php /data/www/smartcan/bin/message.php
-*   * * * * php /data/www/smartcan/bin/temperatures.php
-*   * * * * /etc/init.d/domocan-monitor
-*   * * * * ( sleep 20 ; php /var/www/smartcan/bin/chauffage.php )
-5   4 * * * php /data/www/smartcan/bin/dailysync.php
-*/5 * * * *  php /data/www/smartcan/bin/fivemin-clean.php" | crontab
+# echo "*   * * * * php /data/www/smartcan/bin/message.php
+# *   * * * * php /data/www/smartcan/bin/temperatures.php
+# *   * * * * /etc/init.d/domocan-monitor
+# *   * * * * ( sleep 20 ; php /var/www/smartcan/bin/chauffage.php )
+# 5   4 * * * php /data/www/smartcan/bin/dailysync.php
+# */5 * * * *  php /data/www/smartcan/bin/fivemin-clean.php" | crontab
 
 # Start Samba
 service samba start
