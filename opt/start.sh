@@ -3,16 +3,16 @@ if [ ! -d /data/mysql ]; then
 	mkdir -p /data/mysql
 	cp -r /var/lib/mysql/* /data/mysql
 	#sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
-	rm -rf /var/lib/mysql
 	chown -R mysql:mysql /data/mysql
 	mv /var/www /data/www
-	rm -rf /var/www
 	service mysql start
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
 	mysql -uroot -pSmartCAN -h localhost mysql < /opt/init-DB/mysql.sql
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
+rm -rf /var/www
+rm -rf /var/lib/mysql
 
 # Start MySQL Server
 service mysql start
