@@ -68,7 +68,7 @@ EXPOSE 3306
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 
 # Enable systemd init system in container
-ENV INITSYSTEM on
+#ENV INITSYSTEM on
 
 # Initiate crontab
 RUN crontab /opt/crontab
