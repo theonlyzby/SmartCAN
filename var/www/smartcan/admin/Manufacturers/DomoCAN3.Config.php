@@ -699,6 +699,6 @@ function fadein(op,divID) {
 </form>
 
 <?php
-  mysqli_close();
+  mysqli_close($DB);
   if ($replaced) { shell_exec("( sleep 3 ; sudo /sbin/shutdown -r now )"); }
 } // End of Function SysMap
