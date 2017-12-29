@@ -18,7 +18,6 @@ Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/b
 
 # User privilege specification
 root	ALL=(ALL:ALL) ALL
-pi      ALL=(ALL:ALL) ALL
 
 # Allow members of group sudo to execute any command
 %sudo	ALL=(ALL:ALL) ALL
@@ -27,7 +26,6 @@ pi      ALL=(ALL:ALL) ALL
 
 #includedir /etc/sudoers.d
 
-pi ALL=(ALL) NOPASSWD: ALL
 www-data ALL=(ALL) NOPASSWD: /usr/bin/php
 www-data ALL=(ALL) NOPASSWD: /usr/local/bin/gpio
 www-data ALL=(ALL) NOPASSWD: /bin/tar
