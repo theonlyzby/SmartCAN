@@ -11,20 +11,14 @@ if [ ! -d /data/mysql ]; then
 	mysql -uroot -pSmartCAN -h localhost mysql < /opt/init-DB/mysql.sql
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
+
+# Removes non-persistent files (mysql DB and www files)
 rm -rf /var/www
 rm -rf /var/lib/mysql
 
 # Start MySQL Server
 service mysql start
 mysql -uroot -pSmartCAN -e "SHOW DATABASES";
-
-# crontab
-# echo "*   * * * * php /data/www/smartcan/bin/message.php
-# *   * * * * php /data/www/smartcan/bin/temperatures.php
-# *   * * * * /etc/init.d/domocan-monitor
-# *   * * * * ( sleep 20 ; php /var/www/smartcan/bin/chauffage.php )
-# 5   4 * * * php /data/www/smartcan/bin/dailysync.php
-# */5 * * * *  php /data/www/smartcan/bin/fivemin-clean.php" | crontab
 
 # Start Samba
 service samba start
