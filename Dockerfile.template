@@ -67,11 +67,11 @@ EXPOSE 3306
 # Configure and start Samba
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 
+# Enable systemd init system in container
+ENV INITSYSTEM on
+
 # Initiate crontab
 RUN cat /opt/crontab | crontab
-
-# Enable systemd init system in container
-# ENV INITSYSTEM on
 
 # Starts up the Docker on the device
 CMD [ "bash" , "/opt/start.sh"]
