@@ -371,9 +371,9 @@ function ModConfig() {
 	    echo("  var actualisation = setTimeout(\"compte_a_rebours();\", 1000);" . CRLF);
 	    echo("}" . CRLF);
 	    echo("setTimeout(function () { window.location.href = \"/smartcan/admin\"; }, 120000);setTimeout(function () { window.location.reload(); }, 122000);" . CRLF);
-		echo("</script>" . CRLF);
+	    echo("</script>" . CRLF);
 		
-		//shell_exec("( sleep 3 ; sudo /sbin/shutdown -r now )");		
+	    shell_exec("( sleep 3 ; sudo /sbin/shutdown -r now )");		
       } // END IF
 	  $DomoCANMode = $NEW_DomoCANMode;
 	} // END IF
