@@ -3,9 +3,9 @@ if [ ! -d /data/mysql ]; then
 	mkdir -p /data/mysql
 	cp -r /var/lib/mysql/* /data/mysql
 	#sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
-	rm -rf /var/lib/mysql
 	chown -R mysql:mysql /data/mysql
 	mv /var/www /data/www
+	chmod 777 /data/www/smartcan/www/conf
 	service mysql start
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
@@ -13,17 +13,13 @@ if [ ! -d /data/mysql ]; then
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
+# Remove non-persistent files (mysql DB and www files)
+rm -rf /var/www
+rm -rf /var/lib/mysql
+
 # Start MySQL Server
 service mysql start
 mysql -uroot -pSmartCAN -e "SHOW DATABASES";
-
-# crontab
-# echo "*   * * * * php /data/www/smartcan/bin/message.php
-# *   * * * * php /data/www/smartcan/bin/temperatures.php
-# *   * * * * /etc/init.d/domocan-monitor
-# *   * * * * ( sleep 20 ; php /var/www/smartcan/bin/chauffage.php )
-# 5   4 * * * php /data/www/smartcan/bin/dailysync.php
-# */5 * * * *  php /data/www/smartcan/bin/fivemin-clean.php" | crontab
 
 # Start Samba
 service samba start

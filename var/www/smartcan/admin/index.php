@@ -361,7 +361,7 @@ if ($Access_Level>=1) {
 		<img src="./images/content-bottom.gif" alt="content top" class="content-wrap" />
 
 	<?php
-	echo("HTML Page = $Html_Page");
+	//echo("HTML Page = $Html_Page");
 	if ($Html_Page=="CamConfig2")     {
 	?>
 	<script src="./js/jquery.lavalamp.1.3.3-min.js" type="text/javascript" charset="utf-8"></script>
