@@ -15,7 +15,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-ge
 RUN echo 'mariadb-server-10.1 mysql-server/root_password password SmartCAN' | debconf-set-selections  \
 		&& echo 'mariadb-server-10.1 mysql-server/root_password_again password SmartCAN' | debconf-set-selections
   
-# Install aMySQL Server package
+# Install MySQL Server package
 RUN apt-get install -y mariadb-server-10.1 
 # Configure DB to persistent /data folder
 RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
