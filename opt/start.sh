@@ -37,5 +37,8 @@ service php7.0-fpm start
 # Start DomoCAN Server
 /etc/init.d/domocan-init start
 
+# Start cron
+service cron start
+
 # To prevent Docker from exiting
 bash
