@@ -12,7 +12,7 @@ if [ ! -d /data/mysql ]; then
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
-# Removes non-persistent files (mysql DB and www files)
+# Remove non-persistent files (mysql DB and www files)
 rm -rf /var/www
 rm -rf /var/lib/mysql
 
