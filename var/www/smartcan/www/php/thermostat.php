@@ -63,7 +63,7 @@
     mysqli_close($DB);
     $objResponse->assign("consigneconfort","innerHTML", $newTemp);
 	//sleep(10);
-	exec('php /var/www/smartcan/bin/chauffage.php');
+	exec('php /data/www/smartcan/bin/chauffage.php');
     return $objResponse;    
   }
  
@@ -76,7 +76,7 @@
     mysqli_close($DB);
     $objResponse->assign("consigneminimum","innerHTML", $newTemp);
 	//sleep(10);
-	exec('php /var/www/smartcan/bin/chauffage.php');
+	exec('php /data/www/smartcan/bin/chauffage.php');
     return $objResponse;    
   }
   
@@ -90,7 +90,7 @@
     $sql = "DELETE FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `days` = '00000001';";
     mysqli_query($DB,$sql);
 	mysqli_close($DB);
-	exec('php /var/www/smartcan/bin/chauffage.php');
+	exec('php /data/www/smartcan/bin/chauffage.php');
     return $objResponse;    
   }  
  
@@ -101,7 +101,7 @@
      mysqli_select_db($DB,mysqli_DB);
      mysqli_query($DB,"UPDATE `" . TABLE_CHAUFFAGE_CLEF . "` SET `valeur` = '0' WHERE `clef` = 'absence';");
      mysqli_close($DB);
-	 exec('php /var/www/smartcan/bin/chauffage.php');
+	 exec('php /data/www/smartcan/bin/chauffage.php');
      return $objResponse;    
    }
  
@@ -114,7 +114,7 @@
     $End    = date("H:i:00",mktime(date("H")+$Laps, date("i"), 0, date("m"), date("d"), date("y")));
     $sql    = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` SET `days` = '00000001', `start`='" . $Now . "', `stop`='" . $End . "', `active`='Y';";
     mysqli_query($DB,$sql);
-	exec('php /var/www/smartcan/bin/chauffage.php');
+	exec('php /data/www/smartcan/bin/chauffage.php');
     return $objResponse;    
   }
   

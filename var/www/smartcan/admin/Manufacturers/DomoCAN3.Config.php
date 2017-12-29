@@ -239,7 +239,7 @@ function ModConfig() {
   } // END IF
     
   // CAN Speed
-  $DomoCANSpeed="ERROR";
+  $DomoCANSpeed="UNKNOWN";
   $myFile  = "/etc/network/interfaces";
   $reading = fopen($myFile,'r');
   while(!feof($reading)) {
@@ -249,7 +249,7 @@ function ModConfig() {
   fclose($reading);  
 
   // DomoCAN V3 Mode and IP
-  $myFile  = "/var/www/smartcan/www/conf/init_config.php";
+  $myFile  = "/data/www/smartcan/www/conf/init_config.php";
   $reading = fopen($myFile,'r');
   while(!feof($reading)) {
 	$line = fgets($reading,4096);
@@ -270,7 +270,7 @@ function ModConfig() {
     // DomoCAn Server config in config.php if ADRESSE_INTERFACE or PORT_INTERFACE changed
 	if (($NEW_DomoCANIP!=ADRESSE_INTERFACE) || ($NEW_DomoCANPort!=PORT_INTERFACE) || (($NEW_DomoCANMode=="BridgeA") && ($NEW_DomoCANMode!=$DomoCANMode))) {
 	  //echo("Changes: DomoCANMode=$NEW_DomoCANMode, DomoCANIP=$NEW_DomoCANIP/$DomoCANIP, DomoCANPort=$NEW_DomoCANPort/$DomoCANPort,<br>");
-	  $myFile = "/var/www/smartcan/www/conf/config.php";
+	  $myFile = "/data/www/smartcan/www/conf/config.php";
 	  $reading   = fopen($myFile,'r');
 	  $writing   = fopen($myFile.".tmp","w");
 	  while(!feof($reading)) {
@@ -294,7 +294,7 @@ function ModConfig() {
 	if (($DomoCANSpeed!="ERROR") && ($DomoCANSpeed!=html_postget("DomoCANSpeed"))) {
 	  $myFile = "/etc/network/interfaces";
 	  $reading   = fopen($myFile,'r');
-	  $writing   = fopen("/var/www/smartcan/www/conf/interfaces.tmp","w");
+	  $writing   = fopen("/data/www/smartcan/www/conf/interfaces.tmp","w");
 	  while(!feof($reading)) {
 	    $line = fgets($reading,4096);
 		if (strpos($line,'pre-up ip link set $IFACE type can bitrate')!==false) {
@@ -307,13 +307,13 @@ function ModConfig() {
 	  } // END WHILE
 	  fclose($reading); 
 	  fclose($writing);
-	  shell_exec("sudo cp -f /var/www/smartcan/www/conf/interfaces.tmp /etc/network/interfaces");
-	  shell_exec("sudo rm -f /var/www/smartcan/www/conf/interfaces.tmp");
+	  shell_exec("sudo cp -f /data/www/smartcan/www/conf/interfaces.tmp /etc/network/interfaces");
+	  shell_exec("sudo rm -f /data/www/smartcan/www/conf/interfaces.tmp");
 	} // END IF
 	
 	if ( (($NEW_DomoCANMode!=$DomoCANMode) || ($NEW_DomoCANIP!=$DomoCANIP) || ($NEW_DomoCANPort!=$DomoCANPort))) {
 	  //echo("Changes: DomoCANMode=$NEW_DomoCANMode/$DomoCANMode, DomoCANIP=$NEW_DomoCANIP/$DomoCANIP, DomoCANPort=$NEW_DomoCANPort/$DomoCANPort,<br>");
-	  $myFile = "/var/www/smartcan/www/conf/init_config.php";
+	  $myFile = "/data/www/smartcan/www/conf/init_config.php";
 	  $reading   = fopen($myFile,'r');
 	  $writing   = fopen($myFile.".tmp","w");
 	  // Parse config file
@@ -345,8 +345,8 @@ function ModConfig() {
       } // END WHILE      
       fclose($reading); 
 	  fclose($writing);
-	  shell_exec("sudo cp -f /var/www/smartcan/www/conf/init_config.php.tmp /var/www/smartcan/www/conf/init_config.php");
-	  //shell_exec("sudo rm -f /var/www/smartcan/www/conf/init_config.php.tmp");
+	  shell_exec("sudo cp -f /data/www/smartcan/www/conf/init_config.php.tmp /data/www/smartcan/www/conf/init_config.php");
+	  //shell_exec("sudo rm -f /data/www/smartcan/www/conf/init_config.php.tmp");
 	  // swap files and restart domocan-server
 	  
 	  //$replaced  = false;
@@ -357,7 +357,7 @@ function ModConfig() {
 		if ($NEW_DomoCANMode=="BridgeO") { $EXE_File = "domocan-bridge"; }
 		if ($NEW_DomoCANMode=="BridgeA") { $EXE_File = "domocan-bridge-and-web"; }
 		if ($NEW_DomoCANMode=="WebONLY") { $EXE_File = "server_udp"; }
-		shell_exec("sudo cp -f /var/www/smartcan/bin/" . $EXE_File . " /var/www/smartcan/bin/domocan-server");
+		shell_exec("sudo cp -f /data/www/smartcan/bin/" . $EXE_File . " /data/www/smartcan/bin/domocan-server");
 		//shell_exec("sudo /etc/init.d/domocan-init start");
 		
 		echo("<h2 class='title' align='middle'>".$msg["MAIN"]["Rebooting"][$Lang]." !<br><br>");
@@ -699,6 +699,5 @@ function fadein(op,divID) {
 </form>
 
 <?php
-  mysqli_close();
-  if ($replaced) { shell_exec("( sleep 3 ; sudo /sbin/shutdown -r now )"); }
+  mysqli_close($DB);
 } // End of Function SysMap

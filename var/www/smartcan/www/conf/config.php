@@ -72,8 +72,8 @@
   
   /* 1WIRE & Temp Graphs*/
   define('ONEWIRE_MODE', 'RPI'); // Valuers possibles: OWFS , RPI
-  define('RRDPATH', ''); // If RRDTool Installed: '/var/www/smartcan/rrdtool/'
-  define('EXCELTEMPLOGSPATH', ''); // if Excell Temp Logs Active: '/var/www/smartcan/bin/tests/'
+  define('RRDPATH', ''); // If RRDTool Installed: '/data/www/smartcan/rrdtool/'
+  define('EXCELTEMPLOGSPATH', ''); // if Excell Temp Logs Active: '/data/www/smartcan/bin/tests/'
   define('SONDE_EXTERIEURE', '1');
   define('PATHOWFS', '/mnt/1wire');
   

@@ -1,6 +1,6 @@
 <?PHP
 // Includes
-//include_once('/var/www/smartcan/www/conf/config.php');
+//include_once('/data/www/smartcan/www/conf/config.php');
 
 //include_once(PATHCLASS . 'class.webadmin.php5');
 
@@ -149,7 +149,7 @@ function TempGraphs() {
 	if (($LocalEXCELTEMPLOGSPATH!=$FormEXCELTEMPLOGSPATH) || ($LocalExcelLogs!=$ExcelLogs)) {
 	  if ($ExcelLogs=="Y") {
 	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
-						"  define('EXCELTEMPLOGSPATH',"," '/data/www/smartcan/bin/tests/'); // if Excell Temp Logs Active: '/var/www/smartcan/bin/tests/'");
+						"  define('EXCELTEMPLOGSPATH',"," '/data/www/smartcan/bin/tests/'); // if Excell Temp Logs Active: '/data/www/smartcan/bin/tests/'");
 		$LocalEXCELTEMPLOGSPATH='/data/www/smartcan/bin/tests/';
 	  } else {
 	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
