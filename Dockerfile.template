@@ -71,7 +71,8 @@ RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 ENV INITSYSTEM on
 
 # Initiate crontab
-RUN cat /opt/crontab | crontab
+RUN crontab /opt/crontab
+#RUN cat /opt/crontab | crontab
 
 # Starts up the Docker on the device
 CMD [ "bash" , "/opt/start.sh"]
