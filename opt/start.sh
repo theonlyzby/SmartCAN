@@ -20,7 +20,7 @@ if [ -f /var/www/smartBACKUP/uploads/domotique-update.sql]; then
 	rm -rf /var/www/smartBACKUP/uploads/domotique-update.sql
 fi
 rm -rf /data/www/smartcan/generate-smartbackuptar.sh
-rm -rf /data/www/smartBACKUP/uploads
+rm -rf /data/www/smartBACKUP
 # Remove non-persistent files (mysql DB and www files)
 rm -rf /var/www
 rm -rf /var/lib/mysql
