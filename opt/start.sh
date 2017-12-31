@@ -17,7 +17,7 @@ chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
 # Update SmartCAN files (if needed)
 cp -r /var/www/smartBACKUP/* /data/www/smartcan/
-if [ -f /var/www/smartBACKUP/uploads/domotique-update.sql]; then
+if [ -f /var/www/smartBACKUP/uploads/domotique-update.sql ]; then
 	mysql -uroot -pSmartCAN -h localhost domotique < /var/www/smartBACKUP/uploads/domotique-update.sql
 	rm -rf /var/www/smartBACKUP/uploads/domotique-update.sql
 fi
