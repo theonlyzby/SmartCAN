@@ -1,4 +1,6 @@
 #!/bin/bash
+ifup can0
+
 if [ ! -d /data/mysql ]; then
 	mkdir -p /data/mysql
 	cp -r /var/lib/mysql/* /data/mysql
