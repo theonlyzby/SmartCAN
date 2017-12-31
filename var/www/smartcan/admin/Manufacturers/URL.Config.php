@@ -1,10 +1,10 @@
 <?PHP
 // Includes
-//include_once('/data/www/smartcan/www/conf/config.php');
+//include_once($_SERVER['DOCUMENT_ROOT'].'/smartcan/www/conf/config.php');
 
 //include_once(PATHCLASS . 'class.webadmin.php5');
 
-// Main Function ModConfig (Admin COnfig of the Module
+// Main Function ModConfig (Admin Config of the URL Module)
 function ModConfig() {
 
   // Variables Passed Globally

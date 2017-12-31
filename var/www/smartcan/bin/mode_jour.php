@@ -6,7 +6,9 @@
 
 
   /* DEPENDANCES */
-  include_once('/data/www/smartcan/www/conf/config.php');
+  $base_URI = "/var";
+  if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { $base_URI = "/data"; }
+  include_once($base_URI.'/www/smartcan/www/conf/config.php');
 
   /* ACTIVATION DU MODE JOUR */
   if ( $argv['1'] == 'on' ) {

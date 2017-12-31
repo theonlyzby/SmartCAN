@@ -308,15 +308,22 @@ if ($Access_Level>=1) {
 	  echo("</script>" . CRLF);
 	  //unset($_SESSION["login"]);
       //session_destroy();
-	  shell_exec("sudo /sbin/shutdown -r now");
+	  if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { 
+		shell_exec('curl -X POST --header "Content-Type:application/json" "$RESIN_SUPERVISOR_ADDRESS/v1/reboot?apikey=$RESIN_SUPERVISOR_API_KEY"');
+	  } else {
+		shell_exec("sudo /sbin/shutdown -r now");
+	  } // END IF
 	} // END IF
 	
 	if (($Html_Page=="Admin") && ($Html_SubPage=="ShutDown")) {
 	  // Reboot System
 	  echo("<h2 class='title' align='middle'>".$msg["MAIN"]["shutdown"][$Lang]."!<br><br>");
 	  echo("<br>&nbsp;</h2>");
-	  
-	  shell_exec("sudo /sbin/shutdown -h now");
+	  if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { 
+		shell_exec('curl -X POST --header "Content-Type:application/json" "$RESIN_SUPERVISOR_ADDRESS/v1/shutdown?apikey=$RESIN_SUPERVISOR_API_KEY"');
+	  } else {
+	    shell_exec("sudo /sbin/shutdown -h now");
+	  } // END IF
 	} // END IF
 	
 	if (($Html_Page=="") OR ($Html_Page=="Status")) {

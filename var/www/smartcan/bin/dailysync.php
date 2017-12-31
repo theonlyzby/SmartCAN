@@ -2,7 +2,9 @@
 // Daily Tasks run @04:05
 
 // Includes
-include_once '/data/www/smartcan/www/conf/config.php';
+$base_URI = "/var";
+  if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { $base_URI = "/data"; }
+include_once $base_URI.'/www/smartcan/www/conf/config.php';
 
 // Connect DB
 $DB = mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
@@ -22,7 +24,7 @@ $query = mysqli_query($DB,$sql);
 while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
   $Var = $row['variable'];
   $Val = $row['value'];
-  if ($Var=="backup_uri") { if ($Val=="") { $BackupDir = "/var/www/backups/"; $BackupDirDisplay = "";} else { $BackupDir = $BackupDirDisplay = $Val; }}
+  if ($Var=="backup_uri") { if ($Val=="") { $BackupDir = $base_URI."/www/backups/"; $BackupDirDisplay = "";} else { $BackupDir = $BackupDirDisplay = $Val; }}
   if ($Var=="daily_backup")   { $daily_backup   = $Val; }
   if ($Var=="weekly_backup")  { $weekly_backup  = $Val; }
   if ($Var=="monthly_backup") { $monthly_backup = $Val; }
@@ -30,7 +32,7 @@ while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
 
   // Backup
   if (($daily_backup=="Y") || (($weekly_backup=="Y") && (date("N")=="5")) || (($monthly_backup=="Y") && (date("d")=="01"))) {
-    $BackupDest = "/var/www/backups/";
+    $BackupDest = $base_URI."/www/backups/";
     exec('mysqldump --user=' . MYSQL_LOGIN . ' --password=' . MYSQL_PWD . " " . MYSQL_DB . ' > ' . $BackupDest . 'domotique.sql');
 	$fileName = date("Ymd-His-").'FULLsmartCAN-BACKUP.tar.gz';
 	exec('tar -czvf '. $BackupDest.$fileName . " " .
@@ -99,7 +101,7 @@ shell_exec('sudo hwclock -w');
 // Send New Time to Horloge Card on CAN Bus
 
 // Erase Logs
-exec('sudo rm -R /var/log/*');
+exec('sudo rm -R '.$base_URI."/log/*');
 
 // Daily Reboot within 5 minutes, if needed?!?
 // shell_exec('sudo /sbin/shutdown -r +5 Daily Reboot');

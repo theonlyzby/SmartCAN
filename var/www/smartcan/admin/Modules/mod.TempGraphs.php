@@ -1,6 +1,6 @@
 <?PHP
 // Includes
-//include_once('/data/www/smartcan/www/conf/config.php');
+//include_once($_SERVER['DOCUMENT_ROOT'].'/smartcan/www/conf/config.php');
 
 //include_once(PATHCLASS . 'class.webadmin.php5');
 
@@ -48,7 +48,7 @@ function TempGraphs() {
   $query = mysqli_query($DB,$sql);
   $row = mysqli_fetch_array($query, MYSQLI_BOTH);
   $Val = $row['value'];
-  if ($Val=="") { $GraphDir = "/data/www/smartcan/rrdtool/"; $GraphDirDisplay = "";} else { $GraphDir = $GraphDirDisplay = $Val; }
+  if ($Val=="") { $GraphDir = $_SERVER['DOCUMENT_ROOT']."/smartcan/rrdtool/"; $GraphDirDisplay = "";} else { $GraphDir = $GraphDirDisplay = $Val; }
 
   // RRDTool Running?
   $RRD_Status=shell_exec('sudo dpkg -l rrdtool');
@@ -65,7 +65,7 @@ function TempGraphs() {
 	  $URIChecked = "N";
 	  if ($GraphDest=="") {
 	    // Empty path => back to DEFAULT
-		$URIChecked = "Y"; $BackupDir = "/data/www/backups/"; $GraphDirDisplay = "";
+		$URIChecked = "Y"; $BackupDir = $_SERVER['DOCUMENT_ROOT']."/backups/"; $GraphDirDisplay = "";
 		echo("<b>Destination back to DEFAULT</b><br>");
 	  } else {
 	    $choppedURL = parse_url($GraphDest);
@@ -79,7 +79,7 @@ function TempGraphs() {
 		  // login with username and password 
 		  $login_result = ftp_login($conn_id, $user, $pass); 
 		  // upload a file 
-		  if (ftp_put($conn_id, $path."/SmartCAN-Test.txt", "/data/www/test-ftp.txt", FTP_BINARY)) { 
+		  if (ftp_put($conn_id, $path."/SmartCAN-Test.txt", $_SERVER['DOCUMENT_ROOT']."/test-ftp.txt", FTP_BINARY)) { 
 		    echo("<b>".$msg["BACKUPRESTORE"]["ftptested"][$Lang]."</b><br>");
 		    $URIChecked = "Y";
 		    $BackupDir = $GraphDirDisplay = $GraphDest;
@@ -132,14 +132,14 @@ function TempGraphs() {
     if ( (($RRD_Status!="") && ($RRDTool=="N")) || (($RRD_Status=="") && ($RRDTool=="Y")) ) {
 	  //echo("Change Mode to " .$RRDTool."<br>");
 	  if ($RRDTool=="Y") { 
-	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
-						"  define('RRDPATH',"," '/data/www/smartcan/rrdtool/'); // If RRDTool Installed: '/data/www/smartcan/rrdtool/'");
-		$LocalRRDPATH='/data/www/smartcan/rrdtool/'; 
+	    ChangeInFile($_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php",$_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php.tmp",
+						"  define('RRDPATH',"," '".$_SERVER['DOCUMENT_ROOT']."/smartcan/rrdtool/'); // If RRDTool Installed: '".$_SERVER['DOCUMENT_ROOT']."/smartcan/rrdtool/'");
+		$LocalRRDPATH=$_SERVER['DOCUMENT_ROOT'].'/smartcan/rrdtool/'; 
 		shell_exec('sudo apt-get install -y rrdtool');
 	  } // ENDIF
 	  if ($RRDTool=="N") {
-	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
-						"  define('RRDPATH',"," ''); // If RRDTool Installed: '/data/www/smartcan/rrdtool/'");
+	    ChangeInFile($_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php",$_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php.tmp",
+						"  define('RRDPATH',"," ''); // If RRDTool Installed: '".$_SERVER['DOCUMENT_ROOT']."/smartcan/rrdtool/'");
 		$LocalRRDPATH=''; 
 		shell_exec('sudo apt-get remove -y rrdtool');
 	  } // ENDIF
@@ -148,12 +148,12 @@ function TempGraphs() {
 	// Excell Path Changed?
 	if (($LocalEXCELTEMPLOGSPATH!=$FormEXCELTEMPLOGSPATH) || ($LocalExcelLogs!=$ExcelLogs)) {
 	  if ($ExcelLogs=="Y") {
-	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
-						"  define('EXCELTEMPLOGSPATH',"," '/data/www/smartcan/bin/tests/'); // if Excell Temp Logs Active: '/data/www/smartcan/bin/tests/'");
-		$LocalEXCELTEMPLOGSPATH='/data/www/smartcan/bin/tests/';
+	    ChangeInFile($_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php",$_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php.tmp",
+						"  define('EXCELTEMPLOGSPATH',"," '".$_SERVER['DOCUMENT_ROOT']."/smartcan/bin/tests/'); // if Excell Temp Logs Active: '".$_SERVER['DOCUMENT_ROOT']."/smartcan/bin/tests/'");
+		$LocalEXCELTEMPLOGSPATH=$_SERVER['DOCUMENT_ROOT'].'/smartcan/bin/tests/';
 	  } else {
-	    ChangeInFile("/data/www/smartcan/www/conf/config.php","/data/www/smartcan/www/conf/config.php.tmp",
-						"  define('EXCELTEMPLOGSPATH',"," ''); // if Excell Temp Logs Active: '/data/www/smartcan/bin/tests/'");
+	    ChangeInFile($_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php",$_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php.tmp",
+						"  define('EXCELTEMPLOGSPATH',"," ''); // if Excell Temp Logs Active: '".$_SERVER['DOCUMENT_ROOT']."/smartcan/bin/tests/'");
 		$LocalEXCELTEMPLOGSPATH='';
 	  } // END IF
 	} // END IF

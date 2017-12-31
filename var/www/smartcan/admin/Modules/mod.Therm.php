@@ -106,7 +106,7 @@ function Therm() {
 	if ($OWGPIO!=$GPIOpin) {
 	  // Modify config.txt and reboot
 	  $reading   = fopen($myFile,'r');
-	  $writing   = fopen("/data/www/smartcan/dists/config.tmp","w");
+	  $writing   = fopen($_SERVER['DOCUMENT_ROOT']."/smartcan/dists/config.tmp","w");
 	  while(!feof($reading)) {
 	    $line = fgets($reading,4096);
 		if (strpos($line,'dtoverlay=w1-gpio-pullup,gpiopin=')!==false) {
@@ -117,8 +117,8 @@ function Therm() {
 	  } // END WHILE
 	  fclose($reading); 
 	  fclose($writing);
-	  shell_exec("sudo cp -f /data/www/smartcan/dists/config.tmp /boot/config.txt");
-	  shell_exec("sudo rm -f /data/www/smartcan/dists/config.tmp");
+	  shell_exec("sudo cp -f ".$_SERVER['DOCUMENT_ROOT']."/smartcan/dists/config.tmp /boot/config.txt");
+	  shell_exec("sudo rm -f ".$_SERVER['DOCUMENT_ROOT']."/smartcan/dists/config.tmp");
 	  echo("<h2 class='title' align='middle'>System REBOOTing !<br><br>");
 	  echo($msg["MAIN"]["BePatient"][$Lang]."<div style='display:inline' id=\"compterebours\"><noscript>".$msg["THERM"]["PleaseReload"][$Lang]."</noscript></div>".
 			$msg["MAIN"]["Seconds"][$Lang]."<br><br>&nbsp;</h2>");

@@ -10,7 +10,9 @@
     //echo "[" . $date . "] - Reception brute(recv.php) : " . $argv[1];
 	
     /* DEPENDANCES */
-    include_once('/data/www/smartcan/www/conf/config.php');
+	$base_URI = "/var";
+    if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { $base_URI = "/data"; }
+    include_once($base_URI.'/www/smartcan/www/conf/config.php');
     include_once(PATHCLASS . '/DomoCAN3/class.receptionTrame.php5');
     include_once(PATHCLASS . '/DomoCAN3/class.debug.php5');
 

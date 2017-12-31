@@ -1,6 +1,6 @@
 <?PHP
 // Includes
-include_once('/data/www/smartcan/www/conf/config.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/smartcan/www/conf/config.php');
 
 //include_once(PATHCLASS . 'class.webadmin.php5');
 
@@ -26,7 +26,7 @@ function Variables() {
   $action = html_postget("action");
   
   // SmartCAN Mode
-  $myFile  = "/data/www/smartcan/www/conf/init_config.php";
+  $myFile  = $_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/init_config.php";
   $reading = fopen($myFile,'r');
   while(!feof($reading)) {
 	$line = fgets($reading,4096);
@@ -72,11 +72,11 @@ function Variables() {
 	} // END IF
 	
 	// MySQL root Password
-	$ROOTPasswd = html_postget("ROOTPasswd");
-	$ROOTVerif  = html_postget("ROOTVerif");
+	$ROOTPasswd  = html_postget("ROOTPasswd");
+	$ROOTVerif   = html_postget("ROOTVerif");
 	if (($ROOTPasswd!="") && ($ROOTPasswd==$ROOTVerif)) {
 	  //echo("<b>MySQL Password change Request!</b><br>");
-	  $myFile = "/data/www/smartcan/www/conf/config.php";
+	  $myFile    = $_SERVER['DOCUMENT_ROOT']."/smartcan/www/conf/config.php";
 	  $reading   = fopen($myFile,'r');
 	  $writing   = fopen($myFile.".tmp","w");
 	  $replaced  = false;
