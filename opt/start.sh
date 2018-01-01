@@ -40,18 +40,18 @@ mysql -uroot -pSmartCAN -h localhost -e "SHOW DATABASES";
 service samba start
 
 # Start PHP
-service php7.0-fpm start
+#service php7.0-fpm start
 
 # Start NGINX
 /usr/local/nginx/sbin/nginx -c  /usr/local/nginx/conf/nginx.conf
 
 # Start DomoCAN Server
-chmod +x /etc/init.d/domocan-monitor
-chmod +x /etc/init.d/domocan-init
-/etc/init.d/domocan-init start
+# chmod +x /etc/init.d/domocan-monitor
+# chmod +x /etc/init.d/domocan-init
+# /etc/init.d/domocan-init start
 
 # Start cron
-service cron start
+#service cron start
 
 # To prevent Docker from exiting
 bash
