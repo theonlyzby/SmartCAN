@@ -26,17 +26,10 @@ RUN apt-get install -yq mariadb-client-10.1 mariadb-common libpcre3-dev \
  zlib1g zlib1g-dev openssl libssl1.0-dev wget cron sudo \
  firmware-brcm80211 wpasupplicant sudo make gcc libpcre3 php7.0 \
  php7.0-curl php7.0-gd php7.0-fpm php7.0-cli php7.0-opcache php7.0-mysqli php7.0-xml php7.0-mbstring ntp \
- git-core samba samba-common-bin
+ samba samba-common-bin wiringpi
 
 #  Clean-up apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install wiringPi
-RUN cd /opt
-RUN git clone git://git.drogon.net/wiringPi
-RUN cd ./wiringPi
-RUN git pull origin
-RUN ./build
 
 #Install Openresty
 RUN cd /opt
