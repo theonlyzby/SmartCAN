@@ -14,6 +14,9 @@ if [ ! -d /data/mysql ]; then
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
 	mysql -uroot -pSmartCAN -h localhost mysql < /opt/init-DB/mysql.sql
+	chmod +x /data/www/smartcan/bin/server_udp
+	chmod +x /data/www/smartcan/bin/domocan-bridge
+	chmod +x /data/www/smartcan/bin/domocan-bridge-and-web
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
