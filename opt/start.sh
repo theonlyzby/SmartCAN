@@ -1,5 +1,9 @@
 #!/bin/bash
+
+# Activate can0 Interface
 ifup can0
+
+rm -rf /data/*
 
 if [ ! -d /data/mysql ]; then
 	mkdir -p /data/mysql
