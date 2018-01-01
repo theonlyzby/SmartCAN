@@ -56,12 +56,6 @@ COPY . .
 # Move config files
 # RUN mv /var/config-files/* /*
 
-# Compile DomoCAN Servers (ALL working Modes)
-# RUN cd /var/www/smartcan/bin
-# RUN gcc ./domocan-bridge.c ./domocan-libs.h -o ./domocan-bridge
-# RUN gcc ./domocan-bridge-and-web.c ./domocan-libs.h -o ./domocan-bridge-and-web
-# RUN gcc ./server_udp.c ./domocan-libs.h -o ./server_udp
-
 # Expose services (http, phpMyAdmin and Samba)
 EXPOSE 80
 EXPOSE 81
