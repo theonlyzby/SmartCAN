@@ -4,6 +4,6 @@
 // ServerIP=localhost
 // DomoCANBridge=localhost
 // DomoCANPort=1470
-// DomoCANMode=BridgeAndWeb
+// DomoCANMode=NONE
 //
 ?>
