@@ -66,6 +66,13 @@ EXPOSE 3306
 # Configure and start Samba
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 
+# Enable Required Services
+RUN systemctl enable cron
+RUN systemctl enable php7.0-fpm
+RUN chmod +x /etc/init.d/domocan-monitor
+RUN chmod +x /etc/init.d/domocan-init
+RUN systemctl enable domocan-init
+
 # Enable systemd init system in container
 #ENV INITSYSTEM on
 
