@@ -46,6 +46,8 @@ service php7.0-fpm start
 /usr/local/nginx/sbin/nginx -c  /usr/local/nginx/conf/nginx.conf
 
 # Start DomoCAN Server
+chmod +x /etc/init.d/domocan-monitor
+chmod +x /etc/init.d/domocan-init
 /etc/init.d/domocan-init start
 
 # Start cron
