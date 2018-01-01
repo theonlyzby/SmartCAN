@@ -3,8 +3,6 @@
 # Activate can0 Interface
 ifup can0
 
-rm -rf /data/*
-
 if [ ! -d /data/mysql ]; then
 	mkdir -p /data/mysql
 	cp -r /var/lib/mysql/* /data/mysql
@@ -33,7 +31,7 @@ rm -rf /var/lib/mysql
 
 # Start MySQL Server
 service mysql start
-mysql -uroot -pSmartCAN -e "SHOW DATABASES";
+mysql -uroot -pSmartCAN -h localhost -e "SHOW DATABASES";
 
 # Start Samba
 service samba start
