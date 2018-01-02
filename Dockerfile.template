@@ -56,13 +56,6 @@ COPY . .
 # Move config files
 # RUN mv /var/config-files/* /*
 
-# Expose services (http, phpMyAdmin, DomoCAN and Samba)
-EXPOSE 80
-EXPOSE 81
-EXPOSE 445
-EXPOSE 1407
-EXPOSE 3306
-
 # Configure and start Samba
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 
