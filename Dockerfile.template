@@ -60,8 +60,6 @@ COPY . .
 RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
 
 # Enable Required Services
-RUN systemctl enable cron
-RUN systemctl enable php7.0-fpm
 RUN chmod +x /etc/init.d/domocan-monitor
 RUN chmod +x /etc/init.d/domocan-init
 RUN systemctl enable domocan-init
@@ -71,7 +69,6 @@ RUN systemctl enable domocan-init
 
 # Initiate crontab
 RUN crontab /opt/crontab
-#RUN cat /opt/crontab | crontab
 
 # Starts up the Docker on the device
 CMD [ "bash" , "/opt/start.sh"]
