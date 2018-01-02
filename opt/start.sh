@@ -17,6 +17,7 @@ if [ ! -d /data/mysql ]; then
 	chmod +x /data/www/smartcan/bin/server_udp
 	chmod +x /data/www/smartcan/bin/domocan-bridge
 	chmod +x /data/www/smartcan/bin/domocan-bridge-and-web
+	chmod +x /data/www/smartcan/bin/rx-DOMOCAN3.php
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
 
@@ -40,7 +41,7 @@ mysql -uroot -pSmartCAN -h localhost -e "SHOW DATABASES";
 service samba start
 
 # Start PHP
-#service php7.0-fpm start
+service php7.0-fpm start
 
 # Start NGINX
 /usr/local/nginx/sbin/nginx -c  /usr/local/nginx/conf/nginx.conf
@@ -51,7 +52,7 @@ service samba start
 # /etc/init.d/domocan-init start
 
 # Start cron
-#service cron start
+service cron start
 
 # To prevent Docker from exiting
 bash
