@@ -4,7 +4,6 @@
 # Note the node:slim image doesn't have node-gyp
 # FROM resin/%%RESIN_MACHINE_NAME%%-raspbian:latest
 # FROM resin/rpi-raspbian:stretch
-# FROM resin/resin/raspberrypi3-debian:stretch
 FROM resin/raspberrypi3-debian:stretch
 
 # use apt-get if you need to install dependencies,
