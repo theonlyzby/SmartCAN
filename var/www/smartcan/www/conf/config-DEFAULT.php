@@ -1,10 +1,12 @@
 <?php
+  // Base URI
+  $base_URI = "/var";
+  if (isset($_SERVER['RESIN'])) { $base_URI = "/data"; }
 
   /* POUR ENVOI DE TRAME A LA CARTE CAN/ETH */
   define('ADRESSE_INTERFACE', 'localhost');
   define('PORT_INTERFACE', '1470');
   define('LOCAL_IP', '192.168.1.100');
-
   /*
     DEBUG POUR TRAME CAN
       0 : Aucun
@@ -13,25 +15,18 @@
   */
   define('DEBUG', 0 );
   define('DEMO', '0');
-
   /* INTERFACE WEB */
   define('URI',  '/smartcan/www');
   define('DEBUG_AJAX', FALSE);
-  define('PATH', '/data/www/smartcan/www/');
-  define('PATHBASE', '/data/www/smartcan');
-  define('PATHUPLOAD', '/data/www/smartcan/uploads/');
-  define('PATHCLASS', '/data/www/smartcan/class/');
-  define('PATHVAR', '/data/www/smartcan/var/');
-  define('PATHBIN', '/data/www/smartcan/bin/');
+  define('PATH', $base_URI.'/www/smartcan/www/');
+  define('PATHBASE', $base_URI.'/www/smartcan');
+  define('PATHUPLOAD', $base_URI.'/www/smartcan/uploads/');
+  define('PATHCLASS', $base_URI.'/www/smartcan/class/');
+  define('PATHVAR', $base_URI.'/www/smartcan/var/');
+  define('PATHBIN', $base_URI.'/www/smartcan/bin/');
   define('DEFAUT_LOCALISATION', 'RDC');
   define('URIPUSH', 'http://127.0.0.1/smartcan/envoi');
   define('URIRECV', '/smartcan/reception');
-
-  /* SQL */
-  define('MYSQL_HOST', '127.0.0.1');
-  define('MYSQL_LOGIN', 'root');
-  define('MYSQL_DB', 'domotique');
-  define('MYSQL_PWD', 'SmartCAN');
   
   /* SQLI */
   define('mysqli_HOST', '127.0.0.1');
@@ -54,11 +49,10 @@
   define('TABLE_VARIABLES', 'ha_settings');
   define('TABLE_ELEMENTS', 'ha_element');
   
-
   /* Admin Interface */
   define('ADMIN_DEBUG', '0'); // 0 = NO Debug, 1 = Outputs debug and error messages on Screen
   define('CRLF', chr(10).chr(13));
-  define('PATHWEBADMIN', '/data/www/smartcan/admin/');
+  define('PATHWEBADMIN', $base_URI.'/www/smartcan/admin/');
   define('ONEWIRE_OWSERVER_PORT', '4304');
   define('ADMIN_INTERFACE_NAME', 'SmartCAN Admin');
   define('ADMIN_LIGHT_PAGE_NAME', 'Position des points lumineux et Prises');
@@ -83,5 +77,4 @@
   define('SONDE_EXTERIEURE', '1');
   define('PATHOWFS', '/mnt/1wire');
   
-
 ?>
