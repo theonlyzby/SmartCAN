@@ -1,7 +1,6 @@
 <?php
   // Define Base URI
-  $base_URI = "/var";
-  if (isset($_SERVER['RESIN'])) { $base_URI = "/data"; }
+  $base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
 
   /* POUR ENVOI DE TRAME A LA CARTE CAN/ETH */
   define('ADRESSE_INTERFACE', 'localhost');
