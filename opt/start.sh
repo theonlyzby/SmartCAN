@@ -14,6 +14,7 @@ if [ ! -d /data/mysql ]; then
 	# Install Initial DBs
 	mysql -uroot -pSmartCAN -h localhost < /opt/init-DB/domotique.sql
 	mysql -uroot -pSmartCAN -h localhost mysql < /opt/init-DB/mysql.sql
+	mv /data/www/smartcan/bin/resin/* /data/www/smartcan/bin
 	chmod +x /data/www/smartcan/bin/server_udp
 	chmod +x /data/www/smartcan/bin/domocan-bridge
 	chmod +x /data/www/smartcan/bin/domocan-bridge-and-web
