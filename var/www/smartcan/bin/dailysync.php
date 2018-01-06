@@ -2,8 +2,7 @@
 // Daily Tasks run @04:05
 
 // Includes
-$base_URI = "/var";
-  if (isset($_SERVER['RESIN_HOST_OS_VERSION'])) { $base_URI = "/data"; }
+$base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
 include_once $base_URI.'/www/smartcan/www/conf/config.php';
 
 // Connect DB
