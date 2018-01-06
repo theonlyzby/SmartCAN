@@ -10,8 +10,7 @@
     //echo "[" . $date . "] - Reception brute(recv.php) : " . $argv[1];
 	
     /* DEPENDANCES */
-	$base_URI = "/var";
-    if (isset($_SERVER['RESIN'])) { $base_URI = "/data"; }
+    $base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
     include_once($base_URI.'/www/smartcan/www/conf/config.php');
     include_once(PATHCLASS . '/DomoCAN3/class.receptionTrame.php5');
     include_once(PATHCLASS . '/DomoCAN3/class.debug.php5');
