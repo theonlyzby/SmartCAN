@@ -1,10 +1,10 @@
 <?php
 
+$base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
 //include_once('class.debug.php5');
-
-include_once('/var/www/smartcan/www/conf/config.php');
+include_once($base_URI.'/www/smartcan/www/conf/config.php');
 include_once('class.envoiTrame.php5');	
-include_once('/var/www/smartcan/class/class.triggers.php5');
+include_once($base_URI.'/www/smartcan/class/class.triggers.php5');
 include_once('class.gradateur.php5');	
 include_once('class.in16.php5');	
 include_once('class.erreur.php5');	
@@ -74,17 +74,17 @@ class receptionTrame {
           $this->debug->envoyer(1, "Class RECEPTION D'UNE TRAME","DESTINATAIRE " . $DESTINATAIRE . " | COMMANDE : " . $COMMANDE . " | CIBLE : " . $CIBLE . " | PARAMETRE : " . $PARAMETRE . " | D0 : "
           . $D0 . " | D1 : " . $D1 . " | D2 : " . $D2 . " | D3 : " . $D3 . " | D4 : " . $D4 . " | D5 : " . $D5 . " | D6 : " . $D6 . " | D7 : " . $D7);
 
-		  // Voir Tableau p.42, Présentation_r7.pdf
+		  // Voir Tableau p.42, PrÃ©sentation_r7.pdf
 		  
 		  /* 7.3.22 Cmd_NameC
 		  Commande : 0x00 (CMD_COMM)
-		  Paramètre : 0x69
+		  ParamÃ¨tre : 0x69
 		  Sens : Emission
 		  Mode : Normal
-		  Rôle : Envoi des 8 octets du nom de la carte
+		  RÃ´le : Envoi des 8 octets du nom de la carte
 		  Data : 8 octets
 		             D0/D7 : octets du nom de la carte
-		  Comme son nom l’indique, cette commande permet de fournir le nom de la carte interrogée.
+		  Comme son nom lâ€™indique, cette commande permet de fournir le nom de la carte interrogÃ©e.
 		  */
 		  if ($PARAMETRE=="69") { 
 		  
@@ -129,13 +129,13 @@ class receptionTrame {
 			  
 			  /*3.2.23 Cmd_NameLum
 			  Commande : 0x19 (Cmd_25)
-			  Paramètre : 0x00 à 0x0F : numéro de la sortie
-			  D0/D7 : 8 caractères du nom de la sortie
-			  Cette commande renvoie simplement le nom de la sortie précisée.
+			  ParamÃ¨tre : 0x00 Ã  0x0F : numÃ©ro de la sortie
+			  D0/D7 : 8 caractÃ¨res du nom de la sortie
+			  Cette commande renvoie simplement le nom de la sortie prÃ©cisÃ©e.
 			  */
 			  if ($COMMANDE=="19") {
 
-			    if (!$DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD)) { $this->debug->envoyer(1, "Reception Accusé Gradateur", "!!! ERREUR Connection DB!!!"); }
+			    if (!$DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD)) { $this->debug->envoyer(1, "Reception AccusÃ© Gradateur", "!!! ERREUR Connection DB!!!"); }
 				if (!mysqli_select_db($DB,mysqli_DB)) { $this->debug->envoyer(1, "Reception Gradateur OUT Name", "!!! ERREUR Selection DB!!!"); }
 				// CREATE in TEMP Table
 				$sql = "INSERT INTO `ha_element_TEMP` (`id`, `card_id`, `element_type`, `element_reference`, `sequence`, `element_name`) VALUES (NULL, '0x" . $CIBLE . "', '0x11', '0x" . $PARAMETRE . "', 1, '" . 
@@ -148,12 +148,12 @@ class receptionTrame {
 			  
 			  /*3.2.26 Cmd_NameMLum1
 				Commande : 0x1C (Cmd_28)
-				Paramètre : 0x00 à 0x0E : numéro de la mémoire
+				ParamÃ¨tre : 0x00 Ã  0x0E : numÃ©ro de la mÃ©moire
 				Sens : Emission
-				Rôle : Renvoie les 8 premiers caractères du nom de la mémoire
+				RÃ´le : Renvoie les 8 premiers caractÃ¨res du nom de la mÃ©moire
 				Data : 8 octets
-				D0/D7 : 8 premiers caractères du nom de la mémoire
-				Cette commande renvoie simplement le début du nom de la mémoire précisée, sous forme de 8 caractères ascii.
+				D0/D7 : 8 premiers caractÃ¨res du nom de la mÃ©moire
+				Cette commande renvoie simplement le dÃ©but du nom de la mÃ©moire prÃ©cisÃ©e, sous forme de 8 caractÃ¨res ascii.
 			  */
 			  if ($COMMANDE=="1c") {
 
@@ -170,12 +170,12 @@ class receptionTrame {
 			  
 			  /*3.2.27 Cmd_NameMLum2
 				Commande : 0x1D (Cmd_29)
-				Paramètre : 0x00 à 0x0E : numéro de la mémoire
+				ParamÃ¨tre : 0x00 Ã  0x0E : numÃ©ro de la mÃ©moire
 				Sens : Emission
-				Rôle : Renvoie les 8 derniers caractères du nom de la mémoire
+				RÃ´le : Renvoie les 8 derniers caractÃ¨res du nom de la mÃ©moire
 				Data : 8 octets
-				D0/D7 : 8 derniers caractères du nom de la mémoire
-				Cette commande complète la précédente, en fournissant le reste du nom de la mémoire.
+				D0/D7 : 8 derniers caractÃ¨res du nom de la mÃ©moire
+				Cette commande complÃ¨te la prÃ©cÃ©dente, en fournissant le reste du nom de la mÃ©moire.
 			  */
 			  if ($COMMANDE=="1d") {
 
