@@ -49,28 +49,30 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	$sql = "INSERT INTO `" . TABLE_CHAUFFAGE_CLEF_TEMP . "` (`id`, `clef`, `valeur`) VALUES (NULL, 'warm_water', '1');"; 
 	$retour = mysqli_query($DB,$sql);
 	
-	// Check Server's IP address into config.php ... and change it if needed
-	$ifconfig = shell_exec('/sbin/ifconfig eth0');
-    preg_match('/addr:([\d\.]+)/', $ifconfig, $match);
-	$server_IP=$match[1];
-	if ($server_IP!=LOCAL_IP) {
-	  // Need to modify config.php
-	  $myFile = $base_URI."/www/smartcan/www/conf/config.php";
-	  $reading   = fopen($myFile,'r');
-	  $writing   = fopen($myFile.".tmp","w");
-	  while(!feof($reading)) {
-	    $line = fgets($reading,4096);
+	// If NOT on resin, Check Server's IP address into config.php ... and change it if needed
+	if ($base_URI == "/var") {
+	  $ifconfig = shell_exec('/sbin/ifconfig eth0');
+	  preg_match('/addr:([\d\.]+)/', $ifconfig, $match);
+	  $server_IP=$match[1];
+	  if ($server_IP!=LOCAL_IP) {
+	    // Need to modify config.php
+	    $myFile = $base_URI."/www/smartcan/www/conf/config.php";
+	    $reading   = fopen($myFile,'r');
+	    $writing   = fopen($myFile.".tmp","w");
+	    while(!feof($reading)) {
+	      $line = fgets($reading,4096);
 		if (strpos($line,"define('LOCAL_IP'")!==false) {
 		  fwrite($writing,"  define('LOCAL_IP', '".$server_IP."');" .chr(13).chr(10));
 		} else {
 		  fwrite($writing,$line);
 		} // END IF
-	  } // END WHILE
-	  fclose($reading);
-	  fclose($writing);
-	  shell_exec("sudo cp -f ".$myFile.".tmp ".$myFile);
-	  shell_exec("sudo rm -f ".$myFile.".tmp");
-	} // END IF ($server_IP!=LOCAL_IP)
+	    } // END WHILE
+	    fclose($reading);
+	    fclose($writing);
+	    shell_exec("sudo cp -f ".$myFile.".tmp ".$myFile);
+	    shell_exec("sudo rm -f ".$myFile.".tmp");
+	  } // END IF ($server_IP!=LOCAL_IP)
+	} // END IF
 	
 	
   } // END IF
