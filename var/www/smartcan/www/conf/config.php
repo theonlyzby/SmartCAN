@@ -1,4 +1,5 @@
 <?php
+  // Define Base URI
   $base_URI = "/var";
   if (isset($_SERVER['RESIN'])) { $base_URI = "/data"; }
 
