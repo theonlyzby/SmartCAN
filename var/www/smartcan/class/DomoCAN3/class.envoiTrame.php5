@@ -1,6 +1,6 @@
 <?php
-
-include_once('/var/www/smartcan/www/conf/config.php');
+$base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
+include_once($base_URI.'/www/smartcan/www/conf/config.php');
 
 class DomoCAN3_envoiTrame {
 

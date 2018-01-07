@@ -2,10 +2,11 @@
 // PHP Error Reporting
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
+$base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
 
 // Includes
-include_once('/var/www/smartcan/www/conf/config.php');
-include_once('/var/www/smartcan/class/class.triggers.php5');
+include_once($base_URI.'/www/smartcan/www/conf/config.php');
+include_once($base_URI.'/www/smartcan/class/class.triggers.php5');
 
 // Initiate Trigger (PUSH + DB Update)
 $trigger = new trigger();
