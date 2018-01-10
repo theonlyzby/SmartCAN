@@ -66,7 +66,11 @@ RUN systemctl enable domocan-init
 # Enable systemd init system in container
 #ENV INITSYSTEM on
 
-# Initiate crontab
+# Set correct TimeZone
+RUN cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime
+
+
+# Restore crontab Configuration
 RUN crontab /opt/crontab
 
 # Starts up the Docker on the device
