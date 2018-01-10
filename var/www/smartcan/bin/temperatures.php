@@ -38,6 +38,11 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
       $id   = $row['id'];
 	  $sql2 = "INSERT INTO `" . TABLE_LUMIERES_STATUS . "` (`id`, `valeur`, `timer_pid`) VALUES ('" . $id . "', '00', '0');";
       $retour2 = mysqli_query($DB,$sql2);
+	  // Set configured GPIOs in OUTPUT Mode
+	  if ($row['Manufacturer']=="wiringPI") {
+	    exec('gpio -1 mode '.$row['sortie'].' out');
+		exec('gpio -1 write '.$row['sortie'].' 0');
+	  } // END IF
     } // END WHILE
 	
 	// Populates chauffage_clef_TEMP (Heating system Status in RAM)

@@ -111,7 +111,14 @@ function ModConfig() {
 		  $ElementID[$j] = mysqli_insert_id($DB);
 		  //echo("Element INSERT (".$ElementID[$j].",i=$i, j=$j): sql=$sql<br>");
 		} else {
-		  // Update
+		  // Update lumieres table
+		  $sql = "SELECT * FROM `ha_element` WHERE `id` = '".$ElementID[$j]."';";
+		  $query=mysqli_query($DB,$sql);
+		  if ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
+		    $sql = "UPDATE `lumieres` SET `sortie` = '".$Element[$j]."' WHERE `sortie`='".$row['element_reference']."' AND `Manufacturer`='WiringPI' AND `carte` = 'RaspBerryPI';";
+			$query=mysqli_query($DB,$sql);
+		  } // END IF
+		  // Update ha_element table
 		  $sql = "UPDATE `ha_element` SET `element_name`='".$ElementDesc[$j]."', `card_id` = 'RaspBerryPI', `element_reference`='".$Element[$j]."'" .
 					", `element_type`='".$Mode[$j]."' WHERE `id` = '".$ElementID[$j]."';";
 		  //echo("Update Element ID = ".$ElementID[$j]."<br>SQL=$sql<br>".CRLF);
