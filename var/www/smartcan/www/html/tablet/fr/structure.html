@@ -1,7 +1,9 @@
 <!-- BEGIN: main -->
 <html>
   <head>
-	
+    <title>SmartCAN</title>
+    <meta name="theme-color" content="#000000"/>	
+    <meta name="viewport" content="width=100%, initial-scale=1">
     <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Cache-Control" content="no-cache">
     <meta http-equiv="Pragma" content="no-cache">
@@ -13,9 +15,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"> 
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	
-	<!-- Progressive WebApp ->>
-	<link rel="manifest" href="./manifest.json">
 
 	<!-- Icons -->
 	<!-- All Browser ico=32*32, png=72*72 -->
@@ -63,28 +62,12 @@
 
 <!-- BEGIN: css_specific_file -->
     <link rel="stylesheet" href="{CSU}" type="text/css" />
-    <!-- <link rel="stylesheet" href="./css/tablet/{PAGE}.css" type="text/css" /> -->
+    <!--  <link rel="stylesheet" href="./css/tablet/{PAGE}.css" type="text/css" />  -->
 <!-- END: css_specific_file -->
 
     {XAJAX}
 
 {FILE {JAVASCRIPT}}
-
-<script type="text/javascript">
-// Register Service Worker fro Progressive WebApp
-$(document).ready(function() {
-  if ('serviceWorker' in navigator) {
-    // Path is relative to the origin, not project root.
-    navigator.serviceWorker.register('./service-worker.js', { insecure: true })
-    .then(function(reg) {
-        console.log('Registration succeeded. Scope is ' + reg.scope);
-    })
-    .catch(function(error) {
-        console.error('Registration failed with ' + error);
-    });
-  }
-});
-</script>
 
     <script type="text/javascript">
 
@@ -124,6 +107,45 @@ $(document).ready(function() {
 	<script type="text/javascript">
 	  idleTime = 0; $(document).ready(function() {
 
+	  if(window.location.protocol != 'https:') {
+	    location.href = location.href.replace("http://", "https://");
+	  }
+	  
+	  if ('serviceWorker' in navigator) {
+		window.addEventListener('load', function() {
+			navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+				// Registration was successful
+				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+			}, function(err) {
+				// registration failed :(
+				console.log('ServiceWorker registration failed: ', err);
+			});
+		});
+	  }
+	  window.addEventListener('online', function(e) {
+    // Resync data with server.
+    console.log("You are online");
+    //Page.hideOfflineWarning();
+    //Arrivals.loadData();
+}, false);
+
+window.addEventListener('offline', function(e) {
+    // Queue up events for server.
+    console.log("You are offline");
+    <!-- //Page.showOfflineWarning(); -->
+}, false);
+
+// Check if the user is connected.
+if (navigator.onLine) {
+    //Arrivals.loadData();
+} else {
+    // Show offline message
+    Page.showOfflineWarning();
+}
+
+// Set Knockout view model bindings.
+//ko.applyBindings(Page.vm);
+	  
 		var idleInterval = setInterval("timerIncrement()", 100000); // 100 seconde
 		$(this).mousemove(function(e) {
 		  idleTime = 0;
@@ -145,8 +167,9 @@ $(document).ready(function() {
 		  window.location = '?logout=1';
 		}
 	  }
+	  
 	</script>
-	
+<link rel="manifest" href="manifest.json">	
   </head>
 
   <body>

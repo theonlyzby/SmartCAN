@@ -987,7 +987,7 @@ final class xajax
 		}
 
 		// Build the URL: Start with scheme, user and pass
-		$sURL = $aURL['scheme'].'://';
+		$sURL = '';
 		if (!empty($aURL['user'])) {
 			$sURL.= $aURL['user'];
 			if (!empty($aURL['pass'])) {
@@ -997,7 +997,7 @@ final class xajax
 		}
 
 		// Add the host
-		$sURL.= $aURL['host'];
+		//$sURL.= $aURL['host'];
 
 		// Add the port if needed
 		if (!empty($aURL['port']) 
