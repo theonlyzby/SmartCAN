@@ -117,6 +117,8 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && 
   //include_once('./lang/www.index.php');
   $_XTemplate = new XTemplate(PATH . 'html/' . $_GET['theme'] . '/'.$Lang.'/structure.html');
 
+  // Store theme for later use in javascript
+  $_XTemplate->assign('USED_THEME', $_GET['theme']);
 
   /* SI AUCUNE PAGE N'EST DEMANDEE OU QUE L'ARGUMENT CONTIENT UNE ERREUR */
   if ( !isset($_GET['page']) || !preg_match('`[[:alnum:]]{4,20}$`', $_GET['page']) )

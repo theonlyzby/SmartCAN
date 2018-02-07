@@ -39,8 +39,9 @@
             "type": "image/png"
         }
     ],
-    "start_url": "./?utm_source=web_app_manifest",
-    "display": "fullscreen",
+    "start_url": "./index.php",
+    "scope_url": "./",
+    "display": "standalone",
     "orientation": "landscape",
     "theme_color": "#000000",
     "background_color": "#000000"

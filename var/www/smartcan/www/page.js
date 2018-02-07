@@ -1,3 +1,4 @@
+
 (var Page = (function() {
 
     // declare the view model used within the page

@@ -2,8 +2,9 @@
 <html>
   <head>
     <title>SmartCAN</title>
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000"/>	
-    <meta name="viewport" content="width=100%, initial-scale=1">
+    <meta name="viewport" content="width=device-width">
     <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Cache-Control" content="no-cache">
     <meta http-equiv="Pragma" content="no-cache">
@@ -91,7 +92,9 @@
       }
 
       function go(contenu) {
+        var theme=document.getElementById("usedtheme").value;
         url = '?page=' + contenu;
+        if (theme!='') { url = url + '&theme=' + theme; }
         setTimeout("window.location.replace(url)", 100);
       }
 
@@ -173,12 +176,13 @@ if (navigator.onLine) {
   </head>
 
   <body>
+    <input type=hidden id ="usedtheme" name=fid value="{USED_THEME}">
     <div style="display: none;" id="div_sess" name="div_sess" data-value="{DIV_SESS}"></div>
     <div class="conteneur" style="z-index: 1;">
       <div class="entete">
         <p>{TITRE}</p>
         <div id="message">
-        Wachten...
+        Waiting...
         </div>
       </div>
       <div class="corps">
