@@ -29,6 +29,7 @@ if [ -f /var/www/smartBACKUP/uploads/domotique-update.sql ]; then
 	mysql -uroot -pSmartCAN -h localhost domotique < /var/www/smartBACKUP/uploads/domotique-update.sql
 	rm -rf /var/www/smartBACKUP/uploads/domotique-update.sql
 fi
+rm -rf /data/www/smartcan/generate-smartbackuptar.sh
 rm -rf /data/www/smartBACKUP/*.sql
 # Remove non-persistent files (mysql DB and www files)
 rm -rf /var/www
