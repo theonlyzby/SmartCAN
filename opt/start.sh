@@ -9,6 +9,7 @@ if [ ! -d /data/mysql ]; then
 	#sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
 	chown -R mysql:mysql /data/mysql
 	mv /var/www /data/www
+	mv /var/sys-files /data/sys-files
 	chmod 777 /data/www/smartcan/www/conf
 	service mysql start
 	# Install Initial DBs
@@ -28,7 +29,6 @@ if [ -f /var/www/smartBACKUP/uploads/domotique-update.sql ]; then
 	mysql -uroot -pSmartCAN -h localhost domotique < /var/www/smartBACKUP/uploads/domotique-update.sql
 	rm -rf /var/www/smartBACKUP/uploads/domotique-update.sql
 fi
-rm -rf /data/www/smartcan/generate-smartbackuptar.sh
 rm -rf /data/www/smartBACKUP/*.sql
 # Remove non-persistent files (mysql DB and www files)
 rm -rf /var/www
@@ -51,6 +51,9 @@ service php7.0-fpm start
 # chmod +x /etc/init.d/domocan-monitor
 # chmod +x /etc/init.d/domocan-init
 # /etc/init.d/domocan-init start
+
+# Restore crontab Configuration
+crontab /data/sys-files/crontab
 
 # Start cron
 service cron start

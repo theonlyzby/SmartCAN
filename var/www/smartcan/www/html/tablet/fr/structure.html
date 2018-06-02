@@ -1,7 +1,7 @@
 <!-- BEGIN: main -->
 <html>
   <head>
-    <title>SmartCAN</title>
+    <title>SmartCAN - La Domotique Smart</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000"/>	
     <meta name="viewport" content="width=device-width">
@@ -110,9 +110,9 @@
 	<script type="text/javascript">
 	  idleTime = 0; $(document).ready(function() {
 
-	  if(window.location.protocol != 'https:') {
-	    location.href = location.href.replace("http://", "https://");
-	  }
+	  //if(window.location.protocol != 'https:') {
+	  //  location.href = location.href.replace("http://", "https://");
+	  //}
 	  
 	  if ('serviceWorker' in navigator) {
 		window.addEventListener('load', function() {
@@ -172,7 +172,7 @@ if (navigator.onLine) {
 	  }
 	  
 	</script>
-<link rel="manifest" href="manifest.json">	
+	<link rel="manifest" href="manifest.json">	
   </head>
 
   <body>
