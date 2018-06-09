@@ -74,10 +74,10 @@
     <script type="text/javascript">
 
       $(document).ready(function() {
-	if (window.location.protocol != 'https:') {
-          //alert('NOT https');
-	  location.href = location.href.replace("http://", "https://");
-        }
+	    if (window.location.protocol != 'https:') {
+		  //alert('NOT https');
+		  location.href = location.href.replace("http://", "https://");
+		}
         var iframe = document.createElement("iframe");
         iframe.src = "/smartcan/www/lib/listen.html";
         iframe.style.display = "none";
@@ -116,32 +116,28 @@
 	  idleTime = 0; 
 	  
 	  $(document).ready(function() {
-
-	  if (window.location.protocol != 'https:') {
-	    location.href = location.href.replace("http://", "https://");
-	  }
 	  
 	  if ('serviceWorker' in navigator) {
 		window.addEventListener('load', function() {
 			navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
 				// Registration was successful
-				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+				console.log('PWA: ServiceWorker registration successful with scope: ', registration.scope);
 			}, function(err) {
 				// registration failed :(
-				console.log('ServiceWorker registration failed: ', err);
+				console.log('PWA: ServiceWorker registration failed: ', err);
 			});
 		});
 	  }
 	  window.addEventListener('online', function(e) {
     // Resync data with server.
-    console.log("You are online");
+    console.log("PWA: You are online");
     //Page.hideOfflineWarning();
     //Arrivals.loadData();
 }, false);
 
 window.addEventListener('offline', function(e) {
     // Queue up events for server.
-    console.log("You are offline");
+    console.log("PWA: You are offline");
     <!-- //Page.showOfflineWarning(); -->
 }, false);
 
@@ -174,7 +170,7 @@ if (navigator.onLine) {
 		  // After 5 Minutes time out (3*100 seconds) ... logout, if session active
 		  //alert('Cookie='+document.cookie);
 		  //alert('Sess Div='+document.getElementById("div_sess").getAttribute('data-value'));
-		  window.location = '?logout=1';
+		  //window.location = '?logout=1';
 		}
 	  }
 	  
@@ -182,13 +178,12 @@ if (navigator.onLine) {
   </head>
 
   <body>
-    <input type=hidden id ="usedtheme" name=fid value="{USED_THEME}">
     <div style="display: none;" id="div_sess" name="div_sess" data-value="{DIV_SESS}"></div>
-    <div class="conteneur" style="z-index: 1;">
+    <div class="conteneur" style="z-index: 1;"><input type="hidden" id="usedtheme" value="{USED_THEME}"/>
       <div class="entete">
         <p>{TITRE}</p>
         <div id="message">
-        Waiting...
+        Ready...
         </div>
       </div>
       <div class="corps">
