@@ -55,10 +55,10 @@ if ((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || (
   $pass  = isset($_SERVER['PHP_AUTH_PW'])   ? $_SERVER['PHP_AUTH_PW']   : "";
   $login = isset($_SESSION["login"])        ? $_SESSION["login"]        : "";
   if (($user=="") || ($pass=="") || ($login=="")) {
-    header('WWW-Authenticate: basic realm="resindevice.io"');
+    header('WWW-Authenticate: basic realm="SmartCAN"');
     header("HTTP/1.0 401 Unauthorized");
 	$_SESSION["login"] = true; // " user=".$user.", pass=".$pass.", login=".$login .
-	exit("<font color='black' size='16pt'>Acc&egrave;s Interdit ..." .  " user=".$user.", pass=".$pass.", login=".$login .
+	exit("<font color='black' size='16pt'>Acc&egrave;s Interdit ..." .
 			"[<a style='color:#000000; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login</a>]</font>");
     //session_destroy();
     //exit();
