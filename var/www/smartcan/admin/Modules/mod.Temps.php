@@ -708,7 +708,7 @@ function submitform(action) {
 <td width="30%" align="right"><?php echo($msg["MAIN"]["Description"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
 <td width="50%"><input id="Temp_Name" name="Temp_Name" type="text"/></td></tr>
 <tr><td width="20%">&nbsp;</td>
-<td width="30%" align="right"><?php echo($msg["TEMPS"]["Sensor"]["en"]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
+<td width="30%" align="right"><?php echo($msg["TEMPS"]["Sensor"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
 <td width="50%"><select name="id_sonde" id="id_sonde" onchange="change('NewESP','id_sonde','NewESP2')">
 <?php
 
@@ -722,7 +722,7 @@ while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
 } // END WHILE
 // Scans 1 Wire Directory for NEW Temp Probe
 echo("<option value=''>".$msg["MAIN"]["Choose"][$Lang]."</option>" . CRLF);
-echo("<option value='NewESP' >New ESP</option>" . CRLF);
+echo("<option value='NewESP' >" . $msg["TEMPS"]["NewESP"][$Lang] . "</option>" . CRLF);
 if (ONEWIRE_MODE=="OWFS") {
   require "/usr/share/php/OWNet/ownet.php";
   $ow=new OWNet("tcp://127.0.0.1:" . ONEWIRE_OWSERVER_PORT);
@@ -765,10 +765,10 @@ echo("" . CRLF);
 </td></tr>
 
 <tr id="NewESP" style="display: none;"><td width="20%">&nbsp;</td>
-<td width="30%" align="right"><?php echo("IP Address"); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
+<td width="30%" align="right"><?php echo($msg["TEMPS"]["IPaddress"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
 <td width="50%"><input type="text" name="ESP_IP" id="ESP_IP"></td></tr>
 <tr id="NewESP2" style="display: none;"><td width="20%">&nbsp;</td>
-<td width="30%" align="right"><?php echo("DHT22 GPIO"); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
+<td width="30%" align="right"><?php echo($msg["TEMPS"]["DHT22GPIO"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
 <td width="50%"><select name='DHT22_Pin'><option value=0>GPIO-0 (D3)</option><option value=1 disabled>GPIO-1 (D10)</option><option value=2 selected>GPIO-2 (D4)</option>
 <option value=3 disabled>GPIO-3 (D9)</option><option value=4 disabled>GPIO-4 (D2)</option><option value=5 disabled>GPIO-5 (D1)</option><option value=9>GPIO-9 (D11) &#9888;</option>
 <option value=10>GPIO-10 (D12)</option><option value=12>GPIO-12 (D6)</option><option value=13>GPIO-13 (D7)</option><option value=14>GPIO-14 (D5)</option><option value=15>GPIO-15 (D8)</option>

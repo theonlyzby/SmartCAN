@@ -46,25 +46,41 @@ if ((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || (
   if(isset($_GET['logout'])) {
     unset($_SESSION["login"]);
     session_destroy();
-    echo "<font color='black' size='16pt'>Acc&egrave;s Interdit ... ";
+    echo "<font color='black' size='16pt'>Access Denied ... ";
     echo "[<a style='color:#000000; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login</a>]</font>";
     exit();
   } // END IF
   
-  $user  = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
-  $pass  = isset($_SERVER['PHP_AUTH_PW'])   ? $_SERVER['PHP_AUTH_PW']   : "";
-  $login = isset($_SESSION["login"])        ? $_SESSION["login"]        : "";
+  // Form login?
+  if($_SERVER["REQUEST_METHOD"] == "POST") {
+    // username and password sent from form 
+    $user  = mysqli_real_escape_string($DB,$_POST['username']);
+    $pass  = mysqli_real_escape_string($DB,$_POST['password']);
+	$login = mysqli_real_escape_string($DB,$_POST['login']);
+  } else {
+    $user  = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
+    $pass  = isset($_SERVER['PHP_AUTH_PW'])   ? $_SERVER['PHP_AUTH_PW']   : "";
+	$login = isset($_SESSION["login"])        ? $_SESSION["login"]        : "";
+  }
+  
+  
   if (($user=="") || ($pass=="") || ($login=="")) {
-    header('WWW-Authenticate: basic realm="SmartCAN"');
-    header("HTTP/1.0 401 Unauthorized");
+	header('WWW-Authenticate: Basic realm="My SmartCAN"');
+	header('HTTP/1.0 401 Unauthorized');
 	$_SESSION["login"] = true; // " user=".$user.", pass=".$pass.", login=".$login .
-	exit("<font color='black' size='16pt'>Acc&egrave;s Interdit ..." .
-			"[<a style='color:#000000; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login</a>]</font>");
+	echo("<!DOCTYPE html>" . CRLF . "<html>" . CRLF . "<head>" . CRLF . "<style>" . CRLF . "body {" . CRLF . "    background-color:#000000" . CRLF . "}" . CRLF . "</style>" . CRLF . "</head>" . CRLF . "<body>" . CRLF);
+	echo("<body>" . CRLF . "<p align='center'><font color='white' size='16pt'><a style='color:#ffffff; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login Required</a></p><br>"  );
+	echo("<form action = '' method = 'post' autocomplete='on'><table width=100%><tr><td width=30%>Username</td><td><input type='text' name='username' style='font-size:25pt;' autofocus/></td></tr>" . CRLF);
+	echo("<tr><td width=30%>Password</td><td><input type='password' name='password' style='font-size:25pt;'/></td></tr>" . CRLF);
+	echo("<tr><td width=30%>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='hidden' id='login' name='login' value='1'>" . CRLF);
+	echo("<input type='submit' style='font-size:25pt;' value='Login'></td></tr></table></form>" . CRLF);
+	echo("</font></form></body>" . " user=".$user.", pass=".$pass.", login=".$login . CRLF);
+	exit();
     //session_destroy();
     //exit();
   } else {
-    $SubmitUser = $_SERVER['PHP_AUTH_USER'];
-    $SubmitPass = $_SERVER['PHP_AUTH_PW'];
+    $SubmitUser = $user;
+    $SubmitPass = $pass;
     $sql = "SELECT COUNT(*) AS PassOK FROM `users` WHERE (Alias='" . $SubmitUser . "' AND Password=PASSWORD('". $SubmitPass ."'));";
     $query = mysqli_query($DB,$sql);
     $row = mysqli_fetch_array($query, MYSQLI_BOTH);
@@ -151,7 +167,7 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && 
 
   /* DEFINIR PAGE DEMANDEE (POUR APPEL CSS & JS SPECIFIQUE) */
   $_XTemplate->assign('PAGE', $_GET['page']);
-  $_XTemplate->assign('THEME', $_GET['theme']);
+  $_XTemplate->assign('USEDTHEME', $_GET['theme']);
   
   
   //echo("CSS_URL=./lang/css/" . $_GET['theme'] . "/" . $Lang ."/" . $_GET['page'] . ".css ".$Lang);
