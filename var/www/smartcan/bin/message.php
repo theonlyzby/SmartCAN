@@ -29,7 +29,7 @@
 	  $row2 = mysqli_fetch_array($retour, MYSQLI_BOTH);
 	  $NOK_Sensors  = $Tot_Sensors - $row2[0];
       if ($NOK_Sensors!=0) {
-	    $argv[1] = date('H:i') . " " . $NOK_Sensors . " Sensor(s) NOK!" ;
+	    $argv[1] = date('H:i') . " ! " . $NOK_Sensors . " Sensor(s) NOK!" ;
 	  } else {
 	    $argv[1] = date('H:i');
 	  } // END IF
