@@ -26,7 +26,7 @@
     $objResponse = new xajaxResponse();
     $DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
     mysqli_select_db($DB,mysqli_DB);
-    $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1';");
+    $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1' AND `valeur`<>0 AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
     $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
     $objResponse->assign("moyenne","innerHTML", round($row[0],1));
 	//$objResponse->assign("moyenne","innerHTML", round(rand(0,25),1));
@@ -123,7 +123,7 @@
   mysqli_select_db($DB,mysqli_DB);
 
   /* AFFICHAGE DE LA TEMPERATURE MOYENNE DE LA MAISON */
-  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1';");
+  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1' AND `valeur`<>0 AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
   $row    = mysqli_fetch_array($retour, MYSQLI_BOTH);
   $_XTemplate->assign('MOYENNEMAISON', round($row[0],1));
 

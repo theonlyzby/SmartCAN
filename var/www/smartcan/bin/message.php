@@ -21,7 +21,18 @@
       $argv[1] = date('H:i') . " (Anniversaire de : " . $row[0] . ")";
     }
     else {
-      $argv[1] = date('H:i');
+	  // Sensor NOK?
+	  $retour = mysqli_query($DB,"SELECT COUNT(*) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1');");
+	  $row2 = mysqli_fetch_array($retour, MYSQLI_BOTH);
+	  $Tot_Sensors = $row2[0];
+	  $retour = mysqli_query($DB,"SELECT COUNT(*) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1' AND `valeur`<>0 AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
+	  $row2 = mysqli_fetch_array($retour, MYSQLI_BOTH);
+	  $NOK_Sensors  = $Tot_Sensors - $row2[0];
+      if ($NOK_Sensors!=0) {
+	    $argv[1] = date('H:i') . " " . $NOK_Sensors . " Sensor(s) NOK!" ;
+	  } else {
+	    $argv[1] = date('H:i');
+	  } // END IF
     }
   }
 

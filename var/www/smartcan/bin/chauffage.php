@@ -21,7 +21,7 @@
   mysqli_select_db($DB,mysqli_DB);
 
   /* TEMPERATURE MOYENNE DE LA MAISON */
-  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1';");
+  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1' AND `valeur`<>0 AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
   $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
   $moyenne_actuelle= round($row[0],1); 
   $HeaterOUT="";

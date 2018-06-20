@@ -105,7 +105,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	    $data = explode('t=',$data[1]);  
 	    $b = round($data[1]/1000, 2); 
 	  } // END IF
-	  $sql = "UPDATE `" . TABLE_CHAUFFAGE_TEMP . "` SET `valeur` = '" . $b . "' WHERE `id` = '" . $sensor_id . "';";
+	  $sql = "UPDATE `" . TABLE_CHAUFFAGE_TEMP . "` SET `valeur` = '" . $b . "', `update` = now() WHERE `id` = '" . $sensor_id . "';";
 	  mysqli_query($DB,$sql);
 	} else {
 	  // From http://weather.noaa.gov ?
@@ -129,7 +129,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 		  // Update DB
 		  if ($b!="") {
 		    //$sql = "UPDATE ($sensor_id)`:" . TABLE_CHAUFFAGE_TEMP . "` SET `valeur` = '" . $b . "', `update` = '" . $date . "' WHERE `id` = '" . $sensor_id . "';";
-		    $sql = "UPDATE `" . TABLE_CHAUFFAGE_TEMP . "` SET `valeur` = '" . $b . "', `update` = '" . $date . "' WHERE `id` = '" . $sensor_id . "';";
+		    $sql = "UPDATE `" . TABLE_CHAUFFAGE_TEMP . "` SET `valeur` = '" . $b . "', `update` = now() WHERE `id` = '" . $sensor_id . "';";
 		    //echo("\n UPDATE Temp ".$sql.CRLF);
 		    $retour = mysqli_query($DB,$sql);
 		  } // END IF

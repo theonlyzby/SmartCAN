@@ -5,7 +5,7 @@
 
 
 // Load Dependencies
-include_once('/data/www/smartcan/www/conf/config.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/smartcan/www/conf/config.php');
 
 /* CONNEXION SQL */
 $DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
@@ -15,7 +15,7 @@ mysqli_select_db($DB,mysqli_DB);
 $request = print_r( $_REQUEST, true );
 	
 if ($request!="") {
-  //$file = '/data/www/smartcan/webhook/test-ESP.txt';
+  //$file = $_SERVER['DOCUMENT_ROOT'].'/smartcan/webhook/test-ESP.txt';
   // Open the file to get existing content
   //$current = file_get_contents($file);
   
