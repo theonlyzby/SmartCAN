@@ -187,7 +187,7 @@ function Variables() {
 	    $sql = "UPDATE `ha_settings` SET `value` = '" . $Dump1090IP . "' WHERE `ha_settings`.`variable` = 'dump_1090_srv';";
 	    $query = mysqli_query($DB,$sql);
 	  } else {
-	    echo("Dump1090 NOT Found!<br>");
+	    echo("<H2><font color='red'><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $msg["VARIABLES"]["Dump1090NotFound"][$Lang] . "</b></font></H2><br>");
 	  } // END IF
     } else {
 	  $sql = "UPDATE `ha_settings` SET `value` = '" . $Dump1090IP . "' WHERE `ha_settings`.`variable` = 'dump_1090_srv';";
