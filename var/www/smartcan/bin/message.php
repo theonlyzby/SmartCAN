@@ -36,7 +36,7 @@
 		$retour = mysqli_query($DB,$sql);
 		$row = mysqli_fetch_array($retour, MYSQLI_BOTH);
 		$server = $row["value"];
-		echo("Value =" . $server . "END" . CRLF);
+		//echo("Value =" . $server . "END" . CRLF);
 		if ($server!="") {
           include($base_URI.'/www/smartcan/bin/Plane-Track.php');
           $outputtext = detect_plane($server); if ($outputtext=="No plane close to home") { $outputtext = ""; } else { $outputtext = substr($outputtext,0,strpos($outputtext,", at")) . " / "; }
