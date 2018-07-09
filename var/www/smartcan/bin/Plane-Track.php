@@ -53,7 +53,7 @@ function detect_plane($server, $debug=0) {
       if (($debug!=0) && ($valid!=0) && ($flight!="")) echo("Check Flight: ".$flight.", alt: ".$alt."m, Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h <br>");
   
       if (($valid!=0) && ($flight!="") && ($alt>=340) && ($alt<=7000) && ($dist<=$closest_dist)) {
-	    if ($debug!=0) echo("CLOSEST => Flight: ".$flight.", alt: ".$alt."m, Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h <br>");
+	    if ($debug!=0) echo("<font color='red'><b>CLOSEST => Flight: ".$flight.", alt: ".$alt."m, Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h</b></font><br>");
         $closest_flight = $flight;
 	    $closest_dist   = $dist;
 	    $closest_alt    = $alt;
@@ -93,7 +93,14 @@ function detect_plane($server, $debug=0) {
         if (isset($data['activityLog']['flights']['0'])) {
           $planeFrom = $data['activityLog']['flights']['0']['origin']['friendlyLocation'];
           $planeTo   = $data['activityLog']['flights']['0']['destination']['friendlyLocation'];
-        } else { $planeTo = ""; $planeFrom = ""; }
+        } else { 
+		  if (isset($data['origin'])) {
+		    $planeFrom = $data['origin']['friendlyLocation'];
+            $planeTo   = $data['destination']['friendlyLocation'];
+		  } else {
+		    $planeTo = ""; $planeFrom = "";
+		  }
+		}
         $outMessage = "";
         if ($planeType!="") $outMessage .= $planeType . " of ";
         $outMessage .= $planeAirline;
