@@ -6,6 +6,7 @@
 
   /* DEPENDANCES */
   $base_URI = substr($_SERVER['SCRIPT_FILENAME'],0,strpos(substr($_SERVER['SCRIPT_FILENAME'],1),"/")+1);
+  //echo($_SERVER['SCRIPT_FILENAME'].", BaseURI=".$base_URI.'/www/smartcan/www/conf/config.php'); exit();
   include_once($base_URI.'/www/smartcan/www/conf/config.php');
 
   /* SI AUCUN MESSAGE, ENVOI DE L'HEURE ACTUELLE */
@@ -31,7 +32,19 @@
       if ($NOK_Sensors!=0) {
 	    $argv[1] = date('H:i') . " ! " . $NOK_Sensors . " Sensor(s) NOK!" ;
 	  } else {
-	    $argv[1] = date('H:i');
+        $sql = "SELECT * FROM `ha_settings` WHERE `variable`='dump_1090_srv';";
+		$retour = mysqli_query($DB,$sql);
+		$row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+		$server = $row["value"];
+		echo("Value =" . $server . "END" . CRLF);
+		if ($server!="") {
+          include($base_URI.'/www/smartcan/bin/Plane-Track.php');
+          $outputtext = detect_plane($server); if ($outputtext=="No plane close to home") { $outputtext = ""; } else { $outputtext = substr($outputtext,0,strpos($outputtext,", at")) . " / "; }
+          $argv[1] = $outputtext . date('H:i');
+		  echo($outputtext);
+        } else {
+	      $argv[1] = date('H:i');
+        } // END IF
 	  } // END IF
     }
   }

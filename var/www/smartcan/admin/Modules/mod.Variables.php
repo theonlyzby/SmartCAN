@@ -176,7 +176,23 @@ function Variables() {
 	$DefaultPage  = html_postget("DefaultPage");
 	$sql = "UPDATE `ha_settings` SET `value` = '" . $DefaultPage . "' WHERE `ha_settings`.`variable` = 'default_page';";
 	$query = mysqli_query($DB,$sql);
-  
+	
+	// Dump1090 IP Address
+	$Dump1090IP   = html_postget("Dump1090IP");
+	if ($Dump1090IP!="") {
+	  $url = "http://".$Dump1090IP."/data.json";
+	  $array = @get_headers($url);
+	  $string = $array[0];
+	  if(strpos($string,"200")) {
+	    $sql = "UPDATE `ha_settings` SET `value` = '" . $Dump1090IP . "' WHERE `ha_settings`.`variable` = 'dump_1090_srv';";
+	    $query = mysqli_query($DB,$sql);
+	  } else {
+	    echo("Dump1090 NOT Found!<br>");
+	  } // END IF
+    } else {
+	  $sql = "UPDATE `ha_settings` SET `value` = '" . $Dump1090IP . "' WHERE `ha_settings`.`variable` = 'dump_1090_srv';";
+	  $query = mysqli_query($DB,$sql);
+	} // END IF
   } // END IF
 
   // Start Build Page ...
@@ -388,7 +404,16 @@ position:relative;
   //echo("<option value='volets' "); if ($default_page=="volets") { echo("selected"); } echo(">Volets</option>" . CRLF);
   echo("<option value='misc' "); if ($default_page=="misc") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceMisc"][$Lang]."</option>" . CRLF);
   echo("</select></td></tr>");
-
+  
+  // Dump1090 Server?
+  echo("<tr><td>".$msg["VARIABLES"]["Dump1090IP"][$Lang]."</td><td>");
+  $sql = "SELECT * FROM `ha_settings` WHERE `variable`='dump_1090_srv';";
+  $retour = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+  $Dump1090IP = $row["value"];
+  echo("<input type='text' name='Dump1090IP' id='Dump1090IP' value='" . $Dump1090IP . "' required/></td></tr>");
+  
+  // Submit
   echo("<tr><td colspan=2 align=middle><a href='javascript:submitform(\"Modify\")'><img src='./images/ChangeButton.jpg' width='70px' heigth='60px' /></a></td></tr>");
   
   echo("</table>" . CRLF);

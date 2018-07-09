@@ -17,6 +17,7 @@ mysqli_select_db($DB,mysqli_DB);
 // Decode DialogFlow JSON
 header('Content-Type: application/json');
 ob_start();
+$outputtext = "";
 $json = file_get_contents('php://input'); 
 $request = json_decode($json, true);
 $lang       = $request["lang"];
@@ -24,7 +25,7 @@ $action = $request["result"]["action"];
 $parameters = $request["result"]["parameters"];
 
 // Output in text file (debug)
-$file = '/var/www/smartcan/webhook/dialowflow.txt';
+$file = $_SERVER['DOCUMENT_ROOT'].'/smartcan/webhook/dialowflow.txt';
 // Open the file to get existing content
 $current = file_get_contents($file);
 $current .= "\nLang = ".$lang.", Action = ".$action;
@@ -40,7 +41,7 @@ if ($action=="ON") {
   $sql = "SELECT L.*, LS.valeur FROM `" . TABLE_LUMIERES . "` AS L, `" . TABLE_LUMIERES_STATUS . "` AS LS where L.id=LS.id and `description`='" . $lamp . "'; ";
   $retour = mysqli_query($DB,$sql);
   $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
-  $outputtext = "Cann't find this lamp :-(";
+  $outputtext = "I Can't find this lamp :-(";
   $current .=", Manufacturer = ".$row['Manufacturer'].", valeur = ".$row['valeur']."\n";
   if ($row['Manufacturer']!="") {
 	if ($row['valeur']!=0) {
@@ -191,7 +192,16 @@ if ($action=="STATUS") {
 	$outputtext = $msg; //"Test Status OK!";
 } // END IF
 
-//$outputtext  = "Ok, done Sir!";
+// Detects a plane above house
+if ($action=="WhichPlane") {
+  include_once('./Plane-Track.php');
+  $outputtext = detect_plane();
+} // END IF
+
+// No answer
+if ($outputtext=="") { $outputtext = " Sorry, I cannot answer your request!"; }
+
+//$outputtext  = "Ok, done!";
 $nextcontext = "";
 $param1      = "";
 $param2      = "";

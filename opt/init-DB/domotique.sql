@@ -378,7 +378,7 @@ CREATE TABLE `ha_settings` (
 
 LOCK TABLES `ha_settings` WRITE;
 /*!40000 ALTER TABLE `ha_settings` DISABLE KEYS */;
-INSERT INTO `ha_settings` VALUES (1,'local_user_auth','N'),(2,'default_page','surveillance'),(3,'first_use_admin','1'),(4,'landing_page','1'),(5,'backup_uri',''),(6,'daily_backup','N'),(7,'weekly_backup','N'),(8,'monthly_backup','N'),(9,'last_backup',''),(10,'graph_uri','');
+INSERT INTO `ha_settings` VALUES (1,'local_user_auth','N'),(2,'default_page','surveillance'),(3,'first_use_admin','1'),(4,'landing_page','1'),(5,'backup_uri',''),(6,'daily_backup','N'),(7,'weekly_backup','N'),(8,'monthly_backup','N'),(9,'last_backup',''),(10,'graph_uri',''),(11,'dump_1090_srv','');
 /*!40000 ALTER TABLE `ha_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
