@@ -41,18 +41,24 @@ function detect_plane($server, $debug=0) {
     $closest_alt    = 0;
 
     foreach ($planes as $value) {
-      $flight = $value->flight;
-      $valid  = $value->validposition;
-      $long   = floatval($value->lon);
-      $lat    = floatval($value->lat);
-      $alt    = round(floatval($value->altitude)/3.2808);
-      $vert   = round(($value->vert_rate)*0.0051,1);
-	  $speed  = round(($value->speed)*1,852,1);
-      $dist   = round(distance($lat,$long,50.8503804,4.4185094),1);
+      $flight     = $value->flight;
+      $valid      = $value->validposition;
+	  $validTrack = $value->validtrack;
+      $long       = floatval($value->lon);
+      $lat        = floatval($value->lat);
+      $alt        = round(floatval($value->altitude)/3.2808);
+      $vert       = round(($value->vert_rate)*0.0051,1);
+	  $speed      = round(($value->speed)*1,852,1);
+      $dist       = round(distance($lat,$long,50.8503804,4.4185094),1);
   
-      if (($debug!=0) && ($valid!=0) && ($flight!="")) echo("Check Flight: ".$flight.", alt: ".$alt."m, Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h <br>");
+      if ((($debug!=0) && ($flight!="")) && (($valid!=0) || (($valid==0) && ($alt<=3000) && ($validTrack==0)))) {
+		if ($valid==0) echo("<a target='_blank' style='text-decoration: none' href='https://fr.flightaware.com/photos/aircraft/".$flight."'><font color=blue><b>"); 
+	    echo("Check Flight: ".$flight.", alt: ".$alt."m");
+		if ($valid!=0) { echo(", Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h"); } else { echo("</b></font></a>"); }
+		echo("<br>");
+	  } // END IF
   
-      if (($valid!=0) && ($flight!="") && ($alt>=340) && ($alt<=7000) && ($dist<=$closest_dist)) {
+      if (($valid!=0) && ($flight!="") && ($alt>=340) && ($alt<=5000) && ($dist<=$closest_dist)) {
 	    if ($debug!=0) echo("<font color='red'><b>CLOSEST => Flight: ".$flight.", alt: ".$alt."m, Distance: ".$dist."km, Vert Rate: " . $vert ." m/s, Speed: " . $speed . " km/h</b></font><br>");
         $closest_flight = $flight;
 	    $closest_dist   = $dist;
