@@ -741,7 +741,7 @@ if (ONEWIRE_MODE=="OWFS") {
   closedir($handle);
 } // END IF
 $dir = "/sys/bus/w1/devices";
-if ((ONEWIRE_MODE=="RPI") && (is_file($dir))) {
+if ((ONEWIRE_MODE=="RPI") && (file_exists($dir))) {
   $dh  = opendir($dir);
   while (false !== ($filename = readdir($dh))) {
     $files[] = $filename;
