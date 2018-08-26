@@ -1,23 +1,21 @@
 <?php
+
+// https://www.codeproject.com/Tips/1076176/Login-logout-and-Session-Id-Cookies-in-PHP-for-Beg
+
+
 // PHP Error Reporting
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
-/*
-if ( ! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE) )
-{
- echo("Local IP!");
- exit();
-}
-*/
 
-  /* CONFIGURATIONS ET DEPENDANCES */
-  $Lang="";
-  include_once './conf/config.php';
-  include_once PATH . 'lib/xajax/xajax_core/xajax.inc.php';
-  include_once PATH . 'lib/xtemplate/xtemplate.class.php';
-  // Client's IP address ... Private = local, ifnot ... Inetrnet => Protect! ;-)
-  $client_ip = $_SERVER["REMOTE_ADDR"];
+
+/* CONFIGURATIONS ET DEPENDANCES */
+$Lang="";
+include_once './conf/config.php';
+include_once PATH . 'lib/xajax/xajax_core/xajax.inc.php';
+include_once PATH . 'lib/xtemplate/xtemplate.class.php';
+// Client's IP address ... Private = local, ifnot ... Inetrnet => Protect! ;-)
+$client_ip = $_SERVER["REMOTE_ADDR"];
 
 // Connect DB
 $DB = mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
@@ -34,59 +32,69 @@ $row = mysqli_fetch_array($query, MYSQLI_BOTH);
 $auth_local_user = $row['value'];
 $User_ID=0;
 
-//echo("Params:<br>IP=" . $client_ip . "<br>1=".filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)."<br>2=".(!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE))."<br>3=".$auth_local_user."<br>4=".((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='Y'))));
-//exit();
-$div_sess="";
-
-// Remote client OR Local with Auth Request
-if ((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='Y'))) {
-  // Authentication
+// Remote client OR Local with Auth Request?
+if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='Y'))) && (!isset($_SESSION["login"]))) {
+  //gets session id from cookies, or initiate
   session_start();
-  $div_sess="YES";
-  if(isset($_GET['logout'])) {
-    unset($_SESSION["login"]);
-    session_destroy();
-    echo "<font color='black' size='16pt'>Acc&egrave;s Interdit ... ";
-    echo "[<a style='color:#000000; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login</a>]</font>";
-    exit();
+  // Login OUT
+  if (isset($_GET['logout'])) {
+    setcookie(session_name(), "", time() - 3600); //send browser command remove sid from cookie
+    session_destroy(); //remove sid-login from server storage
+    session_write_close();
+    echo("<a href='".$_SERVER['PHP_SELF']."'>Login</a>");
+	exit();
   } // END IF
-  
-  $user  = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
-  $pass  = isset($_SERVER['PHP_AUTH_PW'])   ? $_SERVER['PHP_AUTH_PW']   : "";
-  $login = isset($_SESSION["login"])        ? $_SESSION["login"]        : "";
-  if (($user=="") || ($pass=="") || ($login=="")) {
-	header('WWW-Authenticate: Basic realm="My SmartCAN"');
-	header('HTTP/1.0 401 Unauthorized');
-	$_SESSION["login"] = true; // " user=".$user.", pass=".$pass.", login=".$login .
-	exit("<font color='black' size='16pt'>Acc&egrave;s Interdit ..." . 
-			"[<a style='color:#000000; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login</a>]</font>");
-    //session_destroy();
-    //exit();
-  } else {
-    $SubmitUser = $_SERVER['PHP_AUTH_USER'];
-    $SubmitPass = $_SERVER['PHP_AUTH_PW'];
-    $sql = "SELECT COUNT(*) AS PassOK FROM `users` WHERE (Alias='" . $SubmitUser . "' AND Password=PASSWORD('". $SubmitPass ."'));";
-    $query = mysqli_query($DB,$sql);
-    $row = mysqli_fetch_array($query, MYSQLI_BOTH);
-    $PassOK = $row['PassOK'];
-   
-    if($PassOK==1) {
-      //echo "You have logged in ... ";
-	  $sql = "SELECT * FROM `users` WHERE Alias='" . $SubmitUser . "';";
+  //if sid exists and login for sid exists
+  if (session_id() == '' || !isset($_SESSION['username'])) { 
+    // Login Submitted?
+    if (isset($_POST['login']) && isset($_POST['password'])) {
+	  echo("Form Submitted<br>");
+      $sql = "SELECT COUNT(*) AS PassOK FROM `users` WHERE (Alias='" . $_POST['username'] . "' AND Password=PASSWORD('". $_POST['password'] ."'));";
       $query = mysqli_query($DB,$sql);
       $row = mysqli_fetch_array($query, MYSQLI_BOTH);
-	  $Access_Level = $row['Access_Level'];
-	  $User_ID = $row['ID'];
-	  $Lang = $row['Lang'];
-      //echo "[<a href='" . $_SERVER['PHP_SELF'] . "?logout'>Logout</a>]";
+      $PassOK = $row['PassOK'];	  
+	  //echo($sql ."<br>"); exit();
+      if ($PassOK==1) {
+		echo("OK to display!<br>");
+		$sql = "SELECT * FROM `users` WHERE Alias='" . $_POST['login'] . "';";
+        $query = mysqli_query($DB,$sql);
+        $row = mysqli_fetch_array($query, MYSQLI_BOTH);
+	    $Access_Level = $row['Access_Level'];
+	    $User_ID = $row['ID'];
+	    $Lang = $row['Lang'];
+        $_SESSION['username'] = $_POST['username']; //write login to server storage
+        // OK to display
+      } else {
+        echo "<script>alert('Wrong login or password');</script>";
+        echo "<noscript>Wrong login or password</noscript>";
+		header("Location: " . $_SERVER['PHP_SELF']);
+		exit();
+      }
     } else {
-      unset($_SESSION["login"]);
-	  session_destroy();
-      header("Location: " . $_SERVER['PHP_SELF']);
-    } // END IF
-  } // END IF
-
-} // END IF
+      	echo("<!DOCTYPE html>" . CRLF . "<html>" . CRLF . "<head>" . CRLF . "<style>" . CRLF . "body {" . CRLF . "    background-color:#000000" . CRLF . "}" . CRLF . "</style>" . CRLF . "</head>" . CRLF . "<body>" . CRLF);
+	    echo("<body>" . CRLF . "<p align='center'><font color='white' size='16pt'><a style='color:#ffffff; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>Login Required</a></p><br>"  );
+	    echo("<form action = '' method = 'post' autocomplete='on'><table width=100%><tr><td width=30%>Username</td><td><input type='text' name='username' style='font-size:25pt;' autofocus/></td></tr>" . CRLF);
+	    echo("<tr><td width=30%>Password</td><td><input type='password' name='password' style='font-size:25pt;'/></td></tr>" . CRLF);
+	    echo("<tr><td width=30%>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='hidden' id='login' name='login' value='1'>" . CRLF);
+	    echo("<input type='submit' style='font-size:25pt;' value='Login'></td></tr></table></form>" . CRLF);
+	    echo("</font></form></body>" . CRLF);
+    exit();
+	}
+  }
+  // Session Opened
+  if (session_id()!='') {
+	//echo("Session");
+	$sql = "SELECT * FROM `users` WHERE Alias='" . $_SESSION['username'] . "';";
+    $query = mysqli_query($DB,$sql);
+    $row = mysqli_fetch_array($query, MYSQLI_BOTH);
+	$Access_Level = $row['Access_Level'];
+	$User_ID = $row['ID'];
+	$Lang = $row['Lang'];
+	$div_sess="YES";
+	//echo($sql ."Access_Level=".$Access_Level.", User_ID=".$User_ID.", Lang=".$Lang."<br>"); exit();
+  } // END IF Session Opened
+  
+} // END IF Requires Auth
 
 // Acess Level OK?
 // Remote client OR Local with Auth Request
@@ -131,7 +139,7 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && 
     $_GET['page'] = $row['value'];
   }
   
-  // Backward COmpatibility
+  // Backward Compatibility
   if ($_GET['page']=="lumieres") { $_GET['page'] = "lights"; }
   if ($_GET['page']=="meteo") { $_GET['page'] = "weather"; }
   if ($_GET['page']=="ambiances") { $_GET['page'] = "vibes"; }
@@ -211,6 +219,19 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && 
   } // END IF
   
   
+  } else {
+	// NOK TO DISPLAY => LOGIN
+	echo("<!DOCTYPE html>" . CRLF . "<html>" . CRLF . "<head>" . CRLF . "<style>" . CRLF . "body {" . CRLF . "    background-color:#000000" . CRLF . "}" . CRLF . "</style>" . CRLF . "</head>" . CRLF . "<body>" . CRLF);
+	echo("<body>" . CRLF . "<p align='center'><font color='white' size='16pt'><a style='color:#ffffff; font-style: bold; size: 16pt;' href='" . $_SERVER['PHP_SELF'] . "'>NOK, Login Required</a></p><br>"  );
+	echo("<form action = '' method = 'post' autocomplete='on'><table width=100%><tr><td width=30%>Username</td><td><input type='text' name='username' style='font-size:25pt;' autofocus/></td></tr>" . CRLF);
+	echo("<tr><td width=30%>Password</td><td><input type='password' name='password' style='font-size:25pt;'/></td></tr>" . CRLF);
+	echo("<tr><td width=30%>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='hidden' id='login' name='login' value='1'>" . CRLF);
+	echo("<input type='submit' style='font-size:25pt;' value='Login'></td></tr></table></form>" . CRLF);
+	echo("</font></form></body>" . CRLF);		 
+  
+  
   } // END IF
+
+  //echo("END");
 
 ?>
