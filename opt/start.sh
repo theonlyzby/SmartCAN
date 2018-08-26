@@ -20,8 +20,12 @@ if [ ! -d /data/mysql ]; then
 	chmod +x /data/www/smartcan/bin/domocan-bridge
 	chmod +x /data/www/smartcan/bin/domocan-bridge-and-web
 	chmod +x /data/www/smartcan/bin/rx-DOMOCAN3.php
+	chmod 777 /data/www/smartcan/www/conf/
 fi
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
+chmod 777 /usr/local/nginx/conf/
+chmod 777 /usr/local/nginx/conf/nginx.conf
+chmod 777 /data/www/smartcan/www/js/
 
 # Update SmartCAN files (if needed)
 cp -r /var/www/smartBACKUP/* /data/www/smartcan/
