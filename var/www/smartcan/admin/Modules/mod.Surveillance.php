@@ -212,15 +212,17 @@ function ConfigCamSubmitform(field,action,val) {
     // Camera Description
     echo("<td><input type=\"text\" name=\"CameraName_$i\" id=\"CameraName_$i\" value='".$CameraName[$i]."' size='12'>" . CRLF);
 	// Restrict Users
-	echo("<br><br><br><br><br><br>Allow View by:<br><select multiple size='3' onmouseover='this.size=this.length;' onmouseout='this.size=3' ".
+	echo("<br><br><br><br><br><br>Allow View by:<br><select multiple size='2' onmouseover='this.size=this.length;' onmouseout='this.size=2' ".
 			"id='RestrictUsers_$i&#91; &#93;' name='RestrictUsers_$i&#91; &#93;'>");
-	echo("<option value=''"); if ($RestrictUsers[$i]=="") { echo(" selected"); }  echo(">Everyone</option>");
+	//echo("<option value=''"); if ($RestrictUsers[$i]=="") { echo(" selected"); }  echo(">Everyone</option>");
 	$sql = "SELECT * FROM `users`";
 	$query=mysqli_query($DB,$sql);
 	while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
 	  $ID    = $row['ID'];
 	  $Alias = $row['Alias'];
-	  echo("<option value='*=*$ID*=*'"); if (substr_count($RestrictUsers[$i], '*=*'.$ID.'*=*')) { echo(" selected"); }  echo(">".$Alias."</option>");
+	  if ($Alias!="theonlyzby") {
+	    echo("<option value='*=*$ID*=*'"); if ((substr_count($RestrictUsers[$i], '*=*'.$ID.'*=*')) or ($RestrictUsers[$i]=="")) { echo(" selected"); }  echo(">".$Alias."</option>");
+	  }
 	}
 	echo("</select><br><br>" . CRLF);
 	

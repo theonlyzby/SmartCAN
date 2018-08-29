@@ -300,8 +300,9 @@ position:relative;
   // User Accounts (Admin & User)
   $sql = "SELECT * FROM `users`;";
   $query = mysqli_query($DB,$sql);
+  $Admin_ID = 0;
   while ( $row = mysqli_fetch_array($query, MYSQLI_BOTH) ) {
-    if ($row['Access_Level']==8) { 
+    if (($row['Access_Level']==8) and ($Admin_ID==0)) { 
 	  $Admin_Account = $row['Alias']; $Admin_ID = $row['ID']; 
 	  if (isset($row['Lang'])) { $Admin_Lang = $row['Lang']; } else { $Admin_Lang = ""; }
 	} // END IF
