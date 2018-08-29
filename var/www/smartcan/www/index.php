@@ -124,7 +124,15 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && 
   $xajax->configure('debug', DEBUG_AJAX);
 
   /* AUCUN THEME > TABLET BY DEFAULT */
-  if ( !isset($_GET['theme']) ) { $_GET['theme'] = 'tablet'; }
+  $reqTheme = 'responsive';
+  if ( !isset($_GET['theme']) ) { 
+    if (isset($_POST['usedtheme'])) {
+	  $reqTheme = $_POST['usedtheme']; $_GET['theme'] = $_POST['usedtheme'];
+	} else {
+      $_GET['theme'] = 'responsive';
+    }
+  }
+  
 
   /* OUVRE LE XTEMPLATE */
   //include_once('./lang/www.index.php');

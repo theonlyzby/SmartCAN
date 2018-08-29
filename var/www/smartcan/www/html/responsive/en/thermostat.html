@@ -73,7 +73,7 @@
 		  <body onLoad="setMyDiv('/smartcan/www/html/nest/nest.php?lang=en');">
 		  <div id="ThermostatConfig"></div>
 		  <div id="main"  style="position: absolute;  top: 65px; left: 0px;">
-		  <div id="info" class="w3-container w3-text-black"><span id="changetemp" onClick="go('chauffage')">Temperature: </span>
+		  <div id="info" class="w3-container w3-text-black w3-margin-top"><span id="changetemp" onClick="go('chauffage')">Temperature: </span>
 		   <strong><span id="moyenne" onClick="go('stats_temperature&idsonde=temperaturemaison');">{MOYENNEMAISON}</span> &deg;C</strong>
 		   (Outside: <strong><span id="temperatureexterieure" onClick="go('stats_temperature&idsonde=temperatureexterieure')";>{TEMPERATUREEXTERIEURE}</span> &deg;C</strong>)
 		   , Setpoint: <span id="consigneconfort">{TEMPERATURE}</span> &deg;C, Heater: <span id="divchaudiere">{CHAUDIERE}</span>
