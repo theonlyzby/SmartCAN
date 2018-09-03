@@ -2,8 +2,10 @@
 // PHP Error Reporting
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
+
+
   
-  //$day_list = array("Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche");
+  //$day_list["fr"] = array("Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche");
   // Posted variables?
   $FormAction = ""; if (isset($_POST["FormAction"])) { $FormAction = $_POST["FormAction"]; }
   
@@ -148,7 +150,7 @@
     echo("</select></td>" . CRLF);
 	$j=0;
 	while ($j<=6) {
-      echo("<td width='5%' align='left' valign='bottom'><input type=hidden name='day[".$line."][".$j."]' value='0'><input name='day[".$line."][".$j."]' type='checkbox' value='1' title='" . $day_list[$j] . "'/></td>" . CRLF);
+      echo("<td width='5%' align='left' valign='bottom'><input type=hidden name='day[".$line."][".$j."]' value='0'><input name='day[".$line."][".$j."]' type='checkbox' value='1' title='" . $day_list[$Lang][$j] . "'/></td>" . CRLF);
 	  $j++;
 	} // END WHILE
   
