@@ -2,7 +2,7 @@
 // SELECT * FROM `chauffage_sonde` JOIN `chauffage_temp` ON `chauffage_temp`.`id`=`chauffage_sonde`.`id`
   //$titre = 'Gestion des Températures';
 
-  include '../class/class.envoiTrame.php5';
+  //include '../class/class.envoiTrame.php5';
 
   /* DECLARATION DES FONCTIONS EN AJAX */
   $xajax->register(XAJAX_FUNCTION, 'descendreTemperature');

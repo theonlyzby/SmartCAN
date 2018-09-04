@@ -19,7 +19,7 @@
 	  if (substr($FormAction,0,6)=="Delete") {
 	    // DELETE
 		$sql = "DELETE FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `id` = ".substr($FormAction,6).";";
-		echo("DELETE, SQL=$sql<br>".CRLF);
+		//echo("DELETE, SQL=$sql<br>".CRLF);
 		$retour = mysqli_query($DB,$sql);
 	  } else {
 	    // UPDATE
