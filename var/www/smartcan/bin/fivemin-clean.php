@@ -16,4 +16,11 @@ $sql = "DELETE FROM `ha_cameras_temp` WHERE `Create_Date` < (NOW() - INTERVAL 5 
 $query = mysqli_query($DB,$sql);
 //echo("Camera Reverse Proxy Configs deleted! " . $query.chr(10));
 
+/* Delete “HEAT Now” when done */
+$sql   = "DELETE FROM ". TABLE_HEATING_TIMSESLOTS . " WHERE `function`='HEATER' AND `days`='00000001' AND `stop`< (NOW() - INTERVAL 5 MINUTE);";
+$query = mysqli_query($DB,$sql);
+ 
+$sql   = "DELETE FROM ". TABLE_HEATING_TIMSESLOTS . " WHERE `function`='HEATER' AND `days`='00000001' AND `start`> (NOW() + INTERVAL 5 MINUTE);";
+$query = mysqli_query($DB,$sql);
+
 ?>
