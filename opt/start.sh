@@ -21,6 +21,8 @@ if [ ! -d /data/mysql ]; then
 	chmod +x /data/www/smartcan/bin/domocan-bridge-and-web
 	chmod +x /data/www/smartcan/bin/rx-DOMOCAN3.php
 	chmod 777 /data/www/smartcan/www/conf/
+	mkdir /data/www/backups
+	chmod 777 /data/www/backups
 fi
 
 chmod 0644 /etc/mysql/mariadb.conf.d/50-client.cnf
