@@ -221,9 +221,11 @@ if ($Access_Level>=1) {
 	$Top_Menu["Tag"][11]= "Admin";        $Top_Menu["URL"][11]= "./index.php?page=Admin";
 
 	$Top_SubMenu = array();
-	$i=0;
+	$i=0;$j=0;
 	while ($ndir>$i) {
-	  $Top_SubMenu[10]["Text"][($i+1)] = substr($ManufactDir[$i+2],0,strpos($ManufactDir[$i+2],"."));   $Top_SubMenu[10]["URL"][($i+1)] = "./index.php?page=Modules&SubMenu=".($i+1); $Top_SubMenu[10]["JAVA"][($i+1)] = "";
+	  if (strpos($ManufactDir[$i+2],"Config.php")!=false) {
+	    $Top_SubMenu[10]["Text"][($j+1)] = substr($ManufactDir[$i+2],0,strpos($ManufactDir[$i+2],"."));   $Top_SubMenu[10]["URL"][($j+1)] = "./index.php?page=Modules&SubMenu=".($i+1); $Top_SubMenu[10]["JAVA"][($j+1)] = "";$j++;
+	  }
 	  $i++;
 	} // END While
 	$Top_SubMenu[10]["Text"][($i+1)] = "&nbsp;";             $Top_SubMenu[10]["URL"][($i+1)] = "#";                                        $Top_SubMenu[10]["JAVA"][($i+1)] = "";

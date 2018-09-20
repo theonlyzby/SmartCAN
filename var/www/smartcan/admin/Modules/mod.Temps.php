@@ -10,6 +10,13 @@ function Temps() {
   
   // Includes
   include "./lang/admin.module.Temps.php";
+  
+  // External Sensors, via Addon
+  $dir          = PATHWEBADMIN . "Manufacturers";
+  $ManufactDir  = scandir($dir);
+  $i = 0; $nbrAddons = 0;
+  while (isset($ManufactDir[$i+2])) { $i++; if (strpos($ManufactDir[$i+1],"Addon.Temps.php")!=false) { $AddOn[$nbrAddons] = substr($ManufactDir[$i+1],0,strpos($ManufactDir[$i+1],".")); $nbrAddons++; } }
+  
 
   // Variables passed within the <Form> or URL
   $selected_level = html_postget("selected_level");
@@ -66,45 +73,15 @@ function Temps() {
 	  $Moyenne   = html_get("Moyenne"); if ($Moyenne=="") { $Moyenne = "0"; }
 	  //id_sonde=NewEsp ESP_IP
 	  // ESP?
-	  if ($id_sonde=="NewESP") {
-	    $id_sonde  = html_get("ESP_IP");
-		$DHT22_pin = html_get("DHT22_Pin");
+	  if (substr($id_sonde,0,3)=="New") { 
+	    include_once(PATHWEBADMIN . "Manufacturers".'/'.substr($id_sonde,3).'.Addon.Temps.php');
+		$addOnClass_fullName = substr($id_sonde,3) . "_class";
+		$addOnClass          = new $addOnClass_fullName();
+		$id_sonde = $addOnClass->new();
 		
-		// Send Config Commands to ESP
-		$ip = shell_exec("ifconfig eth0| grep 'inet ' | cut -d: -f2");
-		$ip=substr($ip,0, strpos($ip, " netmask")-1);
-		$ip=substr($ip,(strrpos($ip," ")-strlen($ip)+1));
-		
-		// Disable WiFi Status Led (D4), and I2C pins
-		$ESP_cmd  = "http://" . $id_sonde . "/hardware?pled=-1&psda=-1&pscl=-1";
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		sleep(2);
-		// Configure controller's Webhook
-		$ESP_cmd  = "http://" . $id_sonde . "/controllers?index=1&protocol=8&usedns=0&controllerip=".$ip.
-					"&controllerport=80&controllerpublish=/smartcan/webhook/ESPeasy-WebHook.php%3Fname%3D%25sysname%25%26task%3D%25tskname%25%26valuename%3D%25valname%25%26value%3D%25value%25" .
-					"&controllerenabled=on";
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		sleep(2);
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		sleep(2);
-		// Configures DHT22
-		$ESP_cmd  = "http://" . $id_sonde . "/devices?index=1&edit=1&page=1&TDNUM=5&TDN=".$Temp_Name."&TDE=on&taskdevicepin1=".$DHT22_pin."&plugin_005_dhttype=22&TDSD1=on&TDT=60" .
-					"&TDVN1=Temperature&TDF1=%25value%25&TDVD1=2&TDVN2=Humidity&TDF2=%25value%25&TDVD2=2";
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		sleep(3);
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		// Reboots the ESP
-		$ESP_cmd  = "http://" . $id_sonde . "/?cmd=reboot";
-		$ESP_Call = fopen($ESP_cmd, "r");
-		fclose($ESP_Call);
-		// Adds trailer ESP_" to ID, to saves sensor into DB
-		$id_sonde = "ESP_" . $id_sonde;
+	    //echo(substr($id_sonde,3)); exit; 
 	  }
+	  //echo("id_sonde=".$id_sonde);
 	  
 	  // Saves sensor into DB
 	  $sql = "INSERT INTO `chauffage_sonde` (`id`, `id_sonde`, `moyenne`, " .
@@ -709,7 +686,7 @@ function submitform(action) {
 <td width="50%"><input id="Temp_Name" name="Temp_Name" type="text"/></td></tr>
 <tr><td width="20%">&nbsp;</td>
 <td width="30%" align="right"><?php echo($msg["TEMPS"]["Sensor"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
-<td width="50%"><select name="id_sonde" id="id_sonde" onchange="change('NewESP','id_sonde','NewESP2')">
+<td width="50%"><select name="id_sonde" id="id_sonde" onchange="change('id_sonde');">
 <?php
 
 // List all already used Sensors to exclude them later in drop box
@@ -722,7 +699,17 @@ while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
 } // END WHILE
 // Scans 1 Wire Directory for NEW Temp Probe
 echo("<option value=''>".$msg["MAIN"]["Choose"][$Lang]."</option>" . CRLF);
-echo("<option value='NewESP' >" . $msg["TEMPS"]["NewESP"][$Lang] . "</option>" . CRLF);
+// addOns  
+$nbrAddons = 0;
+while (isset($AddOn[$nbrAddons])) {  
+  include_once(PATHWEBADMIN . "Manufacturers".'/'.$AddOn[$nbrAddons].'.Addon.Temps.php');
+  $addOnClass_fullName = $AddOn[$nbrAddons] . "_class";
+  $addOnClass          = new $addOnClass_fullName();
+  $addOnClass->HTMLoption();
+  $nbrAddons++;
+} // END WHILE
+
+ // 1 wire
 if (ONEWIRE_MODE=="OWFS") {
   require "/usr/share/php/OWNet/ownet.php";
   $ow=new OWNet("tcp://127.0.0.1:" . ONEWIRE_OWSERVER_PORT);
@@ -764,15 +751,19 @@ echo("" . CRLF);
 
 </td></tr>
 
-<tr id="NewESP" style="display: none;"><td width="20%">&nbsp;</td>
-<td width="30%" align="right"><?php echo($msg["TEMPS"]["IPaddress"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
-<td width="50%"><input type="text" name="ESP_IP" id="ESP_IP"></td></tr>
-<tr id="NewESP2" style="display: none;"><td width="20%">&nbsp;</td>
-<td width="30%" align="right"><?php echo($msg["TEMPS"]["DHT22GPIO"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
-<td width="50%"><select name='DHT22_Pin'><option value=0>GPIO-0 (D3)</option><option value=1 disabled>GPIO-1 (D10)</option><option value=2 selected>GPIO-2 (D4)</option>
-<option value=3 disabled>GPIO-3 (D9)</option><option value=4 disabled>GPIO-4 (D2)</option><option value=5 disabled>GPIO-5 (D1)</option><option value=9>GPIO-9 (D11) &#9888;</option>
-<option value=10>GPIO-10 (D12)</option><option value=12>GPIO-12 (D6)</option><option value=13>GPIO-13 (D7)</option><option value=14>GPIO-14 (D5)</option><option value=15>GPIO-15 (D8)</option>
-<option value=16>GPIO-16 (D0)</option></select></td></tr>	
+<?php
+// Position HTML configs of addOns
+  $nbrAddons = 0;
+  while (isset($AddOn[$nbrAddons])) {  
+    include_once(PATHWEBADMIN . "Manufacturers".'/'.$AddOn[$nbrAddons].'.Addon.Temps.php');
+	$addOnClass_fullName = $AddOn[$nbrAddons] . "_class";
+	$addOnClass          = new $addOnClass_fullName();
+	$addOnClass->HTMLconfig();
+	$nbrAddons++;
+  } // END WHILE
+  
+
+?>
 
 <tr><td width="20%">&nbsp;</td>
 <td width="30%" align="right"><?php echo($msg["TEMPS"]["UseItForMean"][$Lang]); ?>&nbsp;&nbsp;&nbsp;<br><br></td> 
@@ -790,27 +781,21 @@ echo("" . CRLF);
 </div>
 </form>
 <script>
-function change(obj,selectBox,obj2) {
-	var e = document.getElementById(selectBox);
-	var selected  = e.options[e.selectedIndex].value;
-    var objct     = document.getElementById(obj);
-	var objct2    = document.getElementById(obj2);
+function change(selectBox) {
+  var e = document.getElementById(selectBox);
+  var selected  = e.options[e.selectedIndex].value;
+  <?php
+  // Position java specfic code from addOns
+  $nbrAddons = 0;
+  while (isset($AddOn[$nbrAddons])) {  
+    include_once(PATHWEBADMIN . "Manufacturers".'/'.$AddOn[$nbrAddons].'.Addon.Temps.php');
+	$addOnClass_fullName = $AddOn[$nbrAddons] . "_class";
+	$addOnClass          = new $addOnClass_fullName();
+	$addOnClass->javaChange();
+	$nbrAddons++;
+  } // END WHILE
+	?>
 
-    if(selected === obj){
-        objct.style.display = "table-row";
-		objct2.style.display = "table-row";
-		<?php 
-		$ip = shell_exec("ifconfig eth0| grep 'inet ' | cut -d: -f2");
-		$ip=substr($ip,0, strpos($ip, " netmask")-1);
-		$ip=substr($ip,(strrpos($ip," ")-strlen($ip)+1));
-		$ip=substr($ip,0,strrpos($ip,".")+1);
-		echo("document.getElementById('ESP_IP').value='".$ip."';" . CRLF);?>
-		document.getElementById('ESP_IP').focus();
-    }
-    else{
-        objct.style.display = "none";
-		objct2.style.display = "none";
-    }
 }
 </script>
 <?php
