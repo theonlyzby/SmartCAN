@@ -172,7 +172,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
   } // END WHILE
   
   /* MISE A JOUR DU GRAPHIQUE DE TEMPERATURE MOYENNE MAISON */
-  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1';");
+  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE (`moyenne` = '1' AND `valeur`<>0 AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
   $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
   if ((RRDPATH!="") && (date("i")%5==0)) {
     //echo("Test if exists? ".RRDPATH . $sensor . '.rrd'. CRLF);
@@ -187,14 +187,13 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
   } // END IF
 	
   // PUSH Valeur Moyenne
-  if ($row[0]!="") {
-    $ch = curl_init(URIPUSH);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "sonde;moyennemaison," . round($row[0], 1));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $ret = curl_exec($ch);
-    curl_close($ch);
-  }
+  if ($row[0]=="") { $mm="?"; } else { $mm=round($row[0],1); }
+  $ch = curl_init(URIPUSH);
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, "sonde;moyennemaison," . $mm);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $ret = curl_exec($ch);
+  curl_close($ch);
   
   /* MISE A JOUR DU GRAPHIQUE DE TEMPERATURE EXTERIEURE */
   $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `id` = '1'");
