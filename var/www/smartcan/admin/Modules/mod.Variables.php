@@ -302,7 +302,7 @@ position:relative;
   $query = mysqli_query($DB,$sql);
   while ( $row = mysqli_fetch_array($query, MYSQLI_BOTH) ) {
     if ($row['ID']==1) { 
-	  $Admin_Account = $row['Alias'];
+	  $Admin_Account = $row['Alias']; $Admin_ID = $row['ID'];
 	  if (isset($row['Lang'])) { $Admin_Lang = $row['Lang']; } else { $Admin_Lang = ""; }
 	} // END IF
 	if ($row['ID']==2) {
