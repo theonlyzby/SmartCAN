@@ -45,6 +45,18 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	  } // END IF
     } // END WHILE
 	
+	// Sets wiringPi pin modes
+	$sql = "SELECT * FROM `ha_element` WHERE `Manufacturer`='wiringPI';";
+	$retour = mysqli_query($DB,$sql);
+	while ( $row = mysqli_fetch_array($retour, MYSQLI_BOTH) ) {
+	  $pin     = $row['element_reference'];
+	  $type    = $row['element_type'];
+	  $trigger = $row['card_id']; if ($trigger=="low") { $trigger="1"; } else { $trigger="0"; }
+	  if (($type == "0x11") || ($type == "0x12") ) { exec('gpio -1 mode '.$pin.' out'); exec('gpio -1 write '.$pin.' '.$trigger);}
+	  if  ($type == "0x22") { exec('gpio -1 mode '.$pin.' in'); }
+	} // END WHILE
+	
+	
 	// Populates chauffage_clef_TEMP (Heating system Status in RAM)
 	$sql = "INSERT INTO `" . TABLE_CHAUFFAGE_CLEF_TEMP . "` (`id`, `clef`, `valeur`) VALUES (NULL, 'chaudiere', '0');";
 	$retour = mysqli_query($DB,$sql);

@@ -9,7 +9,7 @@ class wiringPI_gradateur extends wiringPI_envoiTrame {
 
   */
   function allumer($var1, $var2, $progression = 0, $intensite = 0x32) {
-	$this->GPIO_Set($var1,$var2,"0x32",$progression);
+	$this->GPIO_Set($var1,$var2,1,$progression);
   }
 
 

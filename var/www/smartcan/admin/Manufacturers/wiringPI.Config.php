@@ -97,6 +97,7 @@ function ModConfig() {
 		$ElementDesc[$j] = html_postget("ElementDesc_".$i);
 		$Element[$j]     = html_postget("Element_".$i);
 		$Mode[$j]        = html_postget("Mode_".$i); 
+		$Trigger[$j]     = html_postget("Trigger_".$i);
 		// Modifies mode
 		system("gpio -1 mode " . $Element[$j] . " " . $Mode[$j]);
 		//echo("gpio -1 mode " . $Element[$j] . " " . $Mode[$j]);
@@ -106,7 +107,7 @@ function ModConfig() {
 		if (($ElementID[$j]==0) && ($ElementDesc[$j]!="")) {
 		  // Create
 		  $sql = "INSERT INTO `ha_element` (`id`, `Manufacturer`, `card_id`, `element_type`, `element_reference`, `element_name`) " .
-					"VALUES (NULL, 'wiringPI' ,'RaspBerryPI', '".$Mode[$j]."', '".$Element[$j]."', '".$ElementDesc[$j]."');";
+					"VALUES (NULL, 'wiringPI' ,'".$Trigger[$j]."', '".$Mode[$j]."', '".$Element[$j]."', '".$ElementDesc[$j]."');";
 		  $query=mysqli_query($DB,$sql);
 		  $ElementID[$j] = mysqli_insert_id($DB);
 		  //echo("Element INSERT (".$ElementID[$j].",i=$i, j=$j): sql=$sql<br>");
@@ -115,11 +116,11 @@ function ModConfig() {
 		  $sql = "SELECT * FROM `ha_element` WHERE `id` = '".$ElementID[$j]."';";
 		  $query=mysqli_query($DB,$sql);
 		  if ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
-		    $sql = "UPDATE `lumieres` SET `sortie` = '".$Element[$j]."' WHERE `sortie`='".$row['element_reference']."' AND `Manufacturer`='WiringPI' AND `carte` = 'RaspBerryPI';";
+		    $sql = "UPDATE `lumieres` SET `sortie` = '".$Element[$j]."' WHERE `sortie`='".$row['element_reference']."' AND `Manufacturer`='WiringPI' AND `carte` = '".$Trigger[$j]."';";
 			$query=mysqli_query($DB,$sql);
 		  } // END IF
 		  // Update ha_element table
-		  $sql = "UPDATE `ha_element` SET `element_name`='".$ElementDesc[$j]."', `card_id` = 'RaspBerryPI', `element_reference`='".$Element[$j]."'" .
+		  $sql = "UPDATE `ha_element` SET `element_name`='".$ElementDesc[$j]."', `card_id` = '".$Trigger[$j]."', `element_reference`='".$Element[$j]."'" .
 					", `element_type`='".$Mode[$j]."' WHERE `id` = '".$ElementID[$j]."';";
 		  //echo("Update Element ID = ".$ElementID[$j]."<br>SQL=$sql<br>".CRLF);
 		  $query=mysqli_query($DB,$sql);
@@ -139,11 +140,12 @@ function ModConfig() {
 	$ElementID[$i]   = $row['id'];
 	$ElementDesc[$i] = $row['element_name'];
 	$Element[$i]     = $row['element_reference'];
+	$Trigger[$i]     = $row['card_id'];
 	$Mode[$i]        = $row['element_type']; if ($Mode[$i]=="0x12") {$Mode[$i]="OUT";} if ($Mode[$i]=="0x22") {$Mode[$i]="IN";}
 	//echo("Element Content from DB: id=".$ElementID[$i].", Desc=".$ElementDesc[$i].", RaspPIN=".$Element[$i]."<br>");
 	$i++;
   } // END WHILE
-  if (($i==0) || ($action=="AddElement")) { $ElementID[$i]=0; $ElementDesc[$i]=""; $Element[$i]=""; $Mode[$i]="OUT";}
+  if (($i==0) || ($action=="AddElement")) { $ElementID[$i]=0; $ElementDesc[$i]=""; $Element[$i]=""; $Trigger[$i]="HIGH"; $Mode[$i]="OUT";}
 
 
   // Start Build Page ...
@@ -220,7 +222,8 @@ function CheckSubmitform(field,action,val) {
   echo("<tr><td width='5%'>&nbsp;&nbsp;&nbsp;&nbsp;</td>" . CRLF);
   echo("<td width='30%'>".$msg["MAIN"]["Description"][$Lang]."</td>" . CRLF);
   echo("<td width='30%'>".$msg["URL"]["RaspPin"][$Lang]."</td>" . CRLF);
-  echo("<td width='30%'>".$msg["URL"]["Mode"][$Lang]."</td>" . CRLF);
+  echo("<td width='15%'>".$msg["URL"]["Mode"][$Lang]."</td>" . CRLF);
+  echo("<td width='15%'>".$msg["URL"]["Trigger"][$Lang]."</td>" . CRLF);
   echo("<td width='5%'>&nbsp;</td></tr>" . CRLF);
   $i=0; 
   // When Creating a new Element
@@ -248,6 +251,11 @@ function CheckSubmitform(field,action,val) {
 	echo("<td><select name=\"Mode_$i\" id=\"Mode_$i\">" . CRLF);
 	echo("<option value='OUT'>".$msg["URL"]["Output"][$Lang]."</option>" . CRLF);
 	echo("<option "); if ($Mode[$i]=="IN") {echo("selected ");} echo("value='IN'>".$msg["URL"]["Input"][$Lang]."</option>" . CRLF);
+	echo("</select>" . CRLF);
+	// Trigger
+	echo("<td><select name=\"Trigger_$i\" id=\"Trigger_$i\">" . CRLF);
+	echo("<option value='HIGH'>".$msg["URL"]["HIGHTrigger"][$Lang]."</option>" . CRLF);
+	echo("<option "); if ($Trigger[$i]=="low") {echo("selected ");} echo("value='low'>".$msg["URL"]["lowTrigger"][$Lang]."</option>" . CRLF);
 	echo("</select>" . CRLF);
     // Drop?
 	if ($ElementDesc[$i]!="") {
