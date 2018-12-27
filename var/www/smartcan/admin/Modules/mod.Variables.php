@@ -193,6 +193,23 @@ function Variables() {
 	  $sql = "UPDATE `ha_settings` SET `value` = '" . $Dump1090IP . "' WHERE `ha_settings`.`variable` = 'dump_1090_srv';";
 	  $query = mysqli_query($DB,$sql);
 	} // END IF
+	
+	// Train Tabletable
+	$trainDeparture       = html_postget("trainDeparture");
+	$sql = "UPDATE `ha_settings` SET `value` = '" . $trainDeparture . "' WHERE `ha_settings`.`variable` = 'trainDeparture';";
+	$query = mysqli_query($DB,$sql);
+	$trainDestination         = html_postget("trainDestination");
+	$sql = "UPDATE `ha_settings` SET `value` = '" . $trainDestination . "' WHERE `ha_settings`.`variable` = 'trainDestination';";
+	$query = mysqli_query($DB,$sql);
+	$trainShowStations    = html_postget("trainShowStations");
+	if ($trainShowStations=="on") { $trainShowStations="Y"; } else { $trainShowStations="N";}
+	$sql = "UPDATE `ha_settings` SET `value` = '" . $trainShowStations . "' WHERE `ha_settings`.`variable` = 'trainShowStations';";
+	$query = mysqli_query($DB,$sql);
+	$trainSwitchAfterNoon = html_postget("trainSwitchAfterNoon");
+	if ($trainSwitchAfterNoon=="on") { $trainSwitchAfterNoon="Y"; } else { $trainSwitchAfterNoon="N";}
+	$sql = "UPDATE `ha_settings` SET `value` = '" . $trainSwitchAfterNoon . "' WHERE `ha_settings`.`variable` = 'trainSwitchAfterNoon';";
+	$query = mysqli_query($DB,$sql);
+
   } // END IF
 
   // Start Build Page ...
@@ -401,6 +418,7 @@ position:relative;
   echo("<option value='vibes' "); if ($default_page=="vibes") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceVibes"][$Lang]."</option>" . CRLF);
   echo("<option value='weather' "); if ($default_page=="weather") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceWeather"][$Lang]."</option>" . CRLF);
   echo("<option value='surveillance' "); if ($default_page=="surveillance") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceSurveillance"][$Lang]."</option>" . CRLF);
+  echo("<option value='trains' "); if ($default_page=="trains") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceTrains"][$Lang]."</option>" . CRLF);
   //echo("<option value='volets' "); if ($default_page=="volets") { echo("selected"); } echo(">Volets</option>" . CRLF);
   echo("<option value='misc' "); if ($default_page=="misc") { echo("selected"); } echo(">".$msg["VARIABLES"]["InterfaceMisc"][$Lang]."</option>" . CRLF);
   echo("</select></td></tr>");
@@ -411,7 +429,34 @@ position:relative;
   $retour = mysqli_query($DB,$sql);
   $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
   $Dump1090IP = $row["value"];
-  echo("<input type='text' name='Dump1090IP' id='Dump1090IP' value='" . $Dump1090IP . "' required/></td></tr>");
+  echo("<input type='text' name='Dump1090IP' id='Dump1090IP' value='" . $Dump1090IP . "' /></td></tr>");
+  
+  // Trains
+  echo("<tr><td><br><b>".$msg["VARIABLES"]["TrainTimetable"][$Lang].":</b></td><td>&nbsp;</td></tr>");
+  echo("<tr><td>".$msg["VARIABLES"]["TrainDeparture"][$Lang]."</td><td>");
+  $sql = "SELECT * FROM `ha_settings` WHERE `variable`='trainDeparture';";
+  $retour = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+  echo("<input type='text' name='trainDeparture' id='trainDeparture' value='" . $row["value"] . "' /> <a href='https://github.com/iRail/stations/blob/master/stations.csv' " .
+		"target='_Blank' title='".$msg["VARIABLES"]["trainShowList"][$Lang]."'><img src='./images/QuestionMark.png' width='30pt' height='30pt' style='vertical-align:middle'/></a></td></tr>");
+  echo("<tr><td>".$msg["VARIABLES"]["TrainDestination"][$Lang]."</td><td>");
+  $sql = "SELECT * FROM `ha_settings` WHERE `variable`='trainDestination';";
+  $retour = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+  echo("<input type='text' name='trainDestination' id='trainDestination' value='" . $row["value"] . "' /> <a href='https://github.com/iRail/stations/blob/master/stations.csv' " .
+		"target='_Blank' title='".$msg["VARIABLES"]["trainShowList"][$Lang]."'><img src='./images/QuestionMark.png' width='30pt' height='30pt' style='vertical-align:middle'/></a></td></tr>");
+  echo("<tr><td>".$msg["VARIABLES"]["trainShowStations"][$Lang]."</td><td><input type='checkbox' name='trainShowStations' id='trainShowStations' ");
+  $sql = "SELECT * FROM `ha_settings` WHERE `variable`='trainShowStations';";
+  $query = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($query, MYSQLI_BOTH);
+  if ($row['value']=="Y") { echo("checked");}
+  echo("/></td></tr>");
+  echo("<tr><td>".$msg["VARIABLES"]["trainSwitchAfterNoon"][$Lang]."</td><td><input type='checkbox' name='trainSwitchAfterNoon' id='trainSwitchAfterNoon' ");
+  $sql = "SELECT * FROM `ha_settings` WHERE `variable`='trainSwitchAfterNoon';";
+  $query = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($query, MYSQLI_BOTH);
+  if ($row['value']=="Y") { echo("checked");}
+  echo("/></td></tr>");
   
   // Submit
   echo("<tr><td colspan=2 align=middle><a href='javascript:submitform(\"Modify\")'><img src='./images/ChangeButton.jpg' width='70px' heigth='60px' /></a></td></tr>");

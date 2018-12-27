@@ -32,11 +32,18 @@ $msg["VARIABLES"]["InterfaceThermostat"]["en"] = "Thermostat";
 $msg["VARIABLES"]["InterfaceVibes"]["en"] = "Vibes";
 $msg["VARIABLES"]["InterfaceWeather"]["en"] = "Weather";
 $msg["VARIABLES"]["InterfaceSurveillance"]["en"] = "Surveillance";
+$msg["VARIABLES"]["InterfaceTrains"]["en"] = "Train Timetable";
 $msg["VARIABLES"]["InterfaceMisc"]["en"] = "Misc";
 $msg["VARIABLES"]["DefaultPage"]["en"] = "Default Page";
 $msg["VARIABLES"]["Dump1090IP"]["en"] = "<u style=\"text-decoration:none;\" title=\"Dump1090 is one of the most popular ADS-B decoders that is used together with a RTL-SDR dongle. " .
 										"ADS-B stands for Automatic Dependant Surveillance Broadcast and is a system used by aircraft that broadcasts their GPS positions. " .
 										"It is a replacement for traditional reflection based radar systems.\">Dump1090 Server IP Address</u>&nbsp;";
+$msg["VARIABLES"]["TrainTimetable"]["en"] = "Train Timetable";
+$msg["VARIABLES"]["TrainDeparture"]["en"] = "Departure Station";
+$msg["VARIABLES"]["TrainDestination"]["en"] = "Arrival Station";
+$msg["VARIABLES"]["trainShowList"]["en"] = "Find into list";
+$msg["VARIABLES"]["trainShowStations"]["en"] = "Show Stations";
+$msg["VARIABLES"]["trainSwitchAfterNoon"]["en"] = "Switch after Noon";
 
    // FR
 $msg["VARIABLES"]["AdminFirstUse"]["fr"] = "Premi&egrave;re mise en place R&eacute;ussie!";
@@ -67,10 +74,17 @@ $msg["VARIABLES"]["InterfaceThermostat"]["fr"] = "Thermostat";
 $msg["VARIABLES"]["InterfaceVibes"]["fr"] = "Ambiances";
 $msg["VARIABLES"]["InterfaceWeather"]["fr"] = "M&eacute;t&eacute;o";
 $msg["VARIABLES"]["InterfaceSurveillance"]["fr"] = "Surveillance";
+$msg["VARIABLES"]["InterfaceTrains"]["fr"] = "Horaires de Train";
 $msg["VARIABLES"]["InterfaceMisc"]["fr"] = "Divers";
 $msg["VARIABLES"]["Dump1090IP"]["fr"] = "<u style=\"text-decoration:none;\" title=\"Dump1090 est l'un des décodeurs ADS-B les plus populaires qui est utilisé avec un dongle RTL-SDR. " .
 										"ADS-B signifie Automatic Dependent Surveillance Broadcast (diffusion dépendante automatique) et est un système utilisé par les aéronefs " .
 										"qui diffuse leurs positions GPS. Il remplace les systèmes radar basés sur la réflexion traditionnelle.\">Adresse IP du Serveur Dump1090</u>&nbsp;";
+$msg["VARIABLES"]["TrainTimetable"]["fr"] = "Horaire de Trains";
+$msg["VARIABLES"]["TrainDeparture"]["fr"] = "Gare de Départ";
+$msg["VARIABLES"]["TrainDestination"]["fr"] = "Gare d'Arrivée";
+$msg["VARIABLES"]["trainShowList"]["fr"] = "Trouver dans la liste";
+$msg["VARIABLES"]["trainShowStations"]["fr"] = "Montrer les Gares";
+$msg["VARIABLES"]["trainSwitchAfterNoon"]["fr"] = "Inverser après Midi";
 
    // NL
 $msg["VARIABLES"]["AdminFirstUse"]["nl"] = "Eerste Setup Succesvol!";
@@ -100,13 +114,18 @@ $msg["VARIABLES"]["InterfaceThermostat"]["nl"] = "Thermostaat";
 $msg["VARIABLES"]["InterfaceVibes"]["nl"] = "Sferen";
 $msg["VARIABLES"]["InterfaceWeather"]["nl"] = "Weer";
 $msg["VARIABLES"]["InterfaceSurveillance"]["nl"] = "Bewaking";
+$msg["VARIABLES"]["InterfaceTrains"]["nl"] = "Trein dienstregeling";
 $msg["VARIABLES"]["InterfaceMisc"]["nl"] = "Diversen";
 $msg["VARIABLES"]["DefaultPage"]["nl"] = "Default Page";
 $msg["VARIABLES"]["Dump1090IP"]["nl"] = "<u style=\"text-decoration:none;\" title=\"Dump1090 is een van de meest populaire ADS-B-decoders die samen met een RTL-SDR-dongle wordt gebruikt. " .
 										"ADS-B staat voor Automatic Dependent Surveillance Broadcast en is een systeem dat wordt gebruikt door vliegtuigen die hun GPS-posities uitzenden. " .
 										"Het is een vervanging voor traditionele, op reflectie gebaseerde radarsystemen.\">Dump1090 Server IP Adres</u>&nbsp;";
-
-
+$msg["VARIABLES"]["TrainTimetable"]["nl"] = "Trein dienstregeling";
+$msg["VARIABLES"]["TrainDeparture"]["nl"] = "Vertrekstation";
+$msg["VARIABLES"]["TrainDestination"]["nl"] = "Aankomststation";
+$msg["VARIABLES"]["trainShowList"]["nl"] = "Lijst tonen";
+$msg["VARIABLES"]["trainShowStations"]["nl"] = "Stations Tonen";
+$msg["VARIABLES"]["trainSwitchAfterNoon"]["nl"] = "Schakel na de middag";
 
 
 ?>

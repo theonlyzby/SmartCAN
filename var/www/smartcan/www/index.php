@@ -7,7 +7,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-
+// Functions
+function html_get($in) {
+$out = "";
+if (isset($_GET[$in])) { $out= $_GET[$in]; }
+return $out;
+} // End Function html_get
 
 /* CONFIGURATIONS ET DEPENDANCES */
 $Lang=""; $message=""; $Remember = "";
@@ -32,8 +37,6 @@ $row = mysqli_fetch_array($query, MYSQLI_BOTH);
 $auth_local_user = $row['value'];
 $User_ID=0;
 $div_sess="";
-$requestedPage = "";
-if (isset($_GET['page'])) { $requestedPage = $_GET['page']; }
 
 // Remote client OR Local with Auth Request?
 if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='Y'))) && (!isset($_SESSION["login"]))) {
@@ -41,13 +44,10 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || 
   session_start();
   // Login OUT
   if (isset($_GET['logout'])) {
-    setcookie(session_name(), "", time() - 3600); //send browser command remove sid from cookie
+    //setcookie(session_name(), "", time() - 3600); //send browser command remove sid from cookie
     session_destroy(); //remove sid-login from server storage
     session_write_close();
     $_GET['page'] = "login";
-    setcookie("member_login","");
-    setcookie("member_password","");
-    header('Location: ?page='.$requestedPage);
   } // END IF
   //if sid exists and login for sid exists
   if (session_id() == '' || !empty($_POST["login"])) { 
@@ -65,8 +65,12 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || 
 				setcookie("member_login",$_POST["member_name"],time()+ (10 * 365 * 24 * 60 * 60));
 				setcookie("member_password",$_POST["member_password"],time()+ (10 * 365 * 24 * 60 * 60));
 		} else {
-			if (isset($_COOKIE["member_login"])) { setcookie("member_login",""); }
-			if (isset($_COOKIE["member_password"])) { setcookie("member_password",""); }
+			if(isset($_COOKIE["member_login"])) {
+				setcookie("member_login","");
+			}
+			if(isset($_COOKIE["member_password"])) {
+				setcookie("member_password","");
+			}
 		}
 		$sql = "SELECT * FROM `users` WHERE Alias='" . $_POST["member_name"] . "';";
         $query = mysqli_query($DB,$sql);
@@ -77,17 +81,15 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || 
         $_SESSION['username'] = $_POST["member_name"]; //write login to server storage $_POST['username'] $_POST['password']
         // OK to display
       } else {
-		  echo("2<br>");
         $_GET['page'] = "login";
       }
     } else {
-		echo("3<br>");
 	  $_GET['page'] = "login";
 	}
   }
 
   // Session Opened
-  if (isset($_SESSION['username']) && ($_GET['page']!="login")) {
+  if (isset($_SESSION['username']) && (html_get('page')!="login")) {
 	//echo("Session");
 	$sql = "SELECT * FROM `users` WHERE Alias='" . $_SESSION['username'] . "';";
     $query = mysqli_query($DB,$sql);
@@ -99,21 +101,6 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || 
 	//echo($sql ."Access_Level=".$Access_Level.", User_ID=".$User_ID.", Lang=".$Lang."<br>"); exit();
   } // END IF Session Opened
   
-  // Saved Cookie?
-  if ((isset($_COOKIE["member_login"])) && (isset($_COOKIE["member_password"]))) {
-	//echo("Cookie Saved");
-	$sql = "SELECT * FROM `users` WHERE (Alias='" . $_COOKIE["member_login"] . "' AND Password=PASSWORD('". $_COOKIE["member_password"] ."'));;";
-    $query = mysqli_query($DB,$sql);
-    $row = mysqli_fetch_array($query, MYSQLI_BOTH);
-	$Access_Level = $row['Access_Level'];
-	$User_ID = $row['ID'];
-	$Lang = $row['Lang'];
-	$div_sess="YES";
-	$_GET['page'] = $requestedPage;
-	//echo($sql ."Access_Level=".$Access_Level.", User_ID=".$User_ID.", Lang=".$Lang."<br>"); exit();
-  } // END IF Cookie
-  
-  
 } // END IF Requires Auth
 
 // Acess Level OK?
@@ -121,10 +108,7 @@ if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) || 
 if (((filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($Access_Level>=1)) || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='Y') && ($Access_Level>=1))
 		 || ((!filter_var($client_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) && ($auth_local_user=='N'))) {
 } else {
-   
-   if ($Access_Level==0) {
-     $_GET['page'] = "login";
-   }   
+   $_GET['page'] = "login";		 
 } // END IF
 
   // Start page ... Secu OK
