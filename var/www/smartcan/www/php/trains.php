@@ -40,17 +40,20 @@ if ((date("Hi")>"1200") && ($trainSwitchAfterNoon=="Y")) { $trainDestination = $
 $sql = "SELECT * FROM `ha_settings` WHERE `variable`='trainDestination';";
 $retour = mysqli_query($DB,$sql);
 $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+// Return ?
 if ((date("Hi")>"1200") && ($trainSwitchAfterNoon=="Y")) { $trainDeparture = $row["value"]; } else { $trainDestination = $row["value"]; }
-$url .= "?from=" . $trainDeparture . "&to=" . $trainDestination . "&date=" . date("dmy") . "&time=" . date("Hi") . "&timesel=departure&format=json&lang=" . $Lang . "&fast=false&typeOfTransport=trains&alerts=false&results=5";
-
 // Switched?
 if (html_get("Switch")=="Y") { $tempo = $trainDeparture ; $trainDeparture = $trainDestination; $trainDestination = $tempo; }
-
+// Build URL
+$url .= "?from=" . $trainDeparture . "&to=" . $trainDestination . "&timesel=departure&format=json&lang=" . $Lang . "&fast=false&typeOfTransport=trains&alerts=false&results=5";
+// . "&date=" . date("dmy") . "&time=" . date("Hi")
 
 $output = "";
+//$output .= $url . "<br>";
+
 // Parses if values entered
 if ($trainDeparture!="" && $trainDestination!="") {
-  $output .= $trainDeparture . " " . $trainDestination;
+  //$output .= $trainDeparture . " " . $trainDestination;
   // Connect to SNCBNBMS API
   // Open the file to get existing content
   $curl = curl_init();
@@ -85,7 +88,7 @@ if ($trainDeparture!="" && $trainDestination!="") {
     // Parses JSON
     $trains = json_decode($dump);
 
-    $output = "<table width='600pt'><tr><td width='25%'><div class='w3-black w3-xxlarge w3-text-grey'>".$msg["trains"]["Departure"][$Lang]."</div><div class='w3-black tiny'>";
+    $output .= "<table width='600pt'><tr><td width='25%'><div class='w3-black w3-xxlarge w3-text-grey'>".$msg["trains"]["Departure"][$Lang]."</div><div class='w3-black tiny'>";
 	if ($trainShowStations=="Y") { $output .= $trainDeparture; }
 	$output .= "</div></td>" . "<td  width='20%' class='w3-container w3-black w3-center'><a href='?page=trains";
 	if (html_get("theme")!="") { $output .= "&layout=" . html_get("theme"); }
