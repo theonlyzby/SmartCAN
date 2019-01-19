@@ -1075,11 +1075,11 @@ $('#full-circle').bind( "touchmove", function(e){
 </head>
 <body style="background: #000; color: #FFF;">	
 
-<div class="fond">
+<div id="nestTitle" class="fond">
 	<div id="full-circle" class="full-circle">
 		<div id="center-circle-cold" class="center-circle-cold">
 			  <div id="bars">
-              <p id='nestTitle' class='nestTitle'>nest</p>
+              <p id="nestTitleSMALL" class="nestTitle">nest</p>
 			  <p name="nestMode" id="nestMode" class="nestMode"></p>
 			  <p name="nestValue" id="nestValue" class="nestValue"></p>
 			  <p name="hour" id="hour" class="hour">1H</p>
