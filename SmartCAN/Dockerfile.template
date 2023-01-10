@@ -1,0 +1,214 @@
+# base-image for node on any machine using a template variable,
+# see more about dockerfile templates here: http://docs.balena.io/deployment/docker-templates/
+# and about balena base images here: http://docs.balena.io/runtime/balena-base-images/
+# Note the node:slim image doesn't have node-gyp
+# FROM balenalib/raspberrypi3-debian:stretch
+FROM balenalib/aarch64-debian:buster
+# FROM balenalib/aarch64-debian:bullseye
+# FROM balenalib/raspberrypi3-64-debian:buster
+# FROM balenalib/raspberrypi3-debian:buster
+
+ENV container docker
+
+# Use apt-get to Update/Upgrade and
+# Install all other required packages ####  librtlsdr-dev
+#RUN echo "deb http://deb.debian.org/debian stretch main non-free" >/etc/apt/sources.list
+RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y 
+	
+RUN apt-get install -yq debconf-utils \
+       mariadb-client mariadb-common libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev wget cron sudo nano python-pip python-dev rpi.gpio \
+       python3 python3-pip wpasupplicant sudo make gcc libpcre3 autoconf automake libtool net-tools php7.3-gmp php7.3-dev \
+       php7.3 php7.3-curl php7.3-gd php7.3-fpm php7.3-cli php7.3-opcache php7.3-mysqli php7.3-xml php7.3-mbstring \
+       ntp samba samba-common-bin systemd systemd-sysv git-core git cmake libusb-1.0-0-dev build-essential pkg-config \
+       libffi-dev libnacl-dev python3-dev curl mosquitto mosquitto-clients libmosquitto-dev \
+	   python3-rpi.gpio libudev-dev g++ libyaml-dev openzwave python3-setuptools npm pciutils rpi-eeprom
+
+# Install Rpi4 EEPROM update
+RUN cd /opt && git clone https://github.com/raspberrypi/rpi-eeprom.git
+
+# Install wiringpi (64 bits Modified Version)
+#RUN cd /opt && git clone git://github.com/Vicinzu/wiringPi-arm64 \
+RUN cd /opt && git clone https://github.com/Vicinzu/wiringPi-arm64 \
+    && cd ./wiringPi-arm64 && ./build \
+    && cd / && rm -r /opt/wiringPi-arm64
+
+# Default mysql password
+RUN echo 'mariadb-server mysql-server/root_password password SmartCAN' | debconf-set-selections  \
+		&& echo 'mariadb-server mysql-server/root_password_again password SmartCAN' | debconf-set-selections
+  
+# Install MySQL Server (MariaDB)
+RUN apt-get install -y mariadb-server 
+# Configure DB to persistent /data folder
+RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/my.cnf
+RUN sed -i -e "s@^datadir.*@datadir = /data/mysql@" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+#  Clean-up apt-get
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install RestCord - PHP Discord API (https://www.restcord.com/)
+RUN curl -s https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+RUN composer require restcord/restcord
+
+# Install php extension (php-mqtt/client) from https://github.com/php-mqtt/client
+# https://github.com/unreal4u/mqtt
+#RUN composer require unreal4u/mqtt
+
+# Install required Python3 packages
+RUN pip3 install cython wheel six pyserial
+RUN pip3 install 'PyDispatcher>=2.0.5'
+RUN pip3 install python_openzwave
+RUN pip3 install pytz
+RUN pip3 install uptime
+RUN pip3 install --upgrade setuptools && pip3 install webexteamssdk
+# DiscordPy (https://discordpy.readthedocs.io/en/latest/intro.html#installing)
+RUN pip3 install -U discord.py
+# NesPi4 Shutdown/Reset Buttons
+RUN pip3 install RPi.GPIO --no-cache-dir
+RUN pip3 install requests
+
+# Install Zigbee2MQTT (later moved to /data/sys-files/zigbee2mqtt )
+# Switch to dev branch for last devices support ( https://www.zigbee2mqtt.io/advanced/more/switch-to-dev-branch.html#linux )
+# Change 'dev' to 'master' to switch back to the release version 
+#	&& git checkout HEAD -- npm-shrinkwrap.json \
+RUN mkdir /var/sys-files && cd /var/sys-files && git clone https://github.com/Koenkk/zigbee2mqtt.git
+RUN cd /var/sys-files/zigbee2mqtt \
+	&& git checkout HEAD \
+	&& git fetch \
+	&& git checkout dev \
+	&& git pull \
+	&& npm ci 
+	
+##	&& npm clean-install
+
+
+#Install Openresty # openresty-1.13.6.2.tar.gz
+RUN cd /opt
+RUN git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
+RUN wget https://openresty.org/download/openresty-1.15.8.2.tar.gz
+#RUN wget https://github.com/slact/nginx_http_push_module/archive/v0.99.16.tar.gz https://github.com/slact/nchan/archive/v0.99.16.tar.gz
+RUN wget https://github.com/slact/nchan/archive/v1.1.7.2.tar.gz
+RUN tar xzvf openresty-1.15.8.2.tar.gz
+RUN tar xzvf v1.1.7.2.tar.gz
+#    --add-dynamic-module=../nchan-0.99.16 \ 
+RUN cd ./openresty-1.15.8.2 && ./configure --prefix=/usr/local --conf-path=/usr/local/nginx/conf/nginx.conf \
+    --add-module=../nchan-1.1.7.2 --add-module=../ngx_http_substitutions_filter_module \
+    --with-cc-opt="-I/usr/local/include" --with-ld-opt="-L/usr/local/lib" --with-pcre-jit \
+    --without-http_gzip_module --with-http_ssl_module --with-http_secure_link_module && make && sudo make install
+
+RUN rm openresty-1.15.8.2.tar.gz \
+      && rm v1.1.7.2.tar.gz \
+      && rm -R openresty-1.15.8.2 \
+      && rm -R nchan-1.1.7.2 \
+      && rm -R ngx_http_substitutions_filter_module
+
+# Enable systemd init system in container
+ENV INITSYSTEM on
+
+# Defines our working directory in container
+WORKDIR /
+
+# Copy Project Files from GitHub
+# This will copy all files from our root to the working  directory in the container
+COPY . .
+RUN chmod 755 /var/phpmyadmin/config.inc.php
+RUN chmod 777 /var/phpmyadmin/tmp
+
+# Install node-red
+RUN pip install setuptools
+RUN pip install wheel
+RUN pip install RPi.GPIO
+RUN chmod 0440 /etc/sudoers
+RUN chmod +x /opt/Install-NodeRed.sh
+RUN /opt/Install-NodeRed.sh --confirm-install --confirm-root --confirm-pi --node16
+#RUN mkdir /var/sys-files/node-red/node_modules \
+#RUN cp -r /root/.node-red/node_modules/* /var/sys-files/node-red/node_modules
+#RUN cd /root/.node-red && npm install
+#RUN systemctl enable nodered.service
+
+# Copy zWave files
+RUN rm -r /etc/openzwave/
+RUN cp -avr /usr/local/lib/python3.7/dist-packages/python_openzwave/ozw_config /etc/openzwave
+RUN cp /opt/eur_spiritz.xml /etc/openzwave/eurotronic/eur_spiritz.xml
+RUN cp /opt/command.py /usr/local/lib/python3.7/dist-packages/openzwave/command.py
+
+# Configure and start Samba
+RUN pdbedit -i smbpasswd:/opt/samba-users.smbback
+
+# Install RTL-SDR Driver
+# Install dump1090
+# OLD server:  && git clone git://github.com/MalcolmRobb/dump1090.git \cd build
+# Previous server: && git clone git://github.com/steel101/dump1090.git \
+# Last try NOK: && git clone git://github.com/antirez/dump1090.git \
+# RUN cd /srv \
+#    && git clone git://git.osmocom.org/rtl-sdr.git \
+#    && cd rtl-sdr \
+#    && mkdir build \
+#    && cd build \
+#    && cmake ../ -DINSTALL_UDEV_RULES=ON -DDETACH_KERNEL_DRIVER=ON \
+#    && ldconfig \
+#    && make \make
+#    && make install \
+#    && ldconfig
+
+# RTL-SR Blog Driver
+RUN cd /srv \
+	&& git clone https://github.com/rtlsdrblog/rtl-sdr-blog.git \
+	&& cd rtl-sdr-blog/ \
+	&& mkdir build \
+	&& cd build \
+	&& cmake ../ -DINSTALL_UDEV_RULES=ON -DDETACH_KERNEL_DRIVER=ON \
+	&& make \
+	&& make install \
+	&& cp /srv/rtl-sdr-blog/rtl-sdr.rules /etc/udev/rules.d/ \
+	&& ldconfig
+RUN echo 'blacklist dvb_usb_rtl28xxu' | tee --append /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf
+	
+	
+#RUN cp /srv/librtlsdr.pc /usr/lib/arm-linux-gnueabihf/pkgconfig/librtlsdr.pc
+RUN cd /srv \
+    && git clone https://github.com/steel101/dump1090.git \
+    && cd dump1090 \
+    && make \
+    && cd .. \
+    && printf 'blacklist dvb_usb_rtl28xxu\nblacklist rtl2832\nblacklist rtl2830\n' > nortl.conf \
+    && cp ./nortl.conf /etc/modprobe.d/no-rtl.conf
+
+#RUN cp /srv/nortl.conf /etc/modprobe.d/no-rtl.conf
+
+# Install ZigBee Libcaot library (Ikea Tradfri and Philips Hue)
+#RUN cd /opt && git clone --recursive https://github.com/obgm/libcoap.git \
+#    && cd libcoap \
+#    && git checkout dtls \
+#    && git submodule update --init --recursive \
+#    && ./autogen.sh \
+#    && ./configure --disable-documentation --disable-shared \
+#    && make \
+#    && make install \
+#    && rm -R /opt/libcoap	
+
+# Compile DomoCAN Services Processes
+RUN gcc /var/www/smartcan/bin/server_udp.c -o /var/www/smartcan/bin/server_udp && chmod u+x /var/www/smartcan/bin/server_udp
+RUN gcc /var/www/smartcan/bin/domocan-bridge.c -o /var/www/smartcan/bin/domocan-bridge && chmod u+x /var/www/smartcan/bin/domocan-bridge
+RUN gcc /var/www/smartcan/bin/domocan-bridge-and-web.c -o /var/www/smartcan/bin/domocan-bridge-and-web && chmod u+x /var/www/smartcan/bin/domocan-bridge-and-web
+RUN gcc /var/www/smartcan/bin/domocan-bridge-and-web-FULL.c -o /var/www/smartcan/bin/domocan-bridge-and-web-FULL && chmod u+x /var/www/smartcan/bin/domocan-bridge-and-web-FULL
+
+# Enable Required Services (Domocan connector)
+RUN chmod +x /etc/init.d/domocan-monitor
+RUN chmod +x /etc/init.d/domocan-init
+RUN systemctl enable domocan-init
+
+# Set correct TimeZone
+RUN cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime
+
+# Declares UDP Socket and enable local broadcast for DomoCAN server
+#RUN sysctl -w net.ipv4.conf.balena0.route_localnet=1
+EXPOSE 1470/udp
+
+# Restore crontab Configuration
+# RUN crontab /opt/crontab
+
+# Intialize SafeShutdown Script
+#RUN sed -i -e "s/^exit 0/sudo python3 \/opt\/SafeShutdown.py \&\n&/g" "/etc/rc.local"
+
+# Starts up the Docker on the device
+CMD [ "bash" , "/opt/start.sh"]

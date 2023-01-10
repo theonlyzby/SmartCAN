@@ -1,0 +1,15 @@
+version: '2'
+volumes:
+  SmartCAN-persistent: null
+services:
+  SmartCAN:
+    build: ./SmartCAN
+    privileged: true
+    environment:
+      - 'DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket'
+    network_mode: host
+    labels:
+      io.balena.features.dbus: '1'
+      io.balena.features.supervisor-api: 1
+    volumes:
+      - 'SmartCAN-persistent:/data'

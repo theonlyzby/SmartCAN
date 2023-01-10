@@ -1,0 +1,1186 @@
+[
+    {
+        "id": "039def2d227970ae",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "af50256203ce24fa",
+        "type": "tab",
+        "label": "DomoCAN3 Events and Actions (do NOT change)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5c6db520b49b7849",
+        "type": "tab",
+        "label": "Integrations",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b59ccf6ca33ca7a1",
+        "type": "mqtt-broker",
+        "name": "SmartCAN",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "3",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "74bf0dbf9f9e48f8",
+        "type": "zigbee2mqtt-bridge-config",
+        "name": "SmartCANZigbee",
+        "broker": "b59ccf6ca33ca7a1",
+        "baseTopic": "zigbee2mqtt",
+        "enabledLogging": false,
+        "allowDeviceStatusRefresh": true
+    },
+    {
+        "id": "884937f43c02f53b",
+        "type": "mqtt in",
+        "z": "039def2d227970ae",
+        "name": "",
+        "topic": "/meraki/radio",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "b59ccf6ca33ca7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 360,
+        "y": 120,
+        "wires": [
+            [
+                "7d0c8b2bc7a89e0f"
+            ]
+        ]
+    },
+    {
+        "id": "7d0c8b2bc7a89e0f",
+        "type": "http request",
+        "z": "039def2d227970ae",
+        "name": "SmartCAN Meraki Webhook",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1/smartcan/webhook/Meraki-WebHook.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1020,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c81ca0f629ceb425",
+        "type": "mqtt out",
+        "z": "039def2d227970ae",
+        "name": "publish MQTT",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b59ccf6ca33ca7a1",
+        "x": 1000,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "9dae18658ba71b3f",
+        "type": "mqtt out",
+        "z": "039def2d227970ae",
+        "name": "",
+        "topic": "zigbee2mqtt/TrafficLight-Green/set",
+        "qos": "2",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b59ccf6ca33ca7a1",
+        "x": 680,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "da1c822ba66c633d",
+        "type": "inject",
+        "z": "039def2d227970ae",
+        "name": "ON",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"state\": \"TOGGLE\",\"color\":{\"rgb\":\"27,131,39\"}}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 720,
+        "wires": [
+            [
+                "9dae18658ba71b3f"
+            ]
+        ]
+    },
+    {
+        "id": "ca6ca19f5115b35e",
+        "type": "debug",
+        "z": "039def2d227970ae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "topic",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "47af15da950b3c80",
+        "type": "debug",
+        "z": "039def2d227970ae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "0292e1dd566b97a5",
+        "type": "debug",
+        "z": "039def2d227970ae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1270,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "811755081c102e3c",
+        "type": "inject",
+        "z": "039def2d227970ae",
+        "name": "Sirene Melody",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "zigbee2mqtt/Sirene01/set",
+        "payload": "{\"melody\":7}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 580,
+        "wires": [
+            [
+                "c81ca0f629ceb425"
+            ]
+        ]
+    },
+    {
+        "id": "7773daa3241f4798",
+        "type": "inject",
+        "z": "039def2d227970ae",
+        "name": "Sirene",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "zigbee2mqtt/Sirene01/set",
+        "payload": "{\"alarm\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "c81ca0f629ceb425"
+            ]
+        ]
+    },
+    {
+        "id": "a555a4cc11dcc6be",
+        "type": "link in",
+        "z": "039def2d227970ae",
+        "name": "LongPressStop Switch01",
+        "links": [
+            "d79c23f07071d518"
+        ],
+        "x": 250,
+        "y": 800,
+        "wires": [
+            [
+                "ce479f7c3a3c0378"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "ce479f7c3a3c0378",
+        "type": "debug",
+        "z": "039def2d227970ae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "1bd203f24ad458c5",
+        "type": "send-messages",
+        "z": "039def2d227970ae",
+        "name": "Send to Zigbee Devices",
+        "bridge": "74bf0dbf9f9e48f8",
+        "x": 870,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "8704b6f6e9d757f9",
+        "type": "http request",
+        "z": "af50256203ce24fa",
+        "name": "SmartCAN3 LongPoll Server",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://172.27.10.226/smartcan/reception",
+        "tls": "",
+        "persist": true,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 340,
+        "y": 340,
+        "wires": [
+            [
+                "24babe263ce71cf4",
+                "3c0d358a850ff982"
+            ]
+        ]
+    },
+    {
+        "id": "24babe263ce71cf4",
+        "type": "function",
+        "z": "af50256203ce24fa",
+        "name": "LongPoll Loop",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nnode.send;",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 400,
+        "wires": [
+            [
+                "8704b6f6e9d757f9"
+            ]
+        ]
+    },
+    {
+        "id": "dbb5fb4e703357be",
+        "type": "inject",
+        "z": "af50256203ce24fa",
+        "name": "Start LongPoll",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 400,
+        "wires": [
+            [
+                "24babe263ce71cf4"
+            ]
+        ]
+    },
+    {
+        "id": "3c0d358a850ff982",
+        "type": "function",
+        "z": "af50256203ce24fa",
+        "name": "Normalize Message",
+        "func": "// \"IN;DomoCAN3,0x01,0x05,0x26\" Press\n// \"IN;DomoCAN3,0x01,0x05,0x52\" LongPress\n// \"IN;DomoCAN3,0x01,0x05,0x8a\" LongPressStop\n// \"LAMP;2,HiFi,32\"\n// \"LAMP;1,lamp,0\"\n\n// Declare Variables\nvar Event_Nature = msg.payload.split(';')[0];\nvar Actions      = { \"0x26\":\"Press\",\n                      \"0x52\":\"LongPress\",\n                      \"0x8a\":\"LongPressStop\"};\nvar States       = { \"0\":\"OFF\", \"32\":\"ON\"};\nvar msg_out      = { payload:\"\" , topic:\"\", manufacturer:\"\", \n                        element:\"\", action:\"\"}\nvar Event_Desc   = \"\";\n\n//node.warn(\"WARN: Event_Nature=\"+Event_Nature);\n\n// if INput Event\nif (Event_Nature==\"IN\") {\n    Event_Desc           = msg.payload.split(';')[1]; \n    msg_out.manufacturer = Event_Desc.split(',')[0];\n    msg_out.element      = Event_Desc.split(',')[1]+\",\"+Event_Desc.split(',')[2];\n    var Action           = Event_Desc.split(',')[3];\n    if ( Object.keys(Actions).includes(Action)){\n        msg_out.action = Actions[Action];\n    }\n}\n    \n// If Lamp Event\nif (Event_Nature==\"LAMP\") {\n    Event_Desc   = msg.payload.split(';')[1];\n    msg_out.manufacturer = \"DomoCAN3\";\n    msg_out.element      = Event_Desc.split(',')[0];\n    var State            = Event_Desc.split(',')[2];\n    msg_out.action       = States[State];\n}\n\n// Generate message OUT    \nif (msg_out.action!=\"\") {\n    msg_out.payload      = \"Element:\"+msg_out.element+\n                            \",Action:\"+msg_out.action+\n                            \",Manufacturer:\"+msg_out.manufacturer;\n    msg_out.topic        = Event_Nature;\n    return msg_out;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 600,
+        "wires": [
+            [
+                "e059e3705dec6175"
+            ]
+        ]
+    },
+    {
+        "id": "3569857a0a0e2083",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "ON LAMP01",
+        "mode": "link",
+        "links": [],
+        "x": 1430,
+        "y": 620,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "e059e3705dec6175",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "Nature",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "IN",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "LAMP",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 650,
+        "y": 600,
+        "wires": [
+            [
+                "e0ef7a2406844270"
+            ],
+            [
+                "3c7f2d51626a9f81"
+            ]
+        ]
+    },
+    {
+        "id": "158a3563917736a5",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "Input Press",
+        "property": "element",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0x01,0x05",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x06",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x07",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 1250,
+        "y": 80,
+        "wires": [
+            [
+                "5be16b72b97905ee"
+            ],
+            [
+                "455ce7e108f8324c"
+            ],
+            [
+                "844c54c2c4ff1df6"
+            ]
+        ]
+    },
+    {
+        "id": "e0ef7a2406844270",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "INput Actions",
+        "property": "action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Press",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "LongPress",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "LongPressStop",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 930,
+        "y": 360,
+        "wires": [
+            [
+                "158a3563917736a5"
+            ],
+            [
+                "3a4dd3d5f6e39b79"
+            ],
+            [
+                "88deca6959273a57"
+            ]
+        ]
+    },
+    {
+        "id": "3c7f2d51626a9f81",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "LAMP Actions",
+        "property": "action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ON",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "OFF",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 940,
+        "y": 860,
+        "wires": [
+            [
+                "3fdf43aefbc0a2ce"
+            ],
+            [
+                "efa33ca63e0cddf6"
+            ]
+        ]
+    },
+    {
+        "id": "3fdf43aefbc0a2ce",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "OUTput ON",
+        "property": "element",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 1250,
+        "y": 660,
+        "wires": [
+            [
+                "3569857a0a0e2083"
+            ],
+            [
+                "f9b1ca551f389742"
+            ],
+            [
+                "1328c02ca7921d1d"
+            ]
+        ]
+    },
+    {
+        "id": "f9b1ca551f389742",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "ON LAMP02",
+        "mode": "link",
+        "links": [],
+        "x": 1430,
+        "y": 660,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "1328c02ca7921d1d",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "ON LAMP03",
+        "mode": "link",
+        "links": [],
+        "x": 1430,
+        "y": 700,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "75e5a0fa210a1a06",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "OFF LAMP01",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 980,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "efa33ca63e0cddf6",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "OUTput OFF",
+        "property": "element",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 1250,
+        "y": 1020,
+        "wires": [
+            [
+                "75e5a0fa210a1a06"
+            ],
+            [
+                "89a6038ad98a468c"
+            ],
+            [
+                "9396aef25d67e792"
+            ]
+        ]
+    },
+    {
+        "id": "89a6038ad98a468c",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "OFF LAMP02",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 1020,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "9396aef25d67e792",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "OFF LAMP03",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 1060,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "5be16b72b97905ee",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "Press Switch01",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 40,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "455ce7e108f8324c",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "Press Switch02",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 80,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "844c54c2c4ff1df6",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "Press Switch03",
+        "mode": "link",
+        "links": [],
+        "x": 1440,
+        "y": 120,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "3a4dd3d5f6e39b79",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "Input LongPress",
+        "property": "element",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0x01,0x05",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x06",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x07",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 1240,
+        "y": 280,
+        "wires": [
+            [
+                "66259d9fe2bb9031"
+            ],
+            [
+                "53bc44bd5d213aa9"
+            ],
+            [
+                "71298fd1584480ae"
+            ]
+        ]
+    },
+    {
+        "id": "66259d9fe2bb9031",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPress Switch01",
+        "mode": "link",
+        "links": [],
+        "x": 1460,
+        "y": 240,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "53bc44bd5d213aa9",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPress Switch02",
+        "mode": "link",
+        "links": [],
+        "x": 1460,
+        "y": 280,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "71298fd1584480ae",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPress Switch03",
+        "mode": "link",
+        "links": [],
+        "x": 1460,
+        "y": 320,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "88deca6959273a57",
+        "type": "switch",
+        "z": "af50256203ce24fa",
+        "name": "Input LongPress Stop",
+        "property": "element",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0x01,0x05",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x06",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0x01,0x07",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 1220,
+        "y": 460,
+        "wires": [
+            [
+                "d79c23f07071d518"
+            ],
+            [
+                "21df0dd0caae7bb0"
+            ],
+            [
+                "d7ed0e08d6d260b7"
+            ]
+        ]
+    },
+    {
+        "id": "d79c23f07071d518",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPressStop Switch01",
+        "mode": "link",
+        "links": [
+            "a555a4cc11dcc6be"
+        ],
+        "x": 1470,
+        "y": 420,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "21df0dd0caae7bb0",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPressStop Switch02",
+        "mode": "link",
+        "links": [],
+        "x": 1470,
+        "y": 460,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "d7ed0e08d6d260b7",
+        "type": "link out",
+        "z": "af50256203ce24fa",
+        "name": "LongPressStop Switch03",
+        "mode": "link",
+        "links": [],
+        "x": 1470,
+        "y": 500,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "32b67cfec2c47100",
+        "type": "mqtt in",
+        "z": "5c6db520b49b7849",
+        "name": "Zigbee2MQTT",
+        "topic": "zigbee2mqtt/+",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "b59ccf6ca33ca7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 80,
+        "wires": [
+            [
+                "1b3bb1ee1df34a58"
+            ]
+        ]
+    },
+    {
+        "id": "d93736a8aaeab2b2",
+        "type": "http request",
+        "z": "5c6db520b49b7849",
+        "name": "Zigbee Webhook",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1/smartcan/webhook/Zigbee-WebHook.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 710,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1b3bb1ee1df34a58",
+        "type": "function",
+        "z": "5c6db520b49b7849",
+        "name": "MQTT to SmartCAN Webhook",
+        "func": "var m_out = [];\n\nmsg.payload = {\"Payload\": msg.payload, \"topic\": msg.topic};\n\nm_out.push(msg);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 80,
+        "wires": [
+            [
+                "d93736a8aaeab2b2"
+            ]
+        ]
+    },
+    {
+        "id": "a8db43977d990451",
+        "type": "function",
+        "z": "5c6db520b49b7849",
+        "name": "Webhook to MQTT",
+        "func": "var m_out = [];\nvar topik = \"zigbee2mqtt/\"+msg.payload.target+\"/set\";\nvar out_msg = {\"topic\":topik,\"payload\":msg.payload.cmd};\nm_out.push(out_msg);\nreturn out_msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "f5054163323e3fb7"
+            ]
+        ]
+    },
+    {
+        "id": "30cca73d308ec7fc",
+        "type": "mqtt out",
+        "z": "5c6db520b49b7849",
+        "name": "publish MQTT",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b59ccf6ca33ca7a1",
+        "x": 860,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "b791bf821f65ae09",
+        "type": "http in",
+        "z": "5c6db520b49b7849",
+        "name": "to MQTT",
+        "url": "/toMQTT",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 300,
+        "wires": [
+            [
+                "6adba4a3c1e6f25e",
+                "a8db43977d990451"
+            ]
+        ]
+    },
+    {
+        "id": "6adba4a3c1e6f25e",
+        "type": "template",
+        "z": "5c6db520b49b7849",
+        "name": "page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "OK\n",
+        "output": "str",
+        "x": 250,
+        "y": 240,
+        "wires": [
+            [
+                "37047b99d5364b81"
+            ]
+        ]
+    },
+    {
+        "id": "37047b99d5364b81",
+        "type": "http response",
+        "z": "5c6db520b49b7849",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 390,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "aa937b5028aa63f2",
+        "type": "trigger",
+        "z": "5c6db520b49b7849",
+        "name": "",
+        "op1": "",
+        "op2": "",
+        "op1type": "pay",
+        "op2type": "pay",
+        "duration": "7",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 900,
+        "y": 340,
+        "wires": [
+            [
+                "30cca73d308ec7fc"
+            ]
+        ]
+    },
+    {
+        "id": "32a0256b0f4ea092",
+        "type": "switch",
+        "z": "5c6db520b49b7849",
+        "name": "Action",
+        "property": "payload.state",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "TOGGLE",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "ON",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "OFF",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "TEMPO",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 690,
+        "y": 260,
+        "wires": [
+            [
+                "30cca73d308ec7fc"
+            ],
+            [
+                "30cca73d308ec7fc"
+            ],
+            [
+                "30cca73d308ec7fc"
+            ],
+            [
+                "976b2ba2eb28212f"
+            ]
+        ]
+    },
+    {
+        "id": "976b2ba2eb28212f",
+        "type": "function",
+        "z": "5c6db520b49b7849",
+        "name": "Tempo Toggle",
+        "func": "var m_out = [];\nvar pload = msg.payload;\npload.state=\"TOGGLE\";\nvar out_msg = {\"topic\":msg.topic,\"payload\":pload};\nm_out.push(out_msg);\nreturn out_msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 280,
+        "wires": [
+            [
+                "aa937b5028aa63f2"
+            ]
+        ]
+    },
+    {
+        "id": "f5054163323e3fb7",
+        "type": "json",
+        "z": "5c6db520b49b7849",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "32a0256b0f4ea092",
+                "30cca73d308ec7fc"
+            ]
+        ]
+    },
+    {
+        "id": "b4c08ce19b16c449",
+        "type": "debug",
+        "z": "5c6db520b49b7849",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "topic",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "b7ed0858a79f9131",
+        "type": "debug",
+        "z": "5c6db520b49b7849",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 180,
+        "wires": []
+    }
+]

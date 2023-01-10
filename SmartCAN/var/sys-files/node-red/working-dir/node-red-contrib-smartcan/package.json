@@ -1,0 +1,15 @@
+{
+    "name": "node-red-contrib-smartcan",
+    "version": "0.0.1",
+    "description": "A node to initiate a flow based upon a SMartCAN event, like switch pressed, or presence detection, ...",
+    "dependencies": {},
+    "keywords": [
+        "node-red",
+        "smartcan"
+    ],
+    "node-red": {
+        "nodes": {
+            "sample": "event/event.js"
+        }
+    }
+}
