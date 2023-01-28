@@ -1,5 +1,12 @@
 <?php
+// Includes
+include_once('../../conf/config.php');
 include_once '../../lang/www.thermostat.php';
+
+// Connect DB
+$DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
+mysqli_select_db($DB,mysqli_DB);
+  
 $Lang = "en"; if (isset($_GET["lang"])) { $Lang = $_GET["lang"];}
 $zone = "0"; if (isset($_GET["zone"])) { $zone = $_GET["zone"];}
 $zoneColor = "000000"; if (isset($_GET["zoneColor"])) { $zoneColor = $_GET["zoneColor"];}
@@ -55,7 +62,6 @@ a {		color: #FFF;
  border-radius:350px;
  -webkit-border-radius: 350px;
  
-  echo("zone=".$zone.",zoneColor=".$zoneColor."<br>");
  /* Permet de mettre un dégradé sur le cercle en fonction de tous les navigateurs */
  background: #<?php echo($zoneColor); ?>; /* Old browsers 0e0e0e RED:754110, Orange:755210, Green:157510, Cyan:107275, Blue:231075, Purple:751033 */
  background: -webkit-radial-gradient(top left, ellipse cover, #eaeaea 0%,#eaeaea 11%,#<?php echo($zoneColor); ?> 61%); /* Chrome10+,Safari5.1+ */
@@ -386,7 +392,7 @@ var temperatureConfort=window.parent.consigneconfort.innerHTML;
 // temperature mini
 var temperatureMini=window.parent.consigneminimum.innerHTML;
 // temperature Affichage LCD
-var temperatureNest=window.parent.consigne.innerHTML;
+var temperatureNest=window.parent.divconsigne.innerHTML;
 //var temperatureNest=temperatureConfort
 // temperature actuelle sondes
 var temperatureActuelle=window.parent.moyenne.innerHTML;
@@ -607,6 +613,7 @@ function refreshTemp()
 	//console.log("Mode="+currentMode+"Mouse="+readyToSensor);
 	if ((currentMode=="") && (currentMode!="Auto") && (readyToSensor=="OK")) {
 	  //console.log("Update Temp & Others");
+	  temperatureNest=window.parent.divconsigne.innerHTML;
 	  getTempMini();
 	  getTempConfort();
 	  getTempActuelle();
@@ -941,7 +948,7 @@ $(parent).bind('keydown', '$', function(evt){
   } // END IF
   
   //
-  // Up or Down on Temp Confort or Temp Mini to chang configured temperatures 
+  // Up or Down on Temp Confort or Temp Mini to change configured temperatures 
   if (((evt.keyCode==38) || (evt.keyCode==40)) && ((currentMode=="TEMP CONFORT") || (currentMode="TEMP MINI"))) { //
     DeltaTemp=+1;
 	if (evt.keyCode==38) { newValue = parseFloat(temperatureNest) + 0.5; } else { newValue = parseFloat(temperatureNest) - 0.5; }
@@ -1014,17 +1021,30 @@ $('#nestTitle').click(function(){
 // Manage Mode Change on screen 
 function ChangeMode(mode) {
   // Restrict available modes when in specific Zone
-<?php if($zone!="0") { echo('  if ((currentMode=="") || (currentMode=="&nbsp;")) { currentMode="Auto"; }');}?>  
+<?php
+if($zone!="0") {
+  // Heater or Thermostatic Valves ONLY?
+  $sql="SELECT * FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `ZoneNber`=0 AND `clef`='HeaterOUT';";
+  $retour = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
+  if ($row['valeur']=="") {
+    echo('  if (currentMode=="&nbsp;") { currentMode="&nbsp;&nbsp;";}' .chr(10).chr(13));
+  } else {
+    echo('  if (currentMode=="&nbsp;") { currentMode="HEAT NOW"; }' .chr(10).chr(13));
+  } // END IF
+  echo('  if (currentMode=="" || currentMode=="HEAT NOW") { currentMode="Auto"; }'.chr(10).chr(13));
+}
+?>  
   // Reduces modes when using keys to scroll modes
   if (mode=="keys") {
     //alert(currentMode);
     if ((currentMode=="") || (currentMode=="TEMP MINI")) { currentMode="&nbsp;&nbsp;"; }
   }
 
-  if ( currentMode == "HEAT NOW" )
+  if ( currentMode == "HEAT NOW" || currentMode == "")
    
    {
-   currentMode="Auto";
+    currentMode="Auto";
 	$( "#nestValue" ).html("AWAY");
 	setCouleurTemperature();
 	majCouleurCercle(couleurFondAutoAway);
@@ -1035,12 +1055,15 @@ function ChangeMode(mode) {
 	$('#feuille').css("opacity","1");
 	$('#fire').css("opacity","0");
 	majBarres(0,ratioTemperature);
-	//console.log("Auto AWAY");
+	console.log("Auto AWAY");
 	TimeOUT_AWAY=setTimeout(function(){AUTO_Away()},5000);
    } else if ( currentMode == "Auto" ) 
 
    {
 	    currentMode="TEMP CONFORT";
+<?php
+if($zone=="0") { echo("clearTimeout(TimeOUT_AWAY);"); }
+?>
 	    temperatureNest=temperatureConfort;
 		$( "#nestMode" ).html(currentMode);
 		$( "#nestValue" ).html(temperatureNest );
@@ -1052,8 +1075,7 @@ function ChangeMode(mode) {
 		$("#hour").css("opacity","0");
 		$("#hour2").css("opacity","0");
 		$('#feuille').css("opacity","0");
-		clearTimeout(TimeOUT_AWAY);
-
+		
 	} else if ( currentMode == "TEMP CONFORT")
 	
    {
@@ -1069,9 +1091,7 @@ function ChangeMode(mode) {
 	$("#hour").css("opacity","0");
 	$("#hour2").css("opacity","0");
 	$('#feuille').css("opacity","0");
-	
    } else if ( currentMode == "TEMP MINI")   
-   
     {
     currentMode="&nbsp;";
 	$( "#nestMode" ).html(currentMode);
@@ -1087,10 +1107,11 @@ function ChangeMode(mode) {
 	//clearTimeout(TimeOUT_RELOAD);
 	majBarres(0,ratioTemperature);
 	TimeOUT_CONFIG=setTimeout(function(){parent.showOverlay("ConfigDIV","day[0][0]");},5000);
-   } else if ( currentMode == "&nbsp;" || currentMode == "") 
+   } else if ( currentMode == "&nbsp;") 
 
    {
     currentMode="&nbsp;&nbsp;";
+	clearTimeout(TimeOUT_CONFIG);
 	$( "#nestMode" ).html(currentMode);
 	$( "#nestValue" ).html("<span id=\"changetemp\" onClick=\"parent.go('heater')\"><img src='thermometer.png' width=48 height=48 align='center' /><br>Temp</span>");
 	setCouleurTemperature();
@@ -1102,13 +1123,15 @@ function ChangeMode(mode) {
 	$("#hour2").css("opacity","0");
 	$('#feuille').css("opacity","0");
 	majBarres(0,ratioTemperature);
-	clearTimeout(TimeOUT_CONFIG);
 	TimeOUT_TEMP=setTimeout(function(){parent.go('heater');},5000);
    } else if ( currentMode == "&nbsp;&nbsp;")  
    
    
    {
     currentMode="HEAT NOW";
+<?php
+if($zone=="0") { echo("clearTimeout(TimeOUT_TEMP);"); } else { echo("clearTimeout(TimeOUT_CONFIG);"); }
+?>
 	$( "#nestMode" ).html(currentMode);
 	$( "#nestValue" ).html('for');
 	setCouleurTemperature();
@@ -1118,7 +1141,6 @@ function ChangeMode(mode) {
 	$("#hour2").css("opacity","1");
 	$( "#consigne" ).css("opacity","0");
 	$('#feuille').css("opacity","0");
-	clearTimeout(TimeOUT_TEMP);
    }   
    
   $( "#nestMode" ).html(currentMode);

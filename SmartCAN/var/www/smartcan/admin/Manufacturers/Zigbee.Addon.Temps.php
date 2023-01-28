@@ -24,8 +24,9 @@ class Zigbee_class {
 	  } // END IF
 	  
 	  //echo("Moyenne Before=".$Moyenne.",After=".$ZoneID."<br>".CRLF);
-	  $Moyenne = $ZoneID;
-	  
+      if ($Moyenne==1) { $Moyenne=0; } else { $Moyenne=1; }
+	  $Moyenne = $ZoneID + ($Moyenne*90);
+	  //echo("Moyenne ,After=".$Moyenne."<br>".CRLF);
 	  
 	  // Return ID value to save into DB
 	  return($NewZigbee);
@@ -35,7 +36,7 @@ class Zigbee_class {
   
   function HTMLoption() {
 	  GLOBAL $DB, $msg, $Lang;
-	  $sql = "SELECT * FROM `".TABLE_ELEMENTS."` WHERE (`element_type`='0x41' AND `Manufacturer`='Zigbee')  ORDER BY `id` ASC;";
+	  $sql = "SELECT * FROM `".TABLE_ELEMENTS."` WHERE ((`element_type`='0x41' OR `element_type`='0x42') AND `Manufacturer`='Zigbee')  ORDER BY `id` ASC;";
 	  $query = mysqli_query($DB,$sql);
 	  while ($row = mysqli_fetch_array($query, MYSQLI_BOTH)) {
 		$sql2 = "SELECT COUNT(*) AS County FROM `".TABLE_CHAUFFAGE_SONDE."` WHERE `id_sonde`='Zigbee_".$row['card_id']."'";
@@ -109,11 +110,18 @@ class Zigbee_class {
   
   function javaChange() {
 	  //echo('alert("sel="+selected.substring(0, 7));');
+	  /*
 	  echo('if (selected.substring(0, 7)==="Zigbee_") { document.getElementById("Mean01").style.display = "none";document.getElementById("Mean02").style.display = "none";'.
 	       'document.getElementById("NewZigbee0").style.display = "table-row";'.
 		   '} else { document.getElementById("Mean01").style.display = "inline";document.getElementById("Mean02").style.display = "inline";' .
 		   'document.getElementById("NewZigbee0").style.display = "none";document.getElementById("NewZigbee1").style.display = "none";}' . CRLF);
+	  */
+	  echo('if (selected.substring(0, 7)==="Zigbee_") { '.
+	       'document.getElementById("NewZigbee0").style.display = "table-row";'.
+		   '} else { ' .
+		   'document.getElementById("NewZigbee0").style.display = "none";document.getElementById("NewZigbee1").style.display = "none";}' . CRLF);
       echo('}' . CRLF);
+	 
 /*
 	  echo('function cloneSel(id,targid){' . CRLF);
 	  echo('  var count=document.getElementsByTagName(doc(id).tagName).length;' . CRLF);

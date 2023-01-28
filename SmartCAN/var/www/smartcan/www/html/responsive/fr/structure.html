@@ -20,6 +20,7 @@
 	
 	<!-- Icons -->
 	<!-- All Browser ico=32*32, png=72*72 -->
+	<link rel="icon" href="./images/icons/favicon.ico" type="image/x-icon"/>
 	<link rel="icon" href="./images/icons/favicon.png" type="image/x-icon"/>
 	<!-- Android -->
 	<link href="./images/icons/icon-196x196.png"                          rel="shortcut icon" sizes="196x196">
@@ -55,7 +56,8 @@
 	
 	
 	<link rel="stylesheet" href="./css/responsive/structure.css" type="text/css" />
-    <script type="text/javascript" src="./lib/jquery-1.4.4.min.js"></script>
+    <!-- <script type="text/javascript" src="./lib/jquery-1.4.4.min.js"></script> -->
+	<script type="text/javascript" src="./lib/jquery-3.6.3.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./lib/weather/jquery.jdigiclock.css" />
 	<link rel="stylesheet" href="./html/responsive/w3.css">
 	<style>
@@ -88,8 +90,23 @@
         document.body.appendChild(iframe);
       });
 
-      function reception(data) {
+	   function reception(data) {
+		//console.log("Reception/Data="+data);
+		tab = data.split(';');
+		console.log(" Reception/tab0="+tab[0]+", tab1="+tab[1]);
+        if ( tab[0] == 'message' ) {
+          $('#message').text(tab[1]);
+        }
+        else {
+          if ( window.receptionmodule ) {
+            receptionmodule(tab[0], tab[1]);
+          }
+        }
+      }
+	  function reception2(data) {
+		//console.log("Reception2/Data="+data);
         tab = data.split(';');
+		console.log(" Reception2/tab0="+tab[0]+", tab1="+tab[1]);
         if ( tab[0] == 'message' ) {
           $('#message').text(tab[1]);
         }

@@ -2,9 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <title>Listen</title>
-      <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+      <script type="text/javascript" src="jquery-3.6.3.min.js"></script>
 
       <script type="text/javascript">
+	  
+		function delay(time) {
+		  return new Promise(resolve => setTimeout(resolve, time));
+		}
+	  
         function listen(last_modified, etag) {
          $.ajax({
            'beforeSend': function(xhr) {
@@ -19,7 +24,9 @@
               etag = xhr.getResponseHeader('Etag');
               last_modified = xhr.getResponseHeader('Last-Modified');
 
-              window.parent.reception(data);
+			  //console.log("listen/data="+data+"/etag="+etag);
+			  if ((etag%2)==1) { window.parent.reception2(data); } else { window.parent.reception(data); }
+              //window.parent.reception(data);
 
               /* Start the next long poll. */
               if ( etag == null ) {

@@ -2,6 +2,8 @@
 
 function receptionmodule(cle,valeur) {
 
+  console.log("JS/cle="+cle+", value="+valeur);
+  
   if ( cle == 'sonde' ) {
     sonde(valeur);
   }
@@ -22,6 +24,12 @@ function receptionmodule(cle,valeur) {
   }
   if ( cle == 'PROCHAINECHAUFFE' ) {
     prochainechauffe(valeur);
+  }  
+  if ( cle == 'CHAUDIERE' ) {
+    chaudiere(valeur);
+  }
+  if ( cle == 'CONSIGNE' ) {
+    consigne(valeur);
   }
 };
 
@@ -29,11 +37,12 @@ function sonde(data) {
   tab = data.split(',');
   idsonde = tab[0];
   valeur = tab[1];
-  if (idsonde=="moyennemaison") { idsonde = "moyenne"; }
+  //if (idsonde=="moyennemaison") { idsonde = "moyenne"; }
   $('#' + idsonde).text(valeur);
-  //console.log("JS/"+idsonde+"="+valeur);
-  xajax_moyenne();
+  //xajax_moyenne();
+  //console.log("JS/"+idsonde+"="+valeur+", OUT="+out);
 }
+
 
 function temperaturevoulue(data) {
   $('#temperature').text(data);
@@ -60,7 +69,18 @@ function finchauffe(data) {
 }
 
 function prochainechauffe(data) {
+	console.log("JS/Prochaine Chauffe="+data);
 	$('#divprochainechauffe').text(data);
+}
+
+function chaudiere(data) {
+	console.log("JS/Chaudiere="+data);
+	$('#divchaudiere').text(data);
+}
+
+function consigne(data) {
+	console.log("JS/Consigne="+data);
+	$('#divconsigne').text(data);
 }
 
 </script>

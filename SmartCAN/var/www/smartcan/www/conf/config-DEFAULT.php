@@ -59,7 +59,7 @@
   define('ADMIN_LIGHT_SIDE_TITLE', 'Points Lumineux/Prises :');
   define('ADMIN_THERM_PAGE_NAME', 'Gestion de la Thermie');
   define('WEB_TEMP_SOURCES', '../www/lib/stations.txt'); //http://weather.rap.ucar.edu/surface/stations.txt
-  define('WEB_TEMP_URL', 'http://tgftp.nws.noaa.gov/data/observations/metar/stations/');
+  define('WEB_TEMP_URL', 'https://tgftp.nws.noaa.gov/data/observations/metar/stations/');
   define('ADMIN_TEMP_PAGE_NAME', 'Position des Sondes de Temp&eacute;rature');
   define('ADMIN_TEMP_SIDE_TITLE', 'Sondes :');
   define('ADMIN_OUTPUT_PAGE_NAME', 'Gestion des Sorties');

@@ -41,8 +41,9 @@
 			$update      = "`function` = '".$db_function."', `days` = '".$db_day."', `start` = '".$db_start."', `stop` = '".$db_stop."', `active` = '".$db_active."'";
 			if ($db_active=="N") { $update .= " , `zones` = '1000000'"; }
 		  } else {
-			if ($db_active=="Y") { $db_active="1"; } else { $db_active="0"; }
-			$update      = "`zones` = '".substr($db_zones,0,(intval($heatzone)-1)).$db_active.substr($db_zones,intval($heatzone),(7-intval($heatzone)))."'";
+			//if ($db_active=="Y") { $db_active="1"; } else { $db_active="0"; }
+			//$update      = "`zones` = '".substr($db_zones,0,(intval($heatzone)-1)).$db_active.substr($db_zones,intval($heatzone),(7-intval($heatzone)))."'";
+			$update      = "`days` = '".$db_day."', `start` = '".$db_start."', `stop` = '".$db_stop."', `active` = '".$db_active."'";
 		  }
 		  if ($db_id!="0") {
 		    $sql = "UPDATE `" . TABLE_HEATING_TIMSESLOTS . "` SET ".$update." WHERE `id` = ".$db_id.";";
@@ -195,7 +196,8 @@
     } // END IF
 	
     echo("<td width='5%' align='left' valign='top'><input type=hidden name='active[".$line."]' value='N'><input id='active[" . $line . "]' name='active[" . $line . "]' type='checkbox' value='Y' style='visibility: hidden; title='Active?'' ");
-	if (($heatzone=="0" && $db_active=="Y") || ($heatzone!="0" && substr($db_zones,($heatzone-1),1)=="1")) { echo("checked"); }
+	if ($db_active=="Y") { echo("checked"); }
+	//if (($heatzone=="0" && $db_active=="Y") || ($heatzone!="0" && substr($db_zones,($heatzone-1),1)=="1")) { echo("checked"); }
 	echo("/><label for='active[" . $line . "]'><span class='ui'></span></label></td>" . CRLF);
     echo("<td width='5%' align='center' valign='bottom'>".$del."</td></tr>" . CRLF);
 	$line++;

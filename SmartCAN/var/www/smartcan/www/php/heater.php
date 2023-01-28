@@ -19,7 +19,7 @@
     $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1'");
     $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
     mysqli_close($DB);
-    $objResponse->assign("moyenne","innerHTML", round($row[0],1));
+    $objResponse->assign("moyenne","innerHTML", rand(25, 35)); //round($row[0],1));
     return $objResponse;    
   }
 
@@ -88,7 +88,7 @@
   /* AFFICHAGE DE LA TEMPERATURE MOYENNE DE LA MAISON */
   $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `moyenne` = '1'");
   $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
-  $_XTemplate->assign('MOYENNEMAISON', round($row[0],1));
+  $_XTemplate->assign('MOYENNEMAISON', 17); //round($row[0],1));
 
   /* AFFICHAGE DE LA TEMPERATURE VOULUE */
   $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'temperature'");

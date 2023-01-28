@@ -21,10 +21,10 @@ RUN apt-get install -yq debconf-utils \
        php7.3 php7.3-curl php7.3-gd php7.3-fpm php7.3-cli php7.3-opcache php7.3-mysqli php7.3-xml php7.3-mbstring \
        ntp samba samba-common-bin systemd systemd-sysv git-core git cmake libusb-1.0-0-dev build-essential pkg-config \
        libffi-dev libnacl-dev python3-dev curl mosquitto mosquitto-clients libmosquitto-dev \
-	   python3-rpi.gpio libudev-dev g++ libyaml-dev openzwave python3-setuptools npm pciutils rpi-eeprom
+	   python3-rpi.gpio libudev-dev g++ libyaml-dev openzwave python3-setuptools npm pciutils
 
 # Install Rpi4 EEPROM update
-RUN cd /opt && git clone https://github.com/raspberrypi/rpi-eeprom.git
+RUN cd /opt && git clone https://github.com/raspberrypi/rpi-eeprom
 
 # Install wiringpi (64 bits Modified Version)
 #RUN cd /opt && git clone git://github.com/Vicinzu/wiringPi-arm64 \

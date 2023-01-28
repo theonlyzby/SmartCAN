@@ -1,4 +1,4 @@
-<head>
+          <head>
 <style>
 /*the container must be positioned relative:*/
 .custom-select {
@@ -62,6 +62,35 @@
 .select-items div:hover, .same-as-selected {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+.battery:after {
+    background-color: #000;
+    border: 2px solid #fff;
+    content: "";
+    display: block;
+    height: 16px;
+    position: absolute;
+    right: -6px;
+    top: 6px;
+    width: 6px;
+}
+.battery {
+    background-color: #000;
+    border: 2px solid #fff;
+    height: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    width: 100px;
+}
+
+.battery .battery-level {
+    background-color: #666;
+    height: 100%;
+    text-align: center;
+	text-color: white;
+	color: white;
+}
 </style>
 		    <script type="text/javascript">
 			  
@@ -77,8 +106,7 @@
 			  }
 			  function setMyDiv(userFile)
 			  {			
-			    
-			    document.getElementById("contenu_gauche").innerHTML = "<iframe name='ithermostat' id='ithermostat' src='"+userFile+"' width=400 height=400 frameborder=0 scrolling=no>";
+			    document.getElementById("contenu_gauche").innerHTML = "<iframe name='ithermostat' id='ithermostat' src='"+userFile+"&zone={HEATZONE}&zoneColor={HEATZONECOLOR}' width=400 height=400 frameborder=0 scrolling=no>";
 				//setTimeout(function() { DivDiv(); }, 1000);
 
 			  }
@@ -139,13 +167,13 @@
 			  
 		    </script>
 		  </head>
-		  <body onLoad="setMyDiv('/smartcan/www/html/nest/nest.php?lang=en');">
+		  <body onLoad="setMyDiv('/smartcan/www/html/nest/nest.php?lang=fr');">
 		  <div id="ThermostatConfig"></div>
-		  <div id="main"  style="position: absolute;  top: 65px; left: 0px;">
-		  <div id="info" class="w3-container w3-text-black w3-margin-top"><span id="changetemp" onClick="go('chauffage')"><br><br>Temperature: </span>
+		  <div id="main"  style="position: absolute;  top: 25px; left: 50px;">
+		  <div id="info" class="w3-container w3-text-black w3-margin-top"><span id="changetemp" onClick="go('chauffage')"><br><br>Temp&eacute;rature: </span>
 		   <strong><span id="moyenne" onClick="go('stats_temperature&idsonde=temperaturemaison');">{MOYENNEMAISON}</span> &deg;C</strong>
-		   (Outside: <strong><span id="temperatureexterieure" onClick="go('stats_temperature&idsonde=temperatureexterieure')";>{TEMPERATUREEXTERIEURE}</span> &deg;C</strong>)
-		   , Setpoint: <span id="consigneconfort">{TEMPERATURE}</span> &deg;C, Heater: <span id="divchaudiere">{CHAUDIERE}</span>
+		   (Exterieur: <strong><span id="temperatureexterieure" onClick="go('stats_temperature&idsonde=temperatureexterieure')";>{TEMPERATUREEXTERIEURE}</span> &deg;C</strong>)
+		   , TempConfort: <span id="consigneconfort">{TEMPERATURE}</span> &deg;C, div Consigne= <span id="divconsigne">{CONSIGNE}</span> &deg;C, Chaudi&egrave;re: <span id="divchaudiere">{CHAUDIERE}</span>
 
 			
 		  </div>
@@ -159,10 +187,10 @@
 		  <span id="divheatzone" style="display:none">{HEATZONE}</span><span id="divheatzonecolor" style="display:none">{HEATZONECOLOR}</span>
 		  </div>
 		  		    <div id="tohide" class="w3-container w3-text-white" style="display:none">Minimum: <span id="consigneminimum">{TEMPMINIMUM}</span> &deg;C, Absence:<span id="divabsence">{ABSENCE}</span>
-			<br> Heating Periode:<span id="divperiodechauffe">{PERIODECHAUFFE}</span>, End Heating Period:<span id="divfinchauffe">{FINCHAUFFE}</span>,<br> Next Heating:<span id="divprochainechauffe">{PROCHAINECHAUFFE}</span>
+			<br> Periode de Chauffe:<span id="divperiodechauffe">{PERIODECHAUFFE}</span>, Fin de periode de chauffe:<span id="divfinchauffe">{FINCHAUFFE}</span>,<br> Prochaine Chauffe:<span id="divprochainechauffe">{PROCHAINECHAUFFE}</span>
 			(Hour=<span id="divprochainechauffeH">{HOUR}</span>,Day=<span id="divprochainechauffeD">{DD}</span>)
 			
-			</div>
+			</div><p align="center"></p>
 		  </div>
 <script>
 var x, i, j, selElmnt, a, b, c, prevSel;
@@ -179,7 +207,10 @@ for (i = 0; i < x.length; i++) {
   /*for each element, create a new DIV that will contain the option list:*/
   b = document.createElement("DIV");
   b.setAttribute("class", "select-items select-hide");
+  SelectedZone = document.getElementById("DropSelectedZone").value;
+  //alert("Zone ="+SelectedZone);
   for (j = 1; j < selElmnt.length; j++) {
+   if (j!=parseInt(SelectedZone)) {
     /*for each option in the original select element,
     create a new DIV that will act as an option item:*/
     c = document.createElement("DIV");
@@ -205,6 +236,7 @@ for (i = 0; i < x.length; i++) {
         h.click();
     });
     b.appendChild(c);
+   }
   }
   x[i].appendChild(b);
   a.addEventListener("click", function(e) {

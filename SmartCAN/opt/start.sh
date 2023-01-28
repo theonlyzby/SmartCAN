@@ -44,8 +44,10 @@ if [ ! -f /data/Initial-Install.txt ]; then
 	chmod 777 /data/www/log/SmartCAN-WebAdmin.log
 	mkdir /data/www/backups
 	chmod 777 /data/www/backups
+	chmod +x  /data/www/smartBACKUP/generate-smartbackuptar.sh
 	chmod 777 /data/www/smartcan/uploads
 	chmod 777 /data/www/smartcan/uploads/
+	chmod 777 /data/www/smartcan/webhook/*.txt
 	# Copying NGINX config file
 	cp /usr/local/nginx/conf/nginx.conf /data/sys-files/nginx.conf
 	# Creating Mosquitot password file for user MQTTuser

@@ -23,7 +23,6 @@ echo("<title>".$msg["MAIN"]["title"]["en"]."</title>");
 
 	<!-- Icons -->
 	<!-- All Browser ico=32*32, png=72*72 -->
-	<link rel="icon" href="../www/images/icons/favicon.ico" type="image/x-icon"/>
 	<link rel="icon" href="../www/images/icons/favicon.png" type="image/x-icon"/>
 	<!-- Android -->
 	<link href="../www/images/icons/icon-196x196.png"                                   rel="shortcut icon" sizes="196x196" />
@@ -60,7 +59,7 @@ echo("<title>".$msg["MAIN"]["title"]["en"]."</title>");
 
 
 <script type='text/javascript' src='./js/jquery.easy-slider.js?ver=3.3.1'></script>
-<script type='text/javascript' src='./js/jquery-1.11.3.min.js?ver=1.4.2'></script>
+<script type='text/javascript' src='./js/jquery-3.6.3.min.js?ver=3.6.3'></script>
 
 
 
