@@ -41,8 +41,9 @@
 			$update      = "`function` = '".$db_function."', `days` = '".$db_day."', `start` = '".$db_start."', `stop` = '".$db_stop."', `active` = '".$db_active."'";
 			if ($db_active=="N") { $update .= " , `zones` = '1000000'"; }
 		  } else {
-			if ($db_active=="Y") { $db_active="1"; } else { $db_active="0"; }
-			$update      = "`zones` = '".substr($db_zones,0,(intval($heatzone)-1)).$db_active.substr($db_zones,intval($heatzone),(7-intval($heatzone)))."'";
+			//if ($db_active=="Y") { $db_active="1"; } else { $db_active="0"; }
+			//$update      = "`zones` = '".substr($db_zones,0,(intval($heatzone)-1)).$db_active.substr($db_zones,intval($heatzone),(7-intval($heatzone)))."'";
+			$update      = "`days` = '".$db_day."', `start` = '".$db_start."', `stop` = '".$db_stop."', `active` = '".$db_active."'";
 		  }
 		  if ($db_id!="0") {
 		    $sql = "UPDATE `" . TABLE_HEATING_TIMSESLOTS . "` SET ".$update." WHERE `id` = ".$db_id.";";
@@ -51,14 +52,14 @@
 		      if ($heatzone=="0") {
 			    $sql = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` (`id`, `function`, `days`, `start`, `stop`, `active`, `zones`) VALUES (NULL, '".$db_function."', '".$db_day."', '".$db_start.":00', '".$db_stop.":00', '".$db_active."', '1111111');";
 			  } else {
-				$zone_insert = str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(6-intval($heatzone)),"0");
-			    $sql = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` (`id`, `function`, `days`, `start`, `stop`, `active`, `zones`) VALUES (NULL, '".$db_function."', '".$db_day."', '".$db_start.":00', '".$db_stop.":00', 'N', '".$zone_insert."');";
+				$zone_insert = str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(7-intval($heatzone)),"0");
+			    $sql = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` (`id`, `function`, `days`, `start`, `stop`, `active`, `zones`) VALUES (NULL, '".$db_function."', '".$db_day."', '".$db_start.":00', '".$db_stop.":00', 'Y', '".$zone_insert."');";
 			  } // END IF
 		    } // END IF
 		  } // END IF
 	      $form_line++;
 		  // Update DB
-		  echo("<br>SQL=$sql<br>");
+		  //echo("<br>SQL=$sql<br>");
 		  $retour = mysqli_query($DB,$sql);
 	    } // END WHILE
 	  } // END IF DELETE?
@@ -66,8 +67,8 @@
   
   
   // Determine Zone and function dependant parameters
-  if ($heatzone!=0) { $selector = "`active`='Y' OR (`active`='N' AND `zones`='".str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(6-intval($heatzone)),"0")."')"; }  else { $selector = "`zones` LIKE '1______'"; }
-  // Circul => no Boiler in Zones
+  if ($heatzone!=0) { $selector = "(`zones`='".str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(7-intval($heatzone)),"0")."')"; }  else { $selector = "`zones` LIKE '1______'"; }
+  // Circul => no Boiler in Zones   `active`='Y' OR 
   $sql = "SELECT * FROM `chauffage_clef` WHERE `clef`='circulateureauchaude';";
   $retour   = mysqli_query($DB,$sql);
   $row=mysqli_fetch_array($retour, MYSQLI_BOTH);
@@ -136,7 +137,7 @@
 
 
   $line=0;
-  //print("HeatZone=".$heatzone);
+  //echo("HeatZone=".$heatzone);
   
   $sql = "SELECT * FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE ".$selector." ORDER BY function,start,zones LIMIT ".$FormStart.",5;";
   //echo("sql = ".$sql."<br>");
@@ -195,7 +196,8 @@
     } // END IF
 	
     echo("<td width='5%' align='left' valign='top'><input type=hidden name='active[".$line."]' value='N'><input id='active[" . $line . "]' name='active[" . $line . "]' type='checkbox' value='Y' style='visibility: hidden; title='Active?'' ");
-	if (($heatzone=="0" && $db_active=="Y") || ($heatzone!="0" && substr($db_zones,($heatzone-1),1)=="1")) { echo("checked"); }
+	if ($db_active=="Y") { echo("checked"); }
+	//if (($heatzone=="0" && $db_active=="Y") || ($heatzone!="0" && substr($db_zones,($heatzone-1),1)=="1")) { echo("checked"); }
 	echo("/><label for='active[" . $line . "]'><span class='ui'></span></label></td>" . CRLF);
     echo("<td width='5%' align='center' valign='bottom'>".$del."</td></tr>" . CRLF);
 	$line++;
@@ -223,13 +225,13 @@
 	  $j++;
 	} // END WHILE
   
-    echo("<td width='10%' valign='bottom'><input type='time' name='start[" . $line . "]' value='12:00:00' style='background: ".$bgcolor."; color: white; border-color: #292929;'></td>" . CRLF);
-    echo("<td width='10%' valign='bottom'><input type='time' name='stop[" . $line . "]' value='12:00:00' style='background: ".$bgcolor."; color: white; border-color: #292929;'></td>" . CRLF);
+    echo("<td width='10%' valign='bottom'><input type='time' name='start[" . $line . "]' value='22:00' style='background: ".$bgcolor."; color: white; border-color: #292929;'></td>" . CRLF);
+    echo("<td width='10%' valign='bottom'><input type='time' name='stop[" . $line . "]' value='23:59' style='background: ".$bgcolor."; color: white; border-color: #292929;'></td>" . CRLF);
     echo("<td width='5%' align='left' valign='top'><input type=hidden name='active[".$line."]' value='N'>");
 	if ($heatzone=="0") {
 	  echo("<input name='active[" . $line . "]' id='active[" . $line . "]' type='checkbox' value='Y'  checked style='visibility: hidden;' /><label for='active[" . $line . "]'>");
     } else {
-	  echo("&nbsp;");
+	  echo("&nbsp;<input type='hidden' name='active[".$line."]' id='active[".$line."]' value='Y'>" . CRLF);
 	} // END IF
 	echo("<span class='ui'></span></label></td>" . CRLF);
     echo("<td width='5%' align='center' valign='bottom'>&nbsp;</td></tr>" . CRLF);  

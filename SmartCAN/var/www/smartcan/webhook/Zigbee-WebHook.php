@@ -79,10 +79,18 @@ if (substr($input["topic"],12,2)!="0x") {
   // Extract Common Variables (Battery)
   $battery = $payload["battery"];
   if ($battery=="") { if ($payload["battery_low"]=="true") { $battery=10; } else { $battery=90; } }
-  if ($payload["power_type"]=="usb") {$battery = 101;}
-  
+  if (array_key_exists('power_type', $payload)) {
+    if ($payload["power_type"]=="usb") {$battery = 101;}
+  }
   // Thermometer? (& Humidity)
   if ((array_key_exists('temperature', $payload)) && (array_key_exists('humidity', $payload))) {
+    // Column tempCompensation exists?
+    $result = mysqli_query($DB, "SHOW COLUMNS FROM `chauffage_temp` LIKE `ValvePosition`;");
+    if (!$result) {
+      $sql = "ALTER TABLE `chauffage_temp` ADD `valvePosition` FLOAT NOT NULL DEFAULT '101' AFTER `valeur`, " .
+                "ADD `tempCompensation` FLOAT NOT NULL DEFAULT '101' AFTER `valvePosition`;";
+      mysqli_query($DB,$sql);
+    }
     // Zigbee Thermometer Element Type exists?
     $sql = "SELECT COUNT(*) AS County FROM `ha_element_types` WHERE `Manufacturer`='Zigbee' AND `role`='Thermometer';";
     $query = mysqli_query($DB,$sql);
@@ -95,13 +103,13 @@ if (substr($input["topic"],12,2)!="0x") {
     } // END IF
     if (strtoupper($debug) == "Y") { $current .= "Thermometer ;-) \n"; }
     $sql = "SELECT * FROM `ha_element` WHERE `Manufacturer`='Zigbee' AND `card_id`='".substr($input["topic"],12)."' AND `element_type`='0x42';";
-    $current .= "SQL=".$sql."\n";
     $query = mysqli_query($DB,$sql);
     $row = mysqli_fetch_array($query, MYSQLI_BOTH);
     if (!$row['id']) {
       $sql2 = "INSERT INTO `".TABLE_ELEMENTS."` (`id`, `Manufacturer`, `card_id`, `element_type`, `element_reference`, `element_name`) VALUES (NULL, 'Zigbee', '".substr($input["topic"],12)."', '0x42', '', '" . substr($input["topic"],12) ."');";
+      $query = mysqli_query($DB,$sql2);
     } // END IF
-    $query = mysqli_query($DB,$sql2);
+
     // Humidity Column exists?
     $sql = "SELECT count(*) AS County FROM information_schema.COLUMNS WHERE COLUMN_NAME = 'humidity' and TABLE_NAME = 'chauffage_temp';";
     $query = mysqli_query($DB,$sql);
@@ -111,8 +119,8 @@ if (substr($input["topic"],12,2)!="0x") {
 	  $query = mysqli_query($DB,$sql);
     } // END IF
     // Get temperature and Humidity
-    $temp = $payload["temperature"];
-    $humidity = $payload["humidity"];
+    $temp = round($payload["temperature"],1);
+    $humidity = round($payload["humidity"],1);
     $sql3 = "UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = ".$temp.", CT.`humidity` = ".$humidity.", CT.`battery` =".$battery.",  CT.`update` = now() WHERE CS.`id_sonde` = 'Zigbee_".substr($input["topic"],12)."' AND CT.`id` = CS.`id`;";
     $query = mysqli_query($DB,$sql3);
     if (strtoupper($debug) == "Y") { $current .= $query . ", SQL=".$sql3 ."\n"; }
@@ -136,11 +144,17 @@ if (substr($input["topic"],12,2)!="0x") {
     $row = mysqli_fetch_array($query, MYSQLI_BOTH);
     if (!$row['id']) {
       $sql2 = "INSERT INTO `".TABLE_ELEMENTS."` (`id`, `Manufacturer`, `card_id`, `element_type`, `element_reference`, `element_name`) VALUES (NULL, 'Zigbee', '".substr($input["topic"],12)."', '0x41', '', '" . substr($input["topic"],12) ."');";
+      $query = mysqli_query($DB,$sql2);
     } // END IF
-    $query = mysqli_query($DB,$sql2);
+    // Get Valve Position
+    $valvePos =  "";
+    if (array_key_exists('position', $payload)) {
+      $valvePos = "CT.`valvePosition`='".$payload["position"]."'";
+    }
     // Get temperature
-    $temp = $payload["local_temperature"]; // + $payload["local_temperature_calibration"];
-    $sql3 = "UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = '".$temp."', CT.`battery` =".$battery.",  CT.`update` = now() WHERE CS.`id_sonde` = 'Zigbee_".substr($input["topic"],12)."' AND CT.`id` = CS.`id`;";
+    $temp = round($payload["local_temperature"],1); // + $payload["local_temperature_calibration"];
+    $sql3 = "UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = '".$temp."', CT.`battery` =".$battery.",  CT.`update` = now(), " .
+            $valvePos . " WHERE CS.`id_sonde` = 'Zigbee_".substr($input["topic"],12)."' AND CT.`id` = CS.`id`;";
     $query = mysqli_query($DB,$sql3);
     if (strtoupper($debug) == "Y") { $current .= $query . ", SQL=".$sql3 ."\n"; }
   } // END IF

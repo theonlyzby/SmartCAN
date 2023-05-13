@@ -1,0 +1,21 @@
+2023-01-30 22:09:27
+
+{"Payload":"{\"battery\":86,\"boost_heating\":\"OFF\",\"child_lock\":\"UNLOCK\",\"current_heating_setpoint\":\"15.0\",\"friday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"heating\":\"OFF\",\"linkquality\":117,\"local_temperature\":\"30.7\",\"local_temperature_calibration\":\"-12.7\",\"max_temperature\":\"32.0\",\"min_temperature\":\"3.0\",\"monday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"position\":\"0.0\",\"preset\":\"manual\",\"saturday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"sunday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"system_mode\":\"auto\",\"thursday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"tuesday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"window\":\"CLOSED\",\"window_detection\":\"OFF\"}","topic":"zigbee2mqtt/Vanne-Salon"}
+Topic ok
+Coming from:Vanne-Salon
+Thermostat ;-) 
+1, SQL=UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = '30.7', CT.`battery` =86,  CT.`update` = now() WHERE CS.`id_sonde` = 'Zigbee_Vanne-Salon' AND CT.`id` = CS.`id`;
+2023-01-30 22:09:27
+
+{"Payload":"{\"battery\":86,\"boost_heating\":\"OFF\",\"child_lock\":\"UNLOCK\",\"current_heating_setpoint\":\"15.0\",\"friday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"heating\":\"OFF\",\"linkquality\":114,\"local_temperature\":\"30.7\",\"local_temperature_calibration\":\"-12.7\",\"max_temperature\":\"32.0\",\"min_temperature\":\"3.0\",\"monday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"position\":\"0.0\",\"preset\":\"manual\",\"saturday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"sunday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"system_mode\":\"auto\",\"thursday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"tuesday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"window\":\"CLOSED\",\"window_detection\":\"OFF\"}","topic":"zigbee2mqtt/Vanne-Salon"}
+Topic ok
+Coming from:Vanne-Salon
+Thermostat ;-) 
+1, SQL=UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = '30.7', CT.`battery` =86,  CT.`update` = now() WHERE CS.`id_sonde` = 'Zigbee_Vanne-Salon' AND CT.`id` = CS.`id`;
+2023-01-30 22:10:07
+
+{"Payload":"{\"battery\":86,\"boost_heating\":\"OFF\",\"child_lock\":\"UNLOCK\",\"current_heating_setpoint\":\"14.0\",\"friday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"heating\":\"OFF\",\"linkquality\":114,\"local_temperature\":\"30.7\",\"local_temperature_calibration\":\"-12.7\",\"max_temperature\":\"32.0\",\"min_temperature\":\"3.0\",\"monday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"position\":\"0.0\",\"preset\":\"manual\",\"saturday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"sunday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"system_mode\":\"auto\",\"thursday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"tuesday_schedule\":\" 6h:0m 20°C,  12h:0m 15°C,  18h:0m 22°C,  22h:0m 15°C \",\"window\":\"CLOSED\",\"window_detection\":\"OFF\"}","topic":"zigbee2mqtt/Vanne-Salon"}
+Topic ok
+Coming from:Vanne-Salon
+Thermostat ;-) 
+1, SQL=UPDATE `chauffage_sonde` AS CS, `chauffage_temp` AS CT SET CT.`valeur` = '30.7', CT.`battery` =86,  CT.`update` = now() WHERE CS.`id_sonde` = 'Zigbee_Vanne-Salon' AND CT.`id` = CS.`id`;

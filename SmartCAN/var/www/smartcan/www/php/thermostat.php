@@ -1,4 +1,4 @@
-<?php
+T<?php
 
 // Battery Level: https://benohead.com/blog/2014/10/04/html5-displaying-battery-level/
 
@@ -157,12 +157,23 @@ ini_set('display_errors', '1');
  
    // HEAT Now depuis Nest
    function HeatNow($Laps) {
+    global $heatzone;
+    if ($heatzone==0) {
+      $zone_insert = "1111111";
+    } else {
+      $zone_insert = str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(7-intval($heatzone)),"0");
+    } // END IF 
     $objResponse = new xajaxResponse();
     $DB=mysqli_connect(mysqli_HOST, mysqli_LOGIN, mysqli_PWD);
     mysqli_select_db($DB,mysqli_DB);
     $Now    = date("H:i:00");
     $End    = date("H:i:00",mktime(date("H")+$Laps, date("i"), 0, date("m"), date("d"), date("y")));
-    $sql    = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` SET `days` = '00000001', `start`='" . $Now . "', `stop`='" . $End . "', `active`='Y';";
+	if ($End < $Now) {
+	  $sql    = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` SET `zones`='".$zone_insert."', `days` = '00000001', `start`='00:00:00', `stop`='" . $End . "', `active`='Y';";
+      mysqli_query($DB,$sql);
+	  $End = "24:00:00";
+	} // END IF
+    $sql    = "INSERT INTO `" . TABLE_HEATING_TIMSESLOTS . "` SET `zones`='".$zone_insert."', `days` = '00000001', `start`='" . $Now . "', `stop`='" . $End . "', `active`='Y';";
     mysqli_query($DB,$sql);
 	exec('php /data/www/smartcan/bin/chauffage.php');
 	exec('php /data/www/smartcan/bin/temperatures.php');
@@ -178,7 +189,8 @@ ini_set('display_errors', '1');
   $row    = mysqli_fetch_array($return, MYSQLI_BOTH);
   $heatzone = "0";
   $heatzonecolor = "000000";
-  if ($row["County"]!=0) {
+  $batteries = $row["County"];
+  if ($batteries!=0) {
     $Actionval    = '  window.open("./?page='.$_GET['page'].'&theme='.$_GET['theme'].'&zone="+document.getElementById("selZone").selectedIndex,"_self");';
 
 	$val = '<form id="bottompage">';
@@ -205,7 +217,8 @@ ini_set('display_errors', '1');
 	  //$sql = "SELECT * FROM `chauffage_temp` WHERE `battery`<101 and `moyenne`='".$heatzone."';";
 	  // SELECT `chauffage_temp`.`battery` AS Bat, `chauffage_sonde`.`description` AS Descrip FROM `chauffage_temp`,`chauffage_sonde` WHERE `chauffage_temp`.`id`=`chauffage_sonde`.`id` AND `chauffage_temp`.`battery`<101 and `chauffage_temp`.`moyenne`='3'
 	  $sql = "SELECT `chauffage_temp`.`battery` AS Bat, `chauffage_sonde`.`description` AS Descrip FROM `chauffage_temp`,`chauffage_sonde` " .
-				"WHERE `chauffage_temp`.`id`=`chauffage_sonde`.`id` AND `chauffage_temp`.`battery`<101 and `chauffage_temp`.`moyenne`='".$heatZ."';";
+				"WHERE `chauffage_temp`.`id`=`chauffage_sonde`.`id` AND `chauffage_temp`.`battery`<101 " .
+                                "AND (`chauffage_temp`.`moyenne`='".$heatZ."' OR `chauffage_temp`.`moyenne`='".($heatZ+90)."');";
 	  $return = mysqli_query($DB,$sql);
 	  $val .= '</div><div><table><tr>';
 	  while ($row = mysqli_fetch_array($return, MYSQLI_BOTH)) {
@@ -229,7 +242,35 @@ ini_set('display_errors', '1');
 	  } // END WHILE
       $val .= '</tr></table>' . CRLF;
 	} // END IF
-     	
+        if (($heatzone!=0) && ($batteries>0)) {
+          $sql = "SELECT AVG(`tempCompensation`) as avgCompensation FROM `chauffage_temp` " .
+                 "WHERE `moyenne`=".(90+$avg)." AND `tempCompensation`!=101;";
+          $return=mysqli_query($DB,$sql);
+          $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+          if ($row['avgCompensation']!=NULL) {
+            $Compensation  = round($row['avgCompensation'],1);
+          } else { $Compensation = 101;}
+          $sql = "SELECT AVG(valvePosition) as valvePosition FROM `chauffage_temp` " .
+                 "WHERE (`moyenne`=".(90+$avg)." OR `moyenne`=".$avg. ") AND `valvePosition`!=101;";
+          $return=mysqli_query($DB,$sql);
+          $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+          if ($row['valvePosition']!=NULL) {
+            $valvePosition = round($row['valvePosition'],1);
+          } else { $valvePosition = 101; }
+          $sql = "SELECT AVG(`humidity`) as humidity FROM `chauffage_temp` WHERE (`moyenne`=".$avg." OR `moyenne`=".(90+$avg).") AND `humidity`!=101;";
+          $return=mysqli_query($DB,$sql);
+          $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+          if ($row['humidity']!=NULL) { $humidity = round($row['humidity'],1); } else { $humidity = 101; }
+          if ($Compensation!=101 || $humidity!=101 || $valvePosition!=101) {
+            $val.='<br><div style="position: relative; text-align: center; color: white;" id="zoneInfos">';
+            if ($humidity!=101) { $val.=$msg["thermostat"]["Humidity"][$Lang]  . ': <span id="divHumidity">'.$humidity.'</span> %'; }
+            if ($Compensation!=101 && $humidity!=101) { $val.=', '; }
+            if ($Compensation!=101) { $val.=$msg["thermostat"]["Compensation"][$Lang] . ': <span id="divCompensation">'.$Compensation.'</span> °C'; }
+            if (($Compensation!=101 || $humidity!=101) && $valvePosition!=101) { $val.=', '; }
+            if ($valvePosition!=101) { $val.=$msg["thermostat"]["ValvePosition"][$Lang] . ': <span id="divValvePosition">'.$valvePosition.'</span> %'; }
+            $val.='</div>';
+          } // END IF
+       } // END IF
   } else {
     $val = '';
   }

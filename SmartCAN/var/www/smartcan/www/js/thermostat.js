@@ -2,56 +2,15 @@
 
 function receptionmodule(cle,valeur) {
 
-  console.log("JS/cle="+cle+", value="+valeur);
+  //console.log("JS/cle="+cle+", value="+valeur);
   
-  if ( cle == 'sonde' ) {
-    sonde(valeur);
-  }
-  if ( cle == 'temperaturevoulue' ) {
-    temperaturevoulue(valeur);
-  }
-  if ( cle == 'heater' ) {
-    heater(valeur);
-  }
   if ( cle == 'boiler' ) {
     boiler(valeur);
   }
-  if ( cle == 'PERIODECHAUFFE' ) {
-    periodechauffe(valeur);
-  }
-  if ( cle == 'FINCHAUFFE' ) {
-    finchauffe(valeur);
-  }
-  if ( cle == 'PROCHAINECHAUFFE' ) {
-    prochainechauffe(valeur);
-  }  
-  if ( cle == 'CHAUDIERE' ) {
-    chaudiere(valeur);
-  }
-  if ( cle == 'CONSIGNE' ) {
-    consigne(valeur);
+  if ( cle == 'THERMOSTAT' ) {
+    thermostat(valeur);
   }
 };
-
-function sonde(data) {
-  tab = data.split(',');
-  idsonde = tab[0];
-  valeur = tab[1];
-  //if (idsonde=="moyennemaison") { idsonde = "moyenne"; }
-  $('#' + idsonde).text(valeur);
-  //xajax_moyenne();
-  //console.log("JS/"+idsonde+"="+valeur+", OUT="+out);
-}
-
-
-function temperaturevoulue(data) {
-  $('#temperature').text(data);
-}
-
-function heater(data) {
-   $('#divchaudiere').text(data);
-   //console.log("JS/Heater="+data);
-}
 
 function boiler(data) {
    if (data=="ON") {
@@ -60,27 +19,31 @@ function boiler(data) {
    }
 }
 
-function periodechauffe(data) {
-	$('#divperiodechauffe').text(data);
-}
-
-function finchauffe(data) {
-	$('#divfinchauffe').text(data);
-}
-
-function prochainechauffe(data) {
-	console.log("JS/Prochaine Chauffe="+data);
-	$('#divprochainechauffe').text(data);
-}
-
-function chaudiere(data) {
-	console.log("JS/Chaudiere="+data);
-	$('#divchaudiere').text(data);
-}
-
-function consigne(data) {
-	console.log("JS/Consigne="+data);
-	$('#divconsigne').text(data);
+function thermostat(data) {
+	const json = JSON.parse(data);
+	// Zones
+	zoneNum = $('#divheatzone').text();
+	//document.getElementById("divheatzone"];
+	console.log("Zone = "+ zoneNum);
+    for(var zone in json.Zones) {
+	  if (parseInt(zoneNum) == parseInt(json.Zones[zone].zoneNber)) {
+        console.log(json.Zones[zone].zoneNber+"/"+json.Zones[zone].zoneName);
+	    $('#divprochainechauffe').text(json.Zones[zone].zoneHeatNext);
+		$('#divconsigne').text(json.Zones[zone].ZoneSetPoint);
+		$('#temperature').text(json.Zones[zone].zoneMeanTemp);
+		$('#divchaudiere').text(json.Zones[zone].ZoneHeater);
+		$('#divperiodechauffe').text(json.Zones[zone].zoneHeating);
+		$('#divfinchauffe').text(json.Zones[zone].zoneHeatEND);
+		$('#divHumidity').text(json.Zones[zone].zoneHumidity);
+        $('#divCompensation').text(json.Zones[zone].zoneCompensation);
+        $('#divValvePosition').text(json.Zones[zone].valvePosition);
+	  }
+    }
+	// Sensors
+	for(var sensor in json.sensors) {
+		console.log(json.sensors[sensor].sensorName+"/"+json.sensors[sensor].sensorTemp);
+		$('#' + json.sensors[sensor].sensorName).text(json.sensors[sensor].sensorTemp);
+	}
 }
 
 </script>

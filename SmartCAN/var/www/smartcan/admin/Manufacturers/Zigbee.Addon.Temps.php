@@ -1,5 +1,5 @@
 <?php
-
+include_once '../www/lang/www.thermostat.php';
 class Zigbee_class {
   
   function new() {
@@ -57,6 +57,7 @@ class Zigbee_class {
   
   
   function HTMLconfig() {
+	  
 	  GLOBAL $msg, $Lang, $DB;
 	  // Determine Local IP Range
 	  $ip = shell_exec("ifconfig eth0| grep 'inet ' | cut -d: -f2");
@@ -71,7 +72,7 @@ class Zigbee_class {
 	  echo('<td width="30%" align="right">' . $msg["TEMPS"]["Zone"][$Lang] . '&nbsp;&nbsp;&nbsp;<br><br></td>' . CRLF);
 	  echo('<td width="50%"><select id="ZoneIDZigbee" name="ZoneIDZigbee" onchange="NewZoneZigbee()"><option value="">Select</option>');
 	  
-
+      echo('<option value="1">' . $msg["thermostat"]["MainZone"][$Lang] .'</option>' . CRLF);
 	  // Already defined Zones?
 	  $sql = "SELECT * FROM `ha_thermostat_zones`;";
 	  $query = mysqli_query($DB,$sql);

@@ -17,6 +17,9 @@ $msg["thermostat"]["Next"]["en"] = "Next";
 $msg["thermostat"]["Active"]["en"] = "Active?";
 $msg["thermostat"]["AreYouSure"]["en"] = "Are you sure?";
 $msg["thermostat"]["MainZone"]["en"] = "Main Zone";
+$msg["thermostat"]["Humidity"]["en"] = "Relative Humidity";
+$msg["thermostat"]["Compensation"]["en"] = "Compensation";
+$msg["thermostat"]["ValvePosition"]["en"] = "Valve Position";
 
    // FR
 $msg["thermostat"]["Title"]["fr"] = "Gestion du chauffage";
@@ -31,6 +34,9 @@ $msg["thermostat"]["Next"]["fr"] = "Suiv.";
 $msg["thermostat"]["Active"]["fr"] = "Active?";
 $msg["thermostat"]["AreYouSure"]["fr"] = "Etes vous certain?";
 $msg["thermostat"]["MainZone"]["fr"] = "Zone Principale";
+$msg["thermostat"]["Humidity"]["fr"] = "Humidité Relative";
+$msg["thermostat"]["Compensation"]["fr"] = "Compensation";
+$msg["thermostat"]["ValvePosition"]["fr"] = "Position Vanne";
 
    // NL
 $msg["thermostat"]["Title"]["nl"] = "Verwarming Beheer";
@@ -45,5 +51,8 @@ $msg["thermostat"]["Next"]["nl"] = "Volg.";
 $msg["thermostat"]["Active"]["nl"] = "Actief?";
 $msg["thermostat"]["AreYouSure"]["nl"] = "Zeker?";
 $msg["thermostat"]["MainZone"]["nl"] = "Kernzone";
+$msg["thermostat"]["Humidity"]["nl"] = "Lucht vochteid";
+$msg["thermostat"]["Compensation"]["nl"] = "Compensatie";
+$msg["thermostat"]["ValvePosition"]["nl"] = "Craan Positie";
 
 ?>

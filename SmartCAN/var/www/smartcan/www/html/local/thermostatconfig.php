@@ -67,8 +67,8 @@
   
   
   // Determine Zone and function dependant parameters
-  if ($heatzone!=0) { $selector = "`active`='Y' OR (`active`='N' AND `zones`='".str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(7-intval($heatzone)),"0")."')"; }  else { $selector = "`zones` LIKE '1______'"; }
-  // Circul => no Boiler in Zones
+  if ($heatzone!=0) { $selector = "(`zones`='".str_pad("",(intval($heatzone)-1),"0")."1".str_pad("",(7-intval($heatzone)),"0")."')"; }  else { $selector = "`zones` LIKE '1______'"; }
+  // Circul => no Boiler in Zones   `active`='Y' OR 
   $sql = "SELECT * FROM `chauffage_clef` WHERE `clef`='circulateureauchaude';";
   $retour   = mysqli_query($DB,$sql);
   $row=mysqli_fetch_array($retour, MYSQLI_BOTH);
@@ -137,7 +137,7 @@
 
 
   $line=0;
-  //print("HeatZone=".$heatzone);
+  //echo("HeatZone=".$heatzone);
   
   $sql = "SELECT * FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE ".$selector." ORDER BY function,start,zones LIMIT ".$FormStart.",5;";
   //echo("sql = ".$sql."<br>");

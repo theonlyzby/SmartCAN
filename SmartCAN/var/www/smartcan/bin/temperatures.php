@@ -3,7 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 // Init
-$interTCPpushDelay = 1;
+$json = '{ "sensors": [';
+$Debug = "Y"; // "Y"
 
 /*
 Info sources for Web Temp:
@@ -100,7 +101,33 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	
 	
   } // END IF
+  
+////////////////////////////////////
+/////// END of Initial init ///////
+//////////////////////////////////
 
+// Gathering system config info
+// Heater OUT? or ... Valve ONLY system?
+$sql = "SELECT * FROM `chauffage_clef` WHERE `clef`='HeaterOUT';";
+$return = mysqli_query($DB,$sql);
+$row = mysqli_fetch_array($return, MYSQLI_BOTH);
+$HeaterOut = $row["valeur"];
+if (strtoupper($Debug) == "Y") { echo("Heater OUT:".$HeaterOut.CRLF); }
+// Zones
+$sql = "SELECT * FROM `ha_thermostat_zones`WHERE `Name`!='';";
+$return = mysqli_query($DB,$sql);
+$TotalZones=1; $ZoneName[0] = "Main"; $ZoneNber[0] = 1;
+if ($HeaterOut=="") { $ZoneCompa[0] = " >= "; } else { $ZoneCompa[0] = " = "; }
+if (strtoupper($Debug) == "Y") { echo(">Zone 0: ".$ZoneName[0]."(".$ZoneNber[0]."), Compa: ".$ZoneCompa[0]. CRLF); }
+while ($row = mysqli_fetch_array($return, MYSQLI_BOTH)) {
+  $ZoneName[$TotalZones] = $row["Name"];
+  $ZoneNber[$TotalZones] = $row["ZoneNber"];
+  $ZoneCompa[$TotalZones] = " = ";
+  if (strtoupper($Debug) == "Y") { echo(">Zone ".$TotalZones.": ".$ZoneName[$TotalZones]."(".$ZoneNber[$TotalZones]."), Compa: ".$ZoneCompa[$TotalZones]. CRLF); }
+  $TotalZones++;
+} // END WHILE
+$TotalZones--;
+if (strtoupper($Debug) == "Y") { echo("Total Zones = ".$TotalZones.CRLF.CRLF); }
 
   /* RECUPERATION DES VALEURS DE TEMPERATURE ET MISES A JOUR DES GRAPHIQUES */
   $sql = "SELECT * FROM `" . TABLE_CHAUFFAGE_SONDE . "` WHERE 1 ORDER BY `id_sonde`;"; // 'ESP_%'    (`id_sonde` NOT LIKE '%_%')
@@ -110,6 +137,7 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
     $sensor      = $row_s["id_sonde"];
 	$sensor_id   = $row_s["id"];
 	$sensor_name = $row_s["description"];
+	$zoneMean    = $row_s["moyenne"];
 	$b           = "";
 	
 	//echo("Sensor = " . $sensor . CRLF);
@@ -206,47 +234,10 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
 	
 	// PUSH Valeur Sonde
 	if ($b!="") {
-	  $ch = curl_init(URIPUSH);
-      curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, "sonde;" . $sensor  . "," . round($b, 1));
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      $ret = curl_exec($ch);
-      curl_close($ch);
+      $json .= '{"sensorName":"'.$sensor.'", "sensorTemp":'.round($b, 1).', "sensorZone":'.$zoneMean.'}, ';
 	} // END IF
-	sleep($interTCPpushDelay);
   } // END WHILE
-  
-  
-  
-  /* MISE A JOUR DU GRAPHIQUE DE TEMPERATURE MOYENNE MAISON */
-  $retour = mysqli_query($DB,"SELECT * FROM `chauffage_clef_TEMP` WHERE `clef`='mean_display';");
-  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
-  $mean_display = $row["valeur"];
-  $retour = mysqli_query($DB,"SELECT AVG(`valeur`) FROM `" . TABLE_CHAUFFAGE_TEMP . 
-              "` WHERE (`moyenne` ".$mean_display." AND `valeur`<>0 );"); // AND `update`>=DATE_SUB(now(), INTERVAL 2 MINUTE));");
-  $row = mysqli_fetch_array($retour, MYSQLI_BOTH);
-  if ((RRDPATH!="") && (date("i")%5==0)) {
-    //echo("Test if exists? ".RRDPATH . $sensor . '.rrd'. CRLF);
-    if ( !file_exists(RRDPATH . 'temperaturemaison.rrd') ) {
-      //echo(RRDPATH . 'creation.sh ' . RRDPATH . 'temperaturemaison.rrd'.CRLF);
-	  exec(RRDPATH . 'creation.sh ' . RRDPATH . 'temperaturemaison.rrd');
-    }
-	//echo('rrdtool update ' . RRDPATH . 'temperaturemaison.rrd N:' . round($row[0], 1));
-    exec('rrdtool update ' . RRDPATH . 'temperaturemaison.rrd N:' . round($row[0], 1));
-	//echo(RRDPATH . 'mettre_a_jour.sh ' . RRDPATH . 'temperaturemaison');
-    exec(RRDPATH . 'mettre_a_jour.sh ' . RRDPATH . 'temperaturemaison');
-  } // END IF
-	
-  // PUSH Valeur Moyenne
-  if ($row[0]=="") { $ZoneAvg="?"; } else { $ZoneAvg=round($row[0],1); }
-  $ch = curl_init(URIPUSH);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, "sonde;moyenne," . $ZoneAvg);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $ret = curl_exec($ch);
-  curl_close($ch);
-  
-  sleep($interTCPpushDelay);
+  $json = substr($json, 0, -2) . ' ]';
   
   /* MISE A JOUR DU GRAPHIQUE DE TEMPERATURE EXTERIEURE */
   $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_TEMP . "` WHERE `id` = '1'");
@@ -266,141 +257,199 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/EBBR.TXT
   
   // PUSH Valeur Temp Exterieure
   if ($row[0]!="") {
-    $ch = curl_init(URIPUSH);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "sonde;temperatureexterieure," . round($row[0], 1));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $ret = curl_exec($ch);
-    curl_close($ch);
+	$json .= ', "exteriorTemp":'.round($row[0], 1);
   } // END IF
 
-  sleep($interTCPpushDelay);
-  
-  // Heater End & Next
-  /* PERIODE DE CHAUFFE? */
-  $Now    = date("H:i:00");
-  $DayBit = date("N");
-  $Today  = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
-  $sql    = "SELECT COUNT(*) FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `function`='HEATER'  AND ((`days` LIKE '" . $Today . "') OR (`days` LIKE '_______1')) AND ('" . $Now . "' BETWEEN `start` AND `stop`) AND `active`='Y';";
-  $retour = mysqli_query($DB,$sql);
-  $row    = mysqli_fetch_array($retour, MYSQLI_BOTH);
-  $ch = curl_init(URIPUSH);
-  $Heating = $row[0];
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, "PERIODECHAUFFE;" . $Heating);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $ret = curl_exec($ch);
-  curl_close($ch);
+// Mean Temps, in Graphs and PUSH to display
+$i=0;
+while ($i<=$TotalZones) {
+  $sql = "SELECT AVG(`valeur`)  FROM `chauffage_temp` WHERE (`valeur`<>0 AND `moyenne`".$ZoneCompa[$i].$ZoneNber[$i]." AND `moyenne`<90);";
+  if (strtoupper($Debug) == "Y") { echo("Mean Temp - sql=".$sql.CRLF); }
+  $return = mysqli_query($DB,$sql);
+  $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+  if ((RRDPATH!="") && (date("i")%5==0)) {
+    //echo("Test if exists? ".RRDPATH . $sensor . '.rrd'. CRLF);
+	if ($ZoneNber[$i]==1) { $fileName = 'temperaturemaison'; } else { $fileName = 'temperatureZone'.$ZoneNber[$i]; }
+    if ( !file_exists(RRDPATH . $fileName) ) {
+      //echo(RRDPATH . 'creation.sh ' . RRDPATH . $fileName.'.rrd'.CRLF);
+      exec(RRDPATH . 'creation.sh ' . RRDPATH . $fileName.'.rrd');
+    } // END IF
+    //echo('rrdtool update ' . RRDPATH . $fileName.'.rrd' . ' N:' . round($row[0], 1));
+    exec('rrdtool update ' . RRDPATH . $fileName.'.rrd' . ' N:' . round($row[0], 1));
+    //echo(RRDPATH . 'mettre_a_jour.sh ' . RRDPATH . $fileName);
+    exec(RRDPATH . 'mettre_a_jour.sh ' . RRDPATH . $fileName);
+  } // END IF
+  if ($row[0]=="") { $ZoneTemp[$i]="?"; } else { $ZoneTemp[$i]=round($row[0],1); }
+  if (strtoupper($Debug) == "Y") { echo("Mean Temp:".$ZoneTemp[$i].", zone: ".$ZoneNber[$i].CRLF); }
+  $i++;
+} // END WHILE
 
-  sleep($interTCPpushDelay);
   
-  /* AFFICHAGE DE FIN DE LA PERIODE DE CHAUFFE EN COURS */
-  $Now    = date("H:i:00");
-  $DayBit = date("N");
-  $Today  = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
-  $sql    = "SELECT stop FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `function`='HEATER'  AND ((`days` LIKE '" . $Today . "') OR (`days` LIKE '_______1')) AND ('" . $Now . "' BETWEEN `start` AND `stop`) AND `active`='Y' ORDER BY start DESC;";
-  $retour = mysqli_query($DB,$sql);
-  if ($row=mysqli_fetch_array($retour, MYSQLI_BOTH)) {
+// END OF MEAN Temps  
+
+
+// Heater End & Next
+/* PERIODE DE CHAUFFE? */
+$Now    = date("H:i:00");
+$DayBit = date("N");
+$Today  = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
+$i=0;
+while ($i<=$TotalZones) {
+  $SQLzone = str_pad(str_pad("1",intval($ZoneNber[$i]),"_",STR_PAD_LEFT),7,"_");
+  $sql     = "SELECT COUNT(*) FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `zones` LIKE '".$SQLzone."' AND `function`='HEATER'  AND ((`days` LIKE '" . $Today . "') OR (`days` LIKE '_______1')) AND ('" . $Now . "' BETWEEN `start` AND `stop`) AND `active`='Y';";
+  if (strtoupper($Debug) == "Y") { echo("Heating? SQL=".$sql.CRLF); }
+  $return  = mysqli_query($DB,$sql);
+  $row     = mysqli_fetch_array($return, MYSQLI_BOTH);
+  $ZoneHeating[$i] = $row[0];
+  $i++;
+} // END WHILE
+//curl_setopt($ch, CURLOPT_POSTFIELDS, "PERIODECHAUFFE;" . $Heating);
+
+
+  
+// END Current Heating Period
+$i=0;
+while ($i<=$TotalZones) {
+  $SQLzone = str_pad(str_pad("1",intval($ZoneNber[$i]),"_",STR_PAD_LEFT),7,"_");
+  $sql     = "SELECT stop FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `zones` LIKE '".$SQLzone."' AND `function`='HEATER'  AND ((`days` LIKE '" . $Today . "') OR (`days` LIKE '_______1')) AND ('" . $Now . "' BETWEEN `start` AND `stop`) AND `active`='Y' ORDER BY start DESC;";
+  if (strtoupper($Debug) == "Y") { echo("Heat END? SQL=".$sql.CRLF); }
+  $return  = mysqli_query($DB,$sql);
+  if ($row=mysqli_fetch_array($return, MYSQLI_BOTH)) {
     $heure = substr($row[0],0,2) . substr($row[0],3,2);
-	$ch = curl_init(URIPUSH);
-	curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "FINCHAUFFE;" . $heure);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$ret = curl_exec($ch);
-	curl_close($ch);
+	$ZoneHeatEnd[$i] = $heure;
   } else {
-    $ch = curl_init(URIPUSH);
-	curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "FINCHAUFFE;");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$ret = curl_exec($ch);
-	curl_close($ch);
+    $ZoneHeatEnd[$i] =  "";
   }
+  $i++;
+} // END WHILE
 
-  sleep($interTCPpushDelay);
   
-  /* AFFICHAGE DE LA PROCHAINE PERIODE DE CHAUFFE */
-  $Now    = date("H:i:00");
-  $DayBit = date("N");
-  $Today  = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
-  $sql    = "SELECT start FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `function`='HEATER'  AND (`days` LIKE '" . $Today . "') AND (`start`>'" . $Now . "') AND `active`='Y' ORDER BY `start`;"; 
-  $retour = mysqli_query($DB,$sql);
-  if ($row=mysqli_fetch_array($retour, MYSQLI_BOTH)) {
+  // AFFICHAGE DE LA PROCHAINE PERIODE DE CHAUFFE 
+$i=0;
+while ($i<=$TotalZones) {
+  $SQLzone = str_pad(str_pad("1",intval($ZoneNber[$i]),"_",STR_PAD_LEFT),7,"_");
+  $sql    = "SELECT start FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE `zones` LIKE '".$SQLzone."' AND `function`='HEATER'  AND (`days` LIKE '" . $Today . "') AND (`start`>'" . $Now . "') AND `active`='Y' ORDER BY `start`;"; 
+  $return = mysqli_query($DB,$sql);
+  if ($row=mysqli_fetch_array($return, MYSQLI_BOTH)) {
 	if (substr($row[0],0,1)=="0") { $heure    = substr($row[0],1,1) . substr($row[0],3,2); } else {$heure    = substr($row[0],0,2) . substr($row[0],3,2);}
-    $ch = curl_init(URIPUSH);
-	curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "PROCHAINECHAUFFE;" . $heure);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$ret = curl_exec($ch);
-	curl_close($ch);
+	$ZoneHeatNext[$i] = $heure;
   } else {
     $DayBit   = date("N",mktime(1, 1, 1, date("m"), date("d")+1, date("y")));
     $Tomorrow = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
-    $sql      = "SELECT start FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE (`function`='HEATER'  AND (`days` LIKE '" . $Tomorrow . "') AND `active`='Y') ORDER BY `start`;";
+    $sql      = "SELECT start FROM `" . TABLE_HEATING_TIMSESLOTS . "` WHERE (`zones` LIKE '".$SQLzone."' AND `function`='HEATER'  AND (`days` LIKE '" . $Tomorrow . "') AND `active`='Y') ORDER BY `start`;";
     $retour   = mysqli_query($DB,$sql);
 	$row=mysqli_fetch_array($retour, MYSQLI_BOTH);
 	if (substr($row[0],0,1)=="0") { $heure    = substr($row[0],1,1) . substr($row[0],3,2); } else {$heure    = substr($row[0],0,2) . substr($row[0],3,2);}
-    $ch = curl_init(URIPUSH);
-	curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "PROCHAINECHAUFFE;" . $heure);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$ret = curl_exec($ch);
-	curl_close($ch);
+	$ZoneHeatNext[$i] = $heure;
   } // ENDIF
-  
-  sleep($interTCPpushDelay);
+  $i++;
+}// END WHILE  
 
-  // Heating?? => chaudiere
-  $heater = "";
-  $retour = mysqli_query($DB,"SELECT * FROM `" . TABLE_CHAUFFAGE_CLEF_TEMP . "` WHERE 1;");
-  while ($row = mysqli_fetch_array($retour, MYSQLI_BOTH)) {
-    if ($row['clef']=="boiler") {    if ($row['valeur'] == "0" ) { $heater = "OFF";   } 
-	  else if ( $row['valeur'] == "1" ) { $heater    = "BOILER";} } // END IF
-	if ($row['clef']=="chaudiere") { if ($row['valeur'] == "0" ) { $chaudiere = "OFF";} 
-	  else if ( $row['valeur'] == "1" ) { $chaudiere = "ON";} } // END IF
-	if ($chaudiere=="OFF" && $heater=="BOILER") { $chaudiere = "BOILER"; } // ENDIF
-  } // END WHILE
-  // Thermostats ONLY? + Set Point
-  $heatzone = substr($mean_display, -1);
-  if ($heatzone==1) { $heatzone=0;}
-  $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'temperature' AND `ZoneNber` = '".$heatzone."';");
+
+// Heating?? => chaudiere
+$heater = "";
+$return = mysqli_query($DB,"SELECT * FROM `" . TABLE_CHAUFFAGE_CLEF_TEMP . "` WHERE 1;");
+while ($row = mysqli_fetch_array($return, MYSQLI_BOTH)) {
+  if ($row['clef']=="boiler") {    if ($row['valeur'] == "0" ) { $heater = "OFF";   } 
+    else if ( $row['valeur'] == "1" ) { $heater    = "BOILER";} } // END IF
+  if ($row['clef']=="chaudiere") { if ($row['valeur'] == "0" ) { $chaudiere = "OFF";} 
+	else if ( $row['valeur'] == "1" ) { $chaudiere = "ON";} } // END IF
+  if ($chaudiere=="OFF" && $heater=="BOILER") { $chaudiere = "BOILER"; } // ENDIF
+} // END WHILE
+// Thermostats ONLY? + Set Point
+$i=0;
+while ($i<=$TotalZones) {
+  if ($ZoneNber[$i]==1) { $ZoneNber[$i]=0;}
+  $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'temperature' AND `ZoneNber` = '".$ZoneNber[$i]."';");
   $row    = mysqli_fetch_array($retour, MYSQLI_BOTH);
   $sql = "SELECT * FROM `chauffage_clef` WHERE `clef`='HeaterOUT';";
   $return = mysqli_query($DB,$sql);
   $row2 = mysqli_fetch_array($return, MYSQLI_BOTH);
   $HeaterOut = $row2["valeur"];
   $TempConsigne = $row[0];
-  $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'tempminimum' AND `ZoneNber` = '".$heatzone."';");
+  $retour = mysqli_query($DB,"SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'tempminimum' AND `ZoneNber` = '".$ZoneNber[$i]."';");
   $row3    = mysqli_fetch_array($retour, MYSQLI_BOTH);
   $Temp_Mini = $row3[0];
   if ($HeaterOut=="") {
-    if ($Heating) { $Temp_Consigne = $row[0]; } else { $TempConsigne = $Temp_Mini; }
+    if ($ZoneHeating[$i]) { $Temp_Consigne = $row[0]; } else { $TempConsigne = $Temp_Mini; }
 	// Heating in Thermostat ONLY mode?
-	if ((((floatval($ZoneAvg)<floatval($TempConsigne)) && ($Heating)) || ($ZoneAvg < $Temp_Mini))  && ($heatzone!=0)) {
+	if ((((floatval($ZoneTemp[$i])<floatval($TempConsigne)) && ($ZoneHeating[$i])) || ($ZoneTemp[$i] < $Temp_Mini))  && ($ZoneNber[$i]!=0)) {
 	  $chaudiere = "ON";
 	} // END IF
-  }
-	
-  $ch = curl_init(URIPUSH);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, "CHAUDIERE;" . $chaudiere);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $ret = curl_exec($ch);
-  curl_close($ch);  
-	
-  sleep($interTCPpushDelay);
-  
-  //echo("SQL=SELECT `valeur` FROM `" . TABLE_CHAUFFAGE_CLEF . "` WHERE `clef` = 'temperature' AND `ZoneNber` = '".$heatzone."';\n");
-  //echo("heatzone=".$heatzone.", CONSIGNE;" . $TempConsigne."\n");
-  $ch = curl_init(URIPUSH);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, "CONSIGNE;" . $TempConsigne);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $ret = curl_exec($ch);
-  curl_close($ch); 
-  
+  } // END IF
 
-// End New Mod
+  $ZoneHeater[$i] = $chaudiere;
+  //echo("heatzone=".$heatzone.", CONSIGNE;" . $TempConsigne."\n");
+  $ZoneSetPoint[$i] =  $TempConsigne;
+
+  $i++;
+} // END WHILE
+
+// Thermostat Parameters
+$i=0;
+while ($i<=$TotalZones) {
+  // Thermostat Parameters 
+  $ZoneHunidity[$i]     = "";
+  $ZoneCompensation[$i] = "";
+  $ValvePosition[$i]    = ""; 
+  if ($ZoneNber[$i]==1) { $ZoneNber[$i]=0;}
+  if ($ZoneNber[$i]!=0) { 
+    $sql = "SELECT AVG(`tempCompensation`) as avgCompensation FROM `chauffage_temp` " .
+                 "WHERE `moyenne`=".(90+$ZoneNber[$i])." AND `tempCompensation`!=101;";
+    $return=mysqli_query($DB,$sql);
+    $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+    if ($row['avgCompensation']!=NULL) {
+      $Compensation  = round($row['avgCompensation'],1);
+    } else { $Compensation = 101;}
+    $sql = "SELECT AVG(valvePosition) as valvePosition FROM `chauffage_temp` " .
+             "WHERE (`moyenne`=".(90+$ZoneNber[$i])." OR `moyenne`=".$ZoneNber[$i]. ") AND `valvePosition`!=101;";
+    $return=mysqli_query($DB,$sql);
+    $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+    if ($row['valvePosition']!=NULL) {
+      $valvePosition = round($row['valvePosition'],1);
+    } else { $valvePosition = 101; }
+     $sql = "SELECT AVG(`humidity`) as humidity FROM `chauffage_temp` WHERE (`moyenne`=".$ZoneNber[$i]." OR `moyenne`=".(90+$ZoneNber[$i]).") AND `humidity`!=101;";
+    $return=mysqli_query($DB,$sql);
+    $row = mysqli_fetch_array($return, MYSQLI_BOTH);
+    if ($row['humidity']!=NULL) { $humidity = round($row['humidity'],1); } else { $humidity = 101; }
+	$ZoneHunidity[$i]     = $humidity;
+	$ZoneCompensation[$i] = $Compensation;
+	$ValvePosition[$i]    = $valvePosition; 
+  } // END IF
+  $i++;
+} // END WHILE
+// End Thermostat parameters
+
+
+
+// Build JSON 
+$i=0; $json .= CRLF . ', "Zones": [';
+while ($i<=$TotalZones) {
+  $json .= '{ "zoneName": "'         . $ZoneName[$i]         . '"' .
+           ', "zoneNber": '          . $ZoneNber[$i]         .
+           ', "zoneMeanTemp": "'     . $ZoneTemp[$i]         .  '"' .
+		   ', "zoneHeating": '       . $ZoneHeating[$i]      .
+		   ', "zoneHeatEND": "'      . $ZoneHeatEnd[$i]      . '"' .
+		   ', "zoneHeatNext": "'     . $ZoneHeatNext[$i]     . '"' .
+		   ', "ZoneHeater": "'       . $ZoneHeater[$i]       . '"' .
+		   ', "ZoneSetPoint": "'     . $ZoneSetPoint[$i]     . '"' .
+		   ', "zoneHumidity": "'     . $ZoneHunidity[$i]     . '"' .
+		   ', "zoneCompensation": "' . $ZoneCompensation[$i] . '"' .
+		   ', "valvePosition": "'    . $ValvePosition[$i]    . '"' .
+		   '}, ';
+  $i++;
+} // END WHILE
+$json = substr($json, 0, -2) . ' ] }' . CRLF;
+
+// PUSH towards serverS
+$ch = curl_init(URIPUSH);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, "THERMOSTAT;" . $json);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$ret = curl_exec($ch);
+curl_close($ch);
+
+if (strtoupper($Debug) == "Y") { echo("JSON =".$json .CRLF.CRLF); }
 
 
 // Every 5 minutes
@@ -457,5 +506,7 @@ if (date("i")%5==0) {
     } // END IF
   } // END IF
 } // END IF
+
+// Closing mysql_affected_rows
 mysqli_close($DB);
 ?>
