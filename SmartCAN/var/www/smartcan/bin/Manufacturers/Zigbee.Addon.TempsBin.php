@@ -5,12 +5,12 @@ class Zigbee_class {
   function get_Temp($sensor) {
 	global $DB;
 	
-	$debug = "Y"; // "Y";
+	$debug = "N"; // "Y";
 	$Now    = date("H:i:00");
 	$DayBit = date("N");
         $Today  = str_pad(str_pad("1",$DayBit,"_",STR_PAD_LEFT),8,"_");
 	//$sql = "SELECT * FROM `" . TABLE_CHAUFFAGE_SONDE . "` WHERE (`id_sonde`='".$sensor."');";
-        $sql = "SELECT CS.`id`, CS.`id_sonde`, CT.`valeur`, CS.`moyenne` FROM `chauffage_sonde` AS CS, `chauffage_temp` AS CT WHERE (CS.`id_sonde`='".$sensor."') AND CS.`id`=CT.`id`;";
+        $sql = "SELECT CS.`id`, CS.`id_sonde`, CT.`valeur`, CS.`moyenne`, CT.`update`, (CT.`update` < DATE_SUB(now(),interval 5 MINUTE)) AS tenMinAgo, (CT.`update` < DATE_SUB(now(),interval 1 HOUR)) AS hourAgo FROM `chauffage_sonde` AS CS, `chauffage_temp` AS CT WHERE (CS.`id_sonde`='".$sensor."') AND CS.`id`=CT.`id`;";
 
 	if (strtoupper($debug) == "Y") { echo("\n\n ===================Zigbee ===================\n"); echo("Zigbee sql = " . $sql . "\n"); }
     $return = mysqli_query($DB,$sql);
@@ -18,7 +18,10 @@ class Zigbee_class {
 	
 	$node = substr($row["id_sonde"],7);
 	$moyenne = $row["moyenne"];
-        $measuredTemp = $row["valeur"];
+    $measuredTemp = $row["valeur"];
+	$update = $row["update"];
+	$tenMinAgo = $row["tenMinAgo"];
+	$hourAgo = $row["hourAgo"];
 	if (strtoupper($debug) == "Y") { echo("Node=".$node.", moyenne=".$moyenne.", measured Value=".$measuredTemp.CRLF); }
 	
 	if ($moyenne<=90) { $zone = $row["moyenne"]; } else { $zone = $row["moyenne"]-90; }
@@ -95,6 +98,23 @@ class Zigbee_class {
           # Print response.
          if (strtoupper($debug) == "Y") { echo "=> Zigbee CMD SENT for ".$node.", temp=".round($temp,1)." => $result \n"; }
        } else {
+		 // Not a valve
+		 if (strtoupper($debug) == "Y") { echo("Update=" . $update . ", tenMinAgo=" . $tenMinAgo . ", hourAgo=" . $hourAgo ."\n"); }
+		 // But if not uodated within 10 minutes => Refreshes or put value to 0 => Inactivate
+		 if (($tenMinAgo == 1) && (($hourAgo == 0))) {
+		   $sql1 = "UPDATE `chauffage_temp` AS CT, `chauffage_sonde` AS CS  SET CT.`valeur` = '0', CT.`battery` = '0' WHERE CS.`id`= CT.`id` AND CS.`id_sonde` = '".$sensor."';";
+		   if (strtoupper($debug) == "Y") { echo("sql1=" . $sql1 . "\n"); echo("\n !!! OLDER !!! SO 0 value and try to get refresh\n"); }
+		   $retour = mysqli_query($DB,$sql1);
+		   $ch = curl_init( "http://127.0.0.1:1880/toMQTT" );
+		   $payload = json_encode( array( "target"=> $node , "cmd"=>"{\"humidity_calibration\":0}"  ) );
+           curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+           curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+           # Return response instead of printing.
+           curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+           # Send request.
+           $result = curl_exec($ch);
+           curl_close($ch);
+		 } // END IF
          if (strtoupper($debug) == "Y") { echo "=> Zigbee NO CMD SENT, because ".$node." is NOT a Valve ;-) \n"; }
        }
 	 

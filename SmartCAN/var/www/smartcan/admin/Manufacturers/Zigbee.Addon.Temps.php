@@ -72,7 +72,7 @@ class Zigbee_class {
 	  echo('<td width="30%" align="right">' . $msg["TEMPS"]["Zone"][$Lang] . '&nbsp;&nbsp;&nbsp;<br><br></td>' . CRLF);
 	  echo('<td width="50%"><select id="ZoneIDZigbee" name="ZoneIDZigbee" onchange="NewZoneZigbee()"><option value="">Select</option>');
 	  
-      echo('<option value="1">' . $msg["thermostat"]["MainZone"][$Lang] .'</option>' . CRLF);
+      echo('<option value="1">' . $msg["thermostat"]["MainZone"][$Lang] .'  </option>' . CRLF);
 	  // Already defined Zones?
 	  $sql = "SELECT * FROM `ha_thermostat_zones`;";
 	  $query = mysqli_query($DB,$sql);
